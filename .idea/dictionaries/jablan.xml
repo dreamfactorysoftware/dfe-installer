@@ -2,6 +2,7 @@
   <dictionary name="jablan">
     <words>
       <w>fzaninotto</w>
+      <w>sqlsrv</w>
     </words>
   </dictionary>
 </component>

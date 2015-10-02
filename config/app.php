@@ -1,7 +1,7 @@
 <?php
 return [
     'debug'           => env('APP_DEBUG', false),
-    'url'             => 'http://localhost',
+    'url'             => env('APP_URL', 'http://dfe-installer.local'),
     'timezone'        => 'UTC',
     'locale'          => 'en',
     'fallback_locale' => 'en',

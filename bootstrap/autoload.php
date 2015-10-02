@@ -5,13 +5,13 @@
 
 define('LARAVEL_START', microtime(true));
 
-if (!function_exists('__dfe_autoload')) {
+if (!function_exists('__dfe_installer_autoload')) {
     /**
      * Bootstrap DFE
      *
      * @return bool
      */
-    function __dfe_autoload()
+    function __dfe_installer_autoload()
     {
         //  Register The Composer Auto Loader
         require __DIR__ . '/../vendor/autoload.php';
@@ -26,4 +26,4 @@ if (!function_exists('__dfe_autoload')) {
     }
 }
 
-return __dfe_autoload();
+return __dfe_installer_autoload();
