@@ -8,6 +8,7 @@ return [
     'key'             => env('APP_KEY', 'SomeRandomString'),
     'cipher'          => 'AES-256-CBC',
     'log'             => 'single',
+    'os_type'         => `which lsb_release` ? strtolower(trim(`lsb_release -si`)) : null,
     'providers'       => [
         /** Laravel Framework Service Providers */
         Illuminate\Foundation\Providers\ArtisanServiceProvider::class,
@@ -38,6 +39,7 @@ return [
         DreamFactory\Enterprise\Installer\Providers\AuthServiceProvider::class,
         DreamFactory\Enterprise\Installer\Providers\EventServiceProvider::class,
         DreamFactory\Enterprise\Installer\Providers\RouteServiceProvider::class,
+        DreamFactory\Enterprise\Common\Providers\InspectionServiceProvider::class,
         /** Third-party Providers */
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
     ],
