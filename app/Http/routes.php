@@ -1,4 +1,5 @@
 <?php
+use DreamFactory\Enterprise\Common\Providers\InspectionServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +21,31 @@ Route::get('/',
                 'mount_point'    => '/data',
                 'storage_path'   => '/storage',
                 'log_path'       => '/data/logs',
+                'requirements'   => [],
             ];
+
+            $_required = config('dfe.required-packages', []);
+            $_service = \App::make(InspectionServiceProvider::IOC_NAME);
+
+            foreach ($_required as $_name => $_packages) {
+                if (!is_array($_packages)) {
+                    $_packages = [$_packages];
+                }
+
+                $_hasPackage = false;
+
+                foreach ($_packages as $_package) {
+                    if (false !== ($_hasPackage = $_service->hasPackage($_package))) {
+                        break;
+                    }
+                }
+
+                $_defaults['requirements'][$_name] = [
+                    'name'        => $_name,
+                    'has-package' => $_hasPackage,
+                    'status'      => $_hasPackage ? 'text-success' : 'text-danger',
+                ];
+            }
 
             return view('index', $_defaults);
         },

@@ -1,10 +1,9 @@
-@extends('layouts.main')
 <?php
-use DreamFactory\Enterprise\Common\Providers\InspectionServiceProvider;
-
-$_required = config('dfe.required-packages', []);
-$_service = \App::make(InspectionServiceProvider::IOC_NAME);
+/**
+ * @type array $requirements
+ */
 ?>
+@extends('layouts.main')
 @section('content')
     <section id="section-inspection">
         <h2>Required Components</h2>
@@ -14,37 +13,27 @@ $_service = \App::make(InspectionServiceProvider::IOC_NAME);
                 <p>The following is a list of components that are required to run DreamFactory Enterprise&trade;. Those
                     that are not installed will be noted below. These must be installed before installation begins.</p>
                 <table style="width: 50%" class="table table-bordered table-condensed table-responsive">
+                    <thead>
                     <tr>
                         <th>Package</th>
                         <th>Status</th>
                     </tr>
+                    </thead>
+                    <tbody>
                     <?php
-                    foreach ($_required as $_name => $_packages) {
-                        if (!is_array($_packages)) {
-                            $_packages = [$_packages];
-                        }
-
-                        $_hasPackage = false;
-
-                        foreach ($_packages as $_package) {
-                            if (false !== ($_hasPackage = $_service->hasPackage($_package))) {
-                                break;
-                            }
-                        }
-
-                        $_status = $_hasPackage ? 'text-success' : 'text-danger';
-
+                    foreach ($requirements as $_name => $_info) {
                         echo '<tr><td class="' .
-                                $_status .
+                                $_info['status'] .
                                 '">' .
                                 $_name .
                                 '</td><td class="' .
-                                $_status .
+                                $_info['status'] .
                                 '">' .
-                                ($_hasPackage ? 'Yes' : 'No') .
+                                ($_info['has-package'] ? 'Yes' : 'No') .
                                 '</td></tr>';
                     }
                     ?>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -131,7 +120,7 @@ $_service = \App::make(InspectionServiceProvider::IOC_NAME);
             <div class="row">
                 <div class="col-md-6">
                     <fieldset>
-                        <legend>MySQL Password</legend>
+                        <legend>MySQL <strong>Root</strong> Password</legend>
                         <div class="form-group">
                             <label for="mysql-root-pwd">MySQL Root Password</label>
                             <input required type="password" class="form-control" id="mysql-root-pwd"
