@@ -1,8 +1,7 @@
 vcsrepo { "/var/www/_releases/console/$console_location":
   ensure   => present,
   provider => git,
-#  source   => "https://${github_user_info}github.com/dreamfactorysoftware/dfe-console.git",
-  source   => "git@github.com:dreamfactorysoftware/dfe-console.git",
+  source   => "https://${github_user_info}github.com/dreamfactorysoftware/dfe-console.git",
   user     => $user,
   owner    => $group,
   group    => $www_group,

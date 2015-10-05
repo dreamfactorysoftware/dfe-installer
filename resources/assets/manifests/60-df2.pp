@@ -1,8 +1,7 @@
 vcsrepo { "/var/www/_releases/dreamfactory/$dsp_location":
   ensure   => present,
   provider => git,
-#  source   => "https://${github_user_info}github.com/dreamfactorysoftware/dfe-dashboard.git",
-  source   => "git@github.com:dreamfactorysoftware/dreamfactory.git",
+  source   => "https://${github_user_info}github.com/dreamfactorysoftware/dfe-dashboard.git",
   user     => $user,
   owner    => $group,
   group    => $www_group,
@@ -16,7 +15,7 @@ file { '/var/www/launchpad/.env':
   ensure => present,
   owner  => $user,
   group  => $www_group,
-  mode   => '0775',
+  mode   => 0775,
   source => '/var/www/launchpad/.env-dist'
 }->
 ini_setting { 'SMTP_DRIVER':
@@ -61,39 +60,16 @@ exec { 'launchpad-config':
   cwd         => '/var/www/launchpad',
   environment => ["HOME=/home/$user"]
 }->
-file { "/var/www/_releases/dreamfactory/$dsp_location/storage":
+file { [
+  "/var/www/_releases/dreamfactory/$dsp_location/bootstrap/cache",
+  "/var/www/_releases/dreamfactory/$dsp_location/storage",
+  "/var/www/_releases/dreamfactory/$dsp_location/storage/logs",
+  "/var/www/_releases/dreamfactory/$dsp_location/storage/framework",
+  "/var/www/_releases/dreamfactory/$dsp_location/storage/framework/db",
+  "/var/www/_releases/dreamfactory/$dsp_location/storage/framework/sessions",
+  "/var/www/_releases/dreamfactory/$dsp_location/storage/framework/views"]:
   ensure => directory,
   owner  => $user,
   group  => $www_group,
-  mode   => "2775"
-}->
-file { "/var/www/_releases/dreamfactory/$dsp_location/storage/framework":
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => "2775"
-}->
-file { "/var/www/_releases/dreamfactory/$dsp_location/storage/logs":
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => "2775"
-}->
-file { "/var/www/_releases/dreamfactory/$dsp_location/storage/bootstrap/cache":
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => "2775"
-}->
-file { "/var/www/_releases/dreamfactory/$dsp_location/storage/framework/sessions":
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => "2775"
-}->
-file { "/var/www/_releases/dreamfactory/$dsp_location/storage/framework/views":
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => "2775"
+  mode   => 2775,
 }
