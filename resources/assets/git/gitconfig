@@ -1,0 +1,5 @@
+[user]
+	name = DreamFactory Administrator
+	email = ops@dreamfactory.com
+[push]
+	default = simple

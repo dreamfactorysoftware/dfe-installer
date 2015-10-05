@@ -1,0 +1,46 @@
+[mysqld]
+## Replication
+server-id                       = 1
+
+## General
+default-storage-engine          = InnoDB
+explicit-defaults-for-timestamp = 0
+
+## Logging
+log-queries-not-using-indexes   = 1
+slow-query-log                  = 1
+
+## Binlogging
+expire-logs-days                = 3
+sync-binlog                     = 1
+
+## Character sets
+character-set-server            = utf8
+collation-server                = utf8_general_ci
+
+## MyISAM (Unused, so very low)
+key-buffer-size                 = 128M
+
+## Network Security
+max-allowed-packet              = 16M
+max-connect-errors              = 1000000
+sysdate-is-now                  = 1
+
+## Caching/Limits
+tmp-table-size                  = 32M
+max-heap-table-size             = 32M
+query-cache-type                = 0
+query-cache-size                = 0
+max-connections                 = 1024
+thread-cache-size               = 64
+open-files-limit                = 65535
+table-definition-cache          = 1024
+table-open-cache                = 2048
+
+## InnoDB-specific
+innodb-flush-method             = O_DIRECT
+innodb-log-files-in-group       = 3
+innodb-log-file-size            = 128M
+innodb-flush-log-at-trx-commit  = 1
+innodb-file-per-table           = 1
+innodb-buffer-pool-size         = 2G

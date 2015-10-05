@@ -4,7 +4,7 @@
 //******************************************************************************
 return [
     'required-packages' => [
-        'git-core',
-        'puppet',
+        'git'    => ['git', 'git-full', 'git-core'],
+        'puppet' => ['puppet'],
     ],
 ];
