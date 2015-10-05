@@ -136,7 +136,7 @@ $_service = \App::make(InspectionServiceProvider::IOC_NAME);
                             <label for="mysql-root-pwd">MySQL Root Password</label>
                             <input required type="password" class="form-control" id="mysql-root-pwd"
                                    name="mysql-root-pwd"
-                                   placeholder="secret" value="{{$mysql_root_pwd}}">
+                                   placeholder="secret" value="{{ $mysql_root_pwd }}">
                         </div>
                     </fieldset>
                 </div>

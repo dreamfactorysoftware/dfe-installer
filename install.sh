@@ -14,6 +14,7 @@
 VERSION=1.1.0
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/manifests/
+ENV_FILE=./.env-install
 
 ## Who am I?
 if [ $UID -ne 0 ]; then
@@ -43,6 +44,7 @@ _checkPuppetModules() {
     [ ! -d "/etc/puppet/hieradata" ] && mkdir /etc/puppet/hieradata
 
     INSTALLED_MODULES=$(puppet module list)
+    local _count=0
 
     for module in puppetlabs-stdlib puppetlabs-vcsrepo puppetlabs-mysql puppetlabs-apt puppetlabs-lvm puppetlabs-inifile wcooley-user_ssh_pubkey
     do
@@ -52,8 +54,11 @@ _checkPuppetModules() {
                 _error "Error during installation of required puppet module \"${module}\""
                 exit 1;
             fi
+            _count=${_count}+1
         fi
     done
+
+    _info "   > Installed ${_count} modules"
 }
 
 ## Hard-coded defaults
@@ -62,19 +67,39 @@ export FACTER_FSTAB=/etc/fstab
 export FACTER_MOUNT_OPTIONS=rw
 export FACTER_LVM_NAME=dfe_lvm
 export FACTER_VG_NAME=dfe_vg
-export FACTER_DEVICE=
-export FACTER_VG_SIZE=
-export FACTER_FSTYPE=
 export FACTER_USER_PWD=`openssl rand -base64 32`
+export FACTER_PERCONA_VERSION=5.6
 export FACTER_MYSQL_USER=mysql
 export FACTER_MYSQL_GROUP=mysql
+export FACTER_HOME=$HOME
+export FACTER_PWD=${PWD}
+export LC_ALL=en_US.UTF-8
+export FACTER_DB_USER=dfe_user
+export FACTER_DB_PWD=dfe_user
+export FACTER_DB_HOST=localhost
+export FACTER_DB_NAME=dfe_local
+export FACTER_CONSOLE_VERSION=develop
+export FACTER_CONSOLE_LOCATION=develop
+export FACTER_DASHBOARD_VERSION=develop
+export FACTER_DASHBOARD_LOCATION=develop
+export FACTER_DSP_VERSION=develop
+export FACTER_DSP_LOCATION=2.0-dev
+export FACTER_APP_DEBUG=true
+
+## Blanks
+export FACTER_USER FACTER_GROUP
+export FACTER_ADMIN_EMAIL FACTER_ADMIN_PWD
+export FACTER_MOUNT_POINT FACTER_DOMAIN FACTER_GH_USER FACTER_GH_PWD
+export FACTER_DEVICE FACTER_VG_SIZE FACTER_FSTYPE
+export FACTER_SMTP_HOST FACTER_SMTP_PORT FACTER_MAIL_FROM_ADDRESS FACTER_MAIL_FROM_NAME
+export FACTER_MAIL_USERNAME FACTER_MAIL_PASSWORD
 
 ## Header
-sectionHeader " ${B1}DreamFactory Enterprise(tm) Intstaller${B2} ${SYSTEM_TYPE} Installer [v${VERSION}]"
+sectionHeader " ${B1}DreamFactory Enterprise(tm)${B2} ${SYSTEM_TYPE} Installer v${VERSION}"
 
 ## Find settings file...
-if [ -f ./storage/.install.env ]; then
-    . ./storage/.install.env
+if [ -f ${ENV_FILE} ]; then
+    . ${ENV_FILE}
 else
     _error "No installation configuration file found. Please fill out the web form."
     exit 2
@@ -84,38 +109,11 @@ _info "Checking system requirements..."
 
 _checkPuppetModules
 
-## Composite values
+## Composite/aggregate values
 export FACTER_STORAGE_USER=${FACTER_USER}
 export FACTER_STORAGE_PATH=${FACTER_MOUNT_POINT}/${FACTER_STORAGE_PATH}
 export FACTER_SSL_CERT_STUB=$(echo ${FACTER_DOMAIN} | tr '.' '-')
-
-## Export all remaining FACTER_* vars
-export FACTER_USER FACTER_GROUP FACTER_STORAGE_GROUP
-export FACTER_VENDOR_ID FACTER_DOMAIN FACTER_WWW_USER FACTER_WWW_GROUP FACTER_MOUNT_POINT FACTER_LOG_PATH
-export FACTER_MYSQL_ROOT_PWD FACTER_PERCONA_VERSION=5.6
-export FACTER_ADMIN_EMAIL FACTER_ADMIN_PWD
-export FACTER_SMTP_HOST
-export FACTER_SMTP_PORT
-export FACTER_MAIL_FROM_ADDRESS
-export FACTER_MAIL_FROM_NAME
-export FACTER_MAIL_USERNAME
-export FACTER_MAIL_PASSWORD
-
-export FACTER_HOME=$HOME
-export FACTER_PWD=${PWD}
-export LC_ALL=en_US.UTF-8
-export FACTER_DB_USER=dfe_user
-export FACTER_DB_PWD=dfe_user
-export FACTER_DB_HOST=localhost
-export FACTER_DB_NAME=dfe_local
 export FACTER_GITHUB_USER_INFO=${FACTER_GH_USER}\:${FACTER_GH_PWD}\@
-export FACTER_CONSOLE_VERSION=develop
-export FACTER_CONSOLE_LOCATION=develop
-export FACTER_DASHBOARD_VERSION=develop
-export FACTER_DASHBOARD_LOCATION=develop
-export FACTER_DSP_VERSION=develop
-export FACTER_DSP_LOCATION=2.0-dev
-export FACTER_APP_DEBUG=true
 
 _info "Installing..."
 
