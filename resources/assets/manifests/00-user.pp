@@ -36,7 +36,7 @@ file { "/home/$user/.gitconfig":
   owner  => $user,
   group  => $group,
   mode   => '664',
-  source => "$pwd/git/gitconfig",
+  source => "$pwd/resources/assets/git/gitconfig",
 }->
 file { "/home/$user/.ssh/known_hosts":
   ensure => file,

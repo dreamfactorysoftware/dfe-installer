@@ -46,7 +46,7 @@ class { 'mysql::server':
 }
 
 file { "/etc/mysql/conf.d/dreamfactory.my.cnf":
-  source => "$pwd/etc/mysql/dreamfactory.my.cnf",
+  source => "$pwd/resources/assets/etc/mysql/dreamfactory.my.cnf",
   ensure => present
 }
 
@@ -61,7 +61,7 @@ mysql::db { $db_name:
   host     => $db_host,
   user     => $db_user,
   password => $db_pwd,
-  sql      => "$pwd/sql/dfe_local.schema.sql"
+  sql      => "$pwd/resources/assets/sql/dfe_local.schema.sql"
 }
 
 mysql_grant { "${db_user}@${db_host}/*.*":

@@ -102,7 +102,7 @@ export FACTER_MAIL_USERNAME
 export FACTER_MAIL_PASSWORD
 
 export FACTER_HOME=$HOME
-export FACTER_PWD=${PWD}/resources/assets
+export FACTER_PWD=${PWD}
 export LC_ALL=en_US.UTF-8
 export FACTER_DB_USER=dfe_user
 export FACTER_DB_PWD=dfe_user
