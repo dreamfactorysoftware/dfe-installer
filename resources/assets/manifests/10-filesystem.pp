@@ -48,25 +48,6 @@ file { $mount_point:
   group  => $www_group,
   mode   => '2775'
 }
-# Setup the MySQL directories
-file { $mysql_data_dir:
-  ensure  => directory,
-  owner   => $storage_user,
-  group   => $storage_group,
-  mode    => '0750'
-}->
-file { "$mount_point/mysql-binlog":
-  ensure => directory,
-  owner  => $storage_user,
-  group  => $storage_group,
-  mode   => '0750'
-}
-file { $mysql_log_bin_path:
-  ensure => directory,
-  owner  => $storage_user,
-  group  => $storage_group,
-  mode   => '0750'
-}
 # Create the storage location
 file { $storage_path:
   ensure  => directory,
@@ -97,12 +78,6 @@ file { "$log_path/dashboard":
   owner   => $www_user,
   group   => $storage_group,
   mode    => '2750',
-}->
-file { "$mysql_log_path":
-  ensure => directory,
-  owner  => $storage_user,
-  group  => $storage_group,
-  mode   => '0750'
 }->
 file { "$mount_point/trash":
   ensure => directory,
