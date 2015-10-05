@@ -13,6 +13,10 @@ body {
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+form {
+    margin-bottom: 20px;
+}
+
 table > td span.label {
     vertical-align: middle;
 }
@@ -75,3 +79,4 @@ table > td span.label {
     line-height:    40px;
     color:          #dddddd;
 }
+
