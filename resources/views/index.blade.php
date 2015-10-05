@@ -193,7 +193,7 @@ $_service = \App::make(InspectionServiceProvider::IOC_NAME);
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-md btn-success"><i class="fa fa-arrow-circle-right"></i> Install
+                <button type="submit" class="btn btn-md btn-success"><i class="fa fa-arrow-circle-right"></i> Save Configuration
                 </button>
             </div>
 
