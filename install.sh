@@ -15,11 +15,17 @@ VERSION=1.1.0
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/manifests/
 ENV_FILE=./.env-install
+PHP_BIN=`which php`
 
 ## Who am I?
 if [ $UID -ne 0 ]; then
    _error "This script must be run as root"
    exit 1
+fi
+
+if [ -z "${PHP_BIN}" ]; then
+    _error "PHP v5.5+ must be installed to run this script."
+    exit 1
 fi
 
 ## Basic usage statement
@@ -62,6 +68,7 @@ _checkPuppetModules() {
 }
 
 ## Hard-coded defaults
+export FACTER_PHP_BIN=${PHP_BIN}
 export FACTER_DEFAULT_LOCAL_MOUNT_NAME=mount-local-1
 export FACTER_FSTAB=/etc/fstab
 export FACTER_MOUNT_OPTIONS=rw
