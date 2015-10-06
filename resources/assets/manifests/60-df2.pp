@@ -1,7 +1,7 @@
 vcsrepo { "/var/www/_releases/dreamfactory/$dsp_branch":
   ensure   => present,
   provider => git,
-  source   => "https://${github_user_info}github.com/dreamfactorysoftware/dfe-dashboard.git",
+  source   => "https://${github_user_info}github.com/dreamfactorysoftware/dreamfactory.git",
   user     => $user,
   owner    => $group,
   group    => $www_group,
