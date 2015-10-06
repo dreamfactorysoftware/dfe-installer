@@ -50,26 +50,26 @@ file { "/home/$user/.ssh/authorized_keys":
   group   => $group,
   mode    => 0600,
 }->
-#file { "/home/$user/.composer":
-#  ensure => directory,
-#  owner  => $user,
-#  group  => $group,
-#  mode   => 2775,
-#}->
-#file { "/home/$user/.composer/auth.json":
-#  ensure => present,
-#  owner  => $user,
-#  group  => $group,
-#  mode   => 0600,
-#  source => "$pwd/.composer/auth.json",
-#}->
-#file { "/home/$user/.composer/config.json":
-#  ensure => present,
-#  owner  => $user,
-#  group  => $group,
-#  mode   => 0600,
-#  source => "$pwd/.composer/config.json",
-#}->
+file { "$pwd/.composer":
+  ensure => directory,
+  owner  => $user,
+  group  => $group,
+  mode   => 2775,
+}->
+file { "$pwd/.composer/auth.json":
+  ensure => present,
+  owner  => $user,
+  group  => $group,
+  mode   => 0600,
+  source => "$pwd/resources/assets/.composer/auth.json",
+}->
+file { "$pwd/.composer/config.json":
+  ensure => present,
+  owner  => $user,
+  group  => $group,
+  mode   => 0600,
+  source => "$pwd/resources/assets/.composer/config.json",
+}->
 exec { 'add_github_to_known_hosts':
   command  => "/usr/bin/ssh-keyscan -H github.com >> /home/$user/.ssh/known_hosts",
   provider => 'shell',
