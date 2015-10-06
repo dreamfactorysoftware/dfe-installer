@@ -66,7 +66,7 @@ Route::post('/',
                 }
             }
 
-            file_put_contents(base_path(config('dfe.install-file-name')), implode(PHP_EOL, $_env) . PHP_EOL);
+            file_put_contents(base_path(config('dfe.output-file')), implode(PHP_EOL, $_env) . PHP_EOL);
         }
 
         return Redirect::home();
