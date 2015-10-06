@@ -106,7 +106,7 @@
                         <div class="form-group">
                             <label for="gh-user">User</label>
                             <input required type="text" class="form-control" id="gh-user" name="gh-user"
-                                   placeholder="you@yourdomain.com">
+                                   placeholder="username">
                         </div>
                         <div class="form-group">
                             <label for="gh-pwd">Password</label>
