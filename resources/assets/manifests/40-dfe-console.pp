@@ -1,4 +1,4 @@
-vcsrepo { "/var/www/_releases/console/$console_location":
+vcsrepo { "/var/www/_releases/console/$console_branch":
   ensure   => present,
   provider => git,
   source   => "https://${github_user_info}github.com/dreamfactorysoftware/dfe-console.git",
@@ -9,7 +9,7 @@ vcsrepo { "/var/www/_releases/console/$console_location":
 }->
 file { '/var/www/console':
   ensure => link,
-  target => "/var/www/_releases/console/$console_location",
+  target => "/var/www/_releases/console/$console_branch",
 }->
 exec { 'console-config':
   command     => '/usr/local/bin/composer update',
@@ -188,47 +188,17 @@ ini_setting { 'DFE_CONSOLE_API_URL':
   setting => 'DFE_CONSOLE_API_URL',
   value   => "http://console.${vendor_id}.${domain}/api/v1/ops"
 }->
-file { "/var/www/_releases/console/$console_location/bootstrap":
+file { ["/var/www/_releases/console/$console_branch/bootstrap",
+  "/var/www/_releases/console/$console_branch/bootstrap/cache",
+  "/var/www/_releases/console/$console_branch/storage",
+  "/var/www/_releases/console/$console_branch/storage/framework",
+  "/var/www/_releases/console/$console_branch/storage/framework/sessions",
+  "/var/www/_releases/console/$console_branch/storage/framework/views",
+  "/var/www/_releases/console/$console_branch/storage/logs",]:
   ensure => present,
   owner  => $www_user,
-  group  => $storage_group,
-  mode   => '2775'
-}->
-file { "/var/www/_releases/console/$console_location/bootstrap/cache":
-  ensure => present,
-  owner  => $www_user,
-  group  => $storage_group,
-  mode   => '2775'
-}->
-file { "/var/www/_releases/console/$console_location/storage":
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => "2775"
-}->
-file { "/var/www/_releases/console/$console_location/storage/framework":
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => "2775"
-}->
-file { "/var/www/_releases/console/$console_location/storage/framework/sessions":
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => "2775"
-}->
-file { "/var/www/_releases/console/$console_location/storage/framework/views":
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => "2775"
-}->
-file { "/var/www/_releases/console/$console_location/storage/logs":
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => "2775"
+  group  => $group,
+  mode   => 2775
 }->
 exec { 'generate-app-key':
   command     => "/usr/bin/php artisan key:generate",
@@ -316,12 +286,12 @@ file { '/var/www/console/storage/logs/laravel.log':
   ensure => present,
   owner  => $www_user,
   group  => $storage_group,
-  mode   => '0664'
+  mode   => 0664
 }->
 file { '/var/www/.dfe.cluster.json':
   ensure => present,
   owner  => $user,
   group  => $www_group,
-  mode   => '0644',
+  mode   => 0644,
   source => '/var/www/console/database/dfe/.dfe.cluster.json'
 }

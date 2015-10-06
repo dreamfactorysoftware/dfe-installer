@@ -79,11 +79,11 @@ export FACTER_DB_PWD=dfe_user
 export FACTER_DB_HOST=localhost
 export FACTER_DB_NAME=dfe_local
 export FACTER_CONSOLE_VERSION=develop
-export FACTER_CONSOLE_LOCATION=develop
+export FACTER_CONSOLE_BRANCH=develop
 export FACTER_DASHBOARD_VERSION=develop
-export FACTER_DASHBOARD_LOCATION=develop
+export FACTER_DASHBOARD_BRANCH=develop
 export FACTER_DSP_VERSION=develop
-export FACTER_DSP_LOCATION=2.0-dev
+export FACTER_DSP_BRANCH=develop
 export FACTER_APP_DEBUG=true
 
 ## Blanks

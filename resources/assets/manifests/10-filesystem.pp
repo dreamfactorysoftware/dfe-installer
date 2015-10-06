@@ -5,35 +5,15 @@ stage { 'pre':
 }
 
 # Set up the WWW directory structure
-
-file { '/var/www':
-  ensure  => directory,
-  owner   => $user,
-  group   => $www_group
-}->
-file { '/var/www/_releases':
+file { [
+  '/var/www', '/var/www/_releases',
+  '/var/www/_releases/dashboard',
+  '/var/www/_releases/dreamfactory',
+  '/var/www/_releases/console', $mount_point,]:
   ensure => directory,
   owner  => $user,
   group  => $www_group,
-  mode   => '2775'
-}->
-file { '/var/www/_releases/dashboard':
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => '2775'
-}->
-file { '/var/www/_releases/dreamfactory':
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => '2775'
-}->
-file { '/var/www/_releases/console':
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => '2775'
+  mode   => 2775
 }->
 file { '/var/www/.dfe-managed':
   ensure => present
@@ -41,47 +21,16 @@ file { '/var/www/.dfe-managed':
 file { '/var/www/.maintenance-mode.off':
   ensure => present
 }->
-# Make sure that the storage directory / mount point is present and has the correct permissions
-file { $mount_point:
-  ensure => directory,
-  owner  => $user,
-  group  => $www_group,
-  mode   => '2775'
-}
-# Create the storage location
-file { $storage_path:
-  ensure  => directory,
-  owner   => $www_user,
-  group   => $storage_group,
-  mode    => '2775'
-}
-# Setup the log directories
-file { $log_path:
+# Create the storage and log paths
+file { [
+  $storage_path,
+  $log_path,
+  "$log_path/console",
+  "$log_path/dashboard",
+  "$log_path/hosted",
+  "$mount_point/trash",]:
   ensure  => directory,
   owner   => $storage_user,
   group   => $storage_group,
-  mode    => '2775',
-}->
-file { "$log_path/console":
-  ensure  => directory,
-  owner   => $www_group,
-  group   => $storage_group,
-  mode    => '2750',
-}->
-file { "$log_path/dashboard":
-  ensure  => directory,
-  owner   => $www_group,
-  group   => $storage_group,
-  mode    => '2750',
-}->file { "$log_path/hosted":
-  ensure  => directory,
-  owner   => $www_user,
-  group   => $storage_group,
-  mode    => '2750',
-}->
-file { "$mount_point/trash":
-  ensure => directory,
-  owner  => $www_user,
-  group  => $storage_group,
-  mode   => '2775'
+  mode    => 2775,
 }

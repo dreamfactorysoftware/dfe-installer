@@ -35,41 +35,41 @@ file { "/home/$user/.gitconfig":
   ensure => present,
   owner  => $user,
   group  => $group,
-  mode   => '664',
+  mode   => 0664,
   source => "$pwd/resources/assets/git/gitconfig",
 }->
 file { "/home/$user/.ssh/known_hosts":
   ensure => file,
   owner  => $user,
   group  => $group,
-  mode   => '600',
+  mode   => 0600,
 }->
 file { "/home/$user/.ssh/authorized_keys":
   ensure  => file,
   owner   => $user,
   group   => $group,
-  mode    => '600',
+  mode    => 0600,
 }->
-file { "/home/$user/.composer":
-  ensure => directory,
-  owner  => $user,
-  group  => $group,
-  mode   => '775',
-}->
-file { "/home/$user/.composer/auth.json":
-  ensure => present,
-  owner  => $user,
-  group  => $group,
-  mode   => '600',
-  source => "$pwd/.composer/auth.json",
-}->
-file { "/home/$user/.composer/config.json":
-  ensure => present,
-  owner  => $user,
-  group  => $group,
-  mode   => '600',
-  source => "$pwd/.composer/config.json",
-}->
+#file { "/home/$user/.composer":
+#  ensure => directory,
+#  owner  => $user,
+#  group  => $group,
+#  mode   => 2775,
+#}->
+#file { "/home/$user/.composer/auth.json":
+#  ensure => present,
+#  owner  => $user,
+#  group  => $group,
+#  mode   => 0600,
+#  source => "$pwd/.composer/auth.json",
+#}->
+#file { "/home/$user/.composer/config.json":
+#  ensure => present,
+#  owner  => $user,
+#  group  => $group,
+#  mode   => 0600,
+#  source => "$pwd/.composer/config.json",
+#}->
 exec { 'add_github_to_known_hosts':
   command  => "/usr/bin/ssh-keyscan -H github.com >> /home/$user/.ssh/known_hosts",
   provider => 'shell',

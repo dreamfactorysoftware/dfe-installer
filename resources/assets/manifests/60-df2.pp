@@ -1,4 +1,4 @@
-vcsrepo { "/var/www/_releases/dreamfactory/$dsp_location":
+vcsrepo { "/var/www/_releases/dreamfactory/$dsp_branch":
   ensure   => present,
   provider => git,
   source   => "https://${github_user_info}github.com/dreamfactorysoftware/dfe-dashboard.git",
@@ -9,7 +9,7 @@ vcsrepo { "/var/www/_releases/dreamfactory/$dsp_location":
 }->
 file { '/var/www/launchpad':
   ensure => link,
-  target => "/var/www/_releases/dreamfactory/$dsp_location",
+  target => "/var/www/_releases/dreamfactory/$dsp_branch",
 }->
 file { '/var/www/launchpad/.env':
   ensure => present,
@@ -61,13 +61,13 @@ exec { 'launchpad-config':
   environment => ["HOME=/home/$user"]
 }->
 file { [
-  "/var/www/_releases/dreamfactory/$dsp_location/bootstrap/cache",
-  "/var/www/_releases/dreamfactory/$dsp_location/storage",
-  "/var/www/_releases/dreamfactory/$dsp_location/storage/logs",
-  "/var/www/_releases/dreamfactory/$dsp_location/storage/framework",
-  "/var/www/_releases/dreamfactory/$dsp_location/storage/framework/db",
-  "/var/www/_releases/dreamfactory/$dsp_location/storage/framework/sessions",
-  "/var/www/_releases/dreamfactory/$dsp_location/storage/framework/views"]:
+  "/var/www/_releases/dreamfactory/$dsp_branch/bootstrap/cache",
+  "/var/www/_releases/dreamfactory/$dsp_branch/storage",
+  "/var/www/_releases/dreamfactory/$dsp_branch/storage/logs",
+  "/var/www/_releases/dreamfactory/$dsp_branch/storage/framework",
+  "/var/www/_releases/dreamfactory/$dsp_branch/storage/framework/db",
+  "/var/www/_releases/dreamfactory/$dsp_branch/storage/framework/sessions",
+  "/var/www/_releases/dreamfactory/$dsp_branch/storage/framework/views"]:
   ensure => directory,
   owner  => $user,
   group  => $www_group,

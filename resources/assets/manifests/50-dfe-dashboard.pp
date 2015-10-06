@@ -1,4 +1,4 @@
-vcsrepo { "/var/www/_releases/dashboard/$dashboard_location":
+vcsrepo { "/var/www/_releases/dashboard/$dashboard_branch":
   ensure   => present,
   provider => git,
   source   => "https://${github_user_info}github.com/dreamfactorysoftware/dfe-dashboard.git",
@@ -9,7 +9,7 @@ vcsrepo { "/var/www/_releases/dashboard/$dashboard_location":
 }->
 file { '/var/www/dashboard':
   ensure => link,
-  target => "/var/www/_releases/dashboard/$dashboard_location"
+  target => "/var/www/_releases/dashboard/$dashboard_branch"
 }->
 exec { 'dashboard-config':
   command     => '/usr/local/bin/composer update',
@@ -207,37 +207,37 @@ ini_setting { 'DFE_CONSOLE_API_URL':
   setting => 'DFE_CONSOLE_API_URL',
   value   => "http://console.${vendor_id}.${domain}/api/v1/ops"
 }->
-file { "/var/www/_releases/dashboard/$dashboard_location/storage":
+file { "/var/www/_releases/dashboard/$dashboard_branch/storage":
   ensure => directory,
   owner  => $user,
   group  => $www_group,
   mode   => "2775"
 }->
-file { "/var/www/_releases/dashboard/$dashboard_location/storage/framework":
+file { "/var/www/_releases/dashboard/$dashboard_branch/storage/framework":
   ensure => directory,
   owner  => $user,
   group  => $www_group,
   mode   => "2775"
 }->
-file { "/var/www/_releases/dashboard/$dashboard_location/storage/logs":
+file { "/var/www/_releases/dashboard/$dashboard_branch/storage/logs":
   ensure => directory,
   owner  => $user,
   group  => $www_group,
   mode   => "2775"
 }->
-file { "/var/www/_releases/dashboard/$dashboard_location/bootstrap/cache":
+file { "/var/www/_releases/dashboard/$dashboard_branch/bootstrap/cache":
   ensure => directory,
   owner  => $user,
   group  => $www_group,
   mode   => "2775"
 }->
-file { "/var/www/_releases/dashboard/$dashboard_location/storage/framework/sessions":
+file { "/var/www/_releases/dashboard/$dashboard_branch/storage/framework/sessions":
   ensure => directory,
   owner  => $user,
   group  => $www_group,
   mode   => "2775"
 }->
-file { "/var/www/_releases/dashboard/$dashboard_location/storage/framework/views":
+file { "/var/www/_releases/dashboard/$dashboard_branch/storage/framework/views":
   ensure => directory,
   owner  => $user,
   group  => $www_group,
