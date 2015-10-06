@@ -54,7 +54,7 @@ _checkPuppetModules() {
                 _error "Error during installation of required puppet module \"${module}\""
                 exit 1;
             fi
-            _count=${_count}+1
+            _count=$((_count+1))
         fi
     done
 

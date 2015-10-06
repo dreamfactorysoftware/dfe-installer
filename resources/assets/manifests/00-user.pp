@@ -50,20 +50,20 @@ file { "/home/$user/.ssh/authorized_keys":
   group   => $group,
   mode    => 0600,
 }->
-file { "$pwd/.composer":
+file { "/home/$user/.composer":
   ensure => directory,
   owner  => $user,
   group  => $group,
   mode   => 2775,
 }->
-file { "$pwd/.composer/auth.json":
+file { "/home/$user/.composer/auth.json":
   ensure => present,
   owner  => $user,
   group  => $group,
   mode   => 0600,
   source => "$pwd/resources/assets/.composer/auth.json",
 }->
-file { "$pwd/.composer/config.json":
+file { "/home/$user/.composer/config.json":
   ensure => present,
   owner  => $user,
   group  => $group,
