@@ -133,7 +133,7 @@ file { '/etc/nginx/sites-available/dashboard.conf':
 
     #Server Name
 
-    root /var/www/console/public;
+    root /var/www/dashboard/public;
 
     error_log /data/logs/dashboard/error.log;
     access_log /data/logs/dashboard/access.log combined;
