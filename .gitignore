@@ -6,4 +6,4 @@
 .idea/tasks.xml
 .idea/composerJson.xml
 /.env-install
-
+/vendor/dreamfactory/*.setdev-on
