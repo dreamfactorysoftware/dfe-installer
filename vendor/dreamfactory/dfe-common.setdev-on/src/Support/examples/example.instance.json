@@ -1,0 +1,42 @@
+{
+  "db":         {
+    "bender": {
+      "id":                    "db-gha-1",
+      "host":                  "localhost",
+      "port":                  "3306",
+      "username":              "ud41d172798021eb",
+      "password":              "ae92aa0feb812dd5c1a4f55c4658f353e1bc53d6",
+      "driver":                "mysql",
+      "default-database-name": "",
+      "database":              "bender",
+      "charset":               "utf8",
+      "collation":             "utf8_unicode_ci",
+      "prefix":                "",
+      "db-server-id":          "db-gha-1"
+    }
+  },
+  "paths":      {
+    "private-path":       "bender/.private",
+    "owner-private-path": ".private",
+    "snapshot-path-name": ".private/snapshots"
+  },
+  "env":        {
+    "cluster-id":       "cluster-gha-1",
+    "default-domain":   ".dfe.3wipes.com",
+    "signature-method": "sha256",
+    "storage-root":     "/data/storage",
+    "console-api-url":  "http://dfe-console.local/api/v1/ops/",
+    "console-api-key":  "super-secret-key",
+    "client-id":        "fe567e64ce0c59e14b452fc9176bdac8ac1aa5af25310bcfba2584b29ca1b927",
+    "client-secret":    "f0f0f937d77e2eb649c764b7da341d370c2c711b359a5514d3914be9c0c3a533"
+  },
+  "_custodian": [
+    {
+      "write": [
+        {
+          "timestamp": "2015-06-24T19:45:58-04:00"
+        }
+      ]
+    }
+  ]
+}

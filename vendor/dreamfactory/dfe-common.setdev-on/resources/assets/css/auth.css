@@ -1,0 +1,146 @@
+body {
+	padding-top:      5%;
+	background-color: #353535;
+	color:            rgba(255, 255, 255, .5);
+	font-size:        14px;
+	margin-bottom:    0;
+}
+
+.form-control {
+	font-size: 14px;
+}
+
+#container-login form h4 {
+	font-size:  17px;
+	color:      #ff9d1d;
+	text-align: center;
+}
+
+#logo, #container-login {
+	margin-left:  auto;
+	margin-right: auto;
+	position:     relative;
+}
+
+#logo img {
+	margin:  0 auto;
+	display: block;
+	width:   250px;
+}
+
+#container-login {
+	overflow:   hidden !important;
+	text-align: left;
+	position:   relative;
+}
+
+#container-login form {
+	/*width:    100%;*/
+	/*background: #2E363F;*/
+	position: relative;
+	top:      0;
+	left:     0;
+}
+
+#container-login .form-actions {
+	border-top:  1px solid rgba(255, 255, 255, 0.1);
+	padding-top: 10px;
+}
+
+#container-login > form {
+	/*z-index: 200;*/
+	display: block;
+	margin:  15px auto;
+}
+
+#container-login #recover-form {
+	display:       none;
+	margin-bottom: 30px;
+}
+
+#container-login #recover-form .form-actions {
+	margin-top: 30px;
+}
+
+.container-logo {
+	/*width:          100%;*/
+	text-align:     center;
+	vertical-align: middle;
+	margin-bottom:  25px;
+	padding-bottom: 15px;
+	border-bottom:  1px solid rgba(189, 183, 107, 0.1);
+	/*font-family:    "Open Sans", "Droid Sans", Arial, sans-serif;*/
+}
+
+.container-logo img {
+	margin:         0 auto;
+	height:         256px;
+	display:        block;
+	padding-bottom: 10px;
+}
+
+.container-logo h3 small {
+	padding:    15px 0;
+	font-size:  21px;
+	color:      #96bd53;
+	margin-top: 15px;
+}
+
+.container-logo h3 small span {
+	font-size:  11px;
+	display:    block;
+	color:      #c97c19;
+	margin-top: 2px;
+}
+
+.checkbox label .check {
+	margin-right: 5px;
+}
+
+.help-inline {
+	color: #c96462;
+}
+
+.form-actions .btn {
+	padding: 10px;
+}
+
+.form-actions .fa-fw.fa-right {
+	margin-left: 2px;
+	text-align:  right;
+}
+
+.form-actions .fa-fw,
+.form-actions .fa-fw.fa-left {
+	margin-right: 2px;
+	text-align:   left;
+}
+
+.form-actions .fa-fw.fa-center {
+	margin-left:  1px;
+	margin-right: 1px;
+	text-align:   center;
+}
+
+.pull-center {
+	text-align: center;
+}
+
+.jumbotron {
+	padding-bottom: 20px;
+	padding-top:    40px;
+}
+
+.jumbotron > .pull-center > h3 {
+	color:         rgba(255, 255, 255, .90);
+	margin-bottom: 0;
+	text-shadow:   0 0 1px rgba(0, 0, 0, 1);
+	font-size:     36px;
+}
+
+.jumbotron > .pull-center > p.text-warning {
+	font-size:      15px;
+	padding-top:    0;
+	margin-top:     0;
+	padding-bottom: 20px;
+}

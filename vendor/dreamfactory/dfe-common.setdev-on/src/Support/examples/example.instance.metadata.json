@@ -1,0 +1,38 @@
+{
+  "storage-map": {
+    "zone":      "local",
+    "partition": "56",
+    "root-hash": "5676717cbb1747b582f477f0aabc2bc35daa7470986581fac9d0a5d4e7211b96"
+  },
+  "paths":       {
+    "private-path":       "bender/.private",
+    "owner-private-path": ".private",
+    "snapshot-path-name": ".private/snapshots"
+  },
+  "db":          {
+    "bender": {
+      "id":                    "db-jablan",
+      "host":                  "localhost",
+      "port":                  "3306",
+      "username":              "u55a032afa626ae9",
+      "password":              "a61815039815b9091edba7970eccaa9ded0263c3",
+      "driver":                "mysql",
+      "default-database-name": "",
+      "database":              "bender",
+      "charset":               "utf8",
+      "collation":             "utf8_unicode_ci",
+      "prefix":                "",
+      "db-server-id":          "db-jablan"
+    }
+  },
+  "env":         {
+    "cluster-id":       null,
+    "default-domain":   "enterprise.dreamfactory.com",
+    "signature-method": "sha256",
+    "storage-root":     "/data/storage",
+    "console-api-url":  "http://dfe-console.local/api/v1/ops",
+    "console-api-key":  "%]3,]~&t,EOxL30[wKw3auju:[+L>eYEVWEP,@3n79Qy",
+    "client-id":        "f32d68ae205fbabd84280f474594b69d4294460c599d407daad735c355961c98",
+    "client-secret":    "761dd98e13ca5eae0f9dd39625a5d7d6a7d88339b790c781e78d9571312d5784"
+  }
+}
