@@ -1,191 +1,188 @@
-/********************************************************************
-*
-* Change these variables as needed
-*
-********************************************************************/
+################################################################################
+# DreamFactory Enterprise(tm) Installer Manifest
+# (c) 2012-∞ by DreamFactory Software, Inc. All Rights Reserved.
+#
+# Installs and configures nginx
+################################################################################
 
-# SSL Certificate Names
+## SSL Certificate Names
 
-#$cert_name = "$pwd/SSL/star-${vendor_id}-${ssl_cert_stub}.pem"
-#$key_name = "$pwd/SSL/star-${vendor_id}-${ssl_cert_stub}.key"
+$cert_file = "star-${vendor_id}-${ssl_cert_stub}.pem"
+$key_file = "star-${vendor_id}-${ssl_cert_stub}.key"
+$cert_name = "$pwd/SSL/$cert_file"
+$key_name = "$pwd/SSL/$key_file"
 
-# Hostnames
-$dsp_hostname = "*.${vendor_id}.${domain}"
+## Hostnames
+
+$instance_hostname = "*.${vendor_id}.${domain}"
 $console_hostname = "console.${vendor_id}.${domain} console.local"
 $dashboard_hostname = "dashboard.${vendor_id}.${domain} dashboard.local"
-$add_to_etc_hosts = ['console.local', 'dashboard.local', "console.${vendor_id}.${domain}", "dashboard.${vendor_id}.${domain}"]
-
-/********************************************************************
-*
-* Do Not Change Anything Below Here
-*
-********************************************************************/
 
 include stdlib
 
-# We're using nginx
+## We"re using nginx/php5-fpm and not apache
 
-service { 'nginx':
+service { "nginx":
   ensure  => running,
   enable  => true
-}
-
-file { '/etc/nginx/dsp-locations.conf':
-  ensure => link,
-  target => '/var/www/launchpad/server/config/nginx/etc/nginx/dsp-locations.conf',
 }->
-file { '/etc/nginx/conf.d/dreamfactory.http.conf':
-  ensure => link,
-  target => '/var/www/launchpad/server/config/nginx/etc/nginx/conf.d/dreamfactory.http.conf'
+service { "php5-fpm":
+  ensure  => running,
+  enable  => true
 }->
-file { '/etc/nginx/conf.d/ssl':
-  ensure => directory,
-}->
-file { '/etc/nginx/conf.d/ssl/dreamfactory.ssl.conf':
-  ensure => present,
-  source => '/var/www/launchpad/server/config/nginx/etc/nginx/conf.d/ssl/dreamfactory.ssl.conf-dist'
-}->
-#file_line { 'add_ssl_cert_key':
-#  path     => '/etc/nginx/conf.d/ssl/dreamfactory.ssl.conf',
-#  line     => "ssl_certificate_key                /etc/nginx/conf.d/ssl/dfe.key;",
-#  multiple => false,
-#  match    => '.*\/path\/to\/your\/signed\/certificate\/file.*'
-#}->
-#file_line { 'add_ssl_cert':
-#  path     => '/etc/nginx/conf.d/ssl/dreamfactory.ssl.conf',
-#  line     => "ssl_certificate                /etc/nginx/conf.d/ssl/dfe.pem;",
-#  multiple => false,
-#  match    => '.*\/path\/to\/your\/signed\/certificate\/key.*'
-#}->
-#file { '/etc/nginx/conf.d/ssl/dfe.pem':
-#  ensure => present,
-#  mode   => '0440',
-#  source => $cert_name
-#}->
-#file { '/etc/nginx/conf.d/ssl/dfe.key':
-#  ensure => present,
-#  mode   => '0440',
-#  source => $key_name
-#}->
-file { '/etc/nginx/conf.d/dreamfactory.php-fpm.conf':
-  ensure => link,
-  target => '/var/www/launchpad/server/config/nginx/etc/nginx/conf.d/dreamfactory.php-fpm.conf'
-}->
-file { '/etc/nginx/sites-available/instance.conf':
-  ensure  => present,
-  content =>'server {
-    listen 80 default_server;
-#    listen 443 ssl;
-
-    #Server Name
-
-    root /var/www/launchpad/public;
-
-    error_log /data/logs/hosted/all.error.log;
-    access_log /data/logs/hosted/$http_host.access.log combined;
-
-#    include conf.d/ssl/dreamfactory.ssl.conf;
-
-    include dsp-locations.conf;
-}'
-}->
-file_line { 'add_dsp_servername':
-  path  => '/etc/nginx/sites-available/instance.conf',
-  line  => "server_name $dsp_hostname;",
-  after => '#Server Name'
-}->
-file { '/etc/nginx/sites-enabled/00-instance.conf':
-  ensure => link,
-  target => '/etc/nginx/sites-available/instance.conf'
-}->
-file { '/etc/nginx/sites-available/console.conf':
-  ensure  => present,
-  content => 'server {
-    listen 80;
-#    listen 443 ssl;
-
-    #Server Name
-
-    root /var/www/console/public;
-
-    error_log /data/logs/console/error.log;
-    access_log /data/logs/console/access.log combined;
-
-#    include conf.d/ssl/dreamfactory.ssl.conf;
-
-    include dsp-locations.conf;
-}'
-}->
-file_line { 'add_console_servername':
-  path  => '/etc/nginx/sites-available/console.conf',
-  line  => "server_name $console_hostname;",
-  after => '#Server Name'
-}->
-file { '/etc/nginx/sites-enabled/console.conf':
-  ensure => link,
-  target => '/etc/nginx/sites-available/console.conf'
-}->
-file { '/etc/nginx/sites-available/dashboard.conf':
-  ensure  => present,
-  content => 'server {
-    listen 80;
-#    listen 443 ssl;
-
-    #Server Name
-
-    root /var/www/dashboard/public;
-
-    error_log /data/logs/dashboard/error.log;
-    access_log /data/logs/dashboard/access.log combined;
-
-#    include conf.d/ssl/dreamfactory.ssl.conf;
-
-    include dsp-locations.conf;
-}'
-}->
-file_line { 'add_dashboard_servername':
-  path  => '/etc/nginx/sites-available/dashboard.conf',
-  line  => "server_name $dashboard_hostname;",
-  after => "#Server Name",
-}->
-file { '/etc/nginx/sites-enabled/dashboard.conf':
-  ensure => link,
-  target => '/etc/nginx/sites-available/dashboard.conf'
-}->
-file { '/etc/nginx/sites-enabled/default':
-  ensure => absent
-}->
-file { '/etc/nginx/nginx.conf':
-  ensure => link,
-  target => '/var/www/launchpad/server/config/nginx/etc/nginx/nginx.conf',
-  notify => Service['nginx']
-}->
-host { 'localhost':
-  ensure       => present,
-  ip           => '127.0.0.1',
-  host_aliases => $add_to_etc_hosts
-}->
-file { '/etc/php5/mods-available/dreamfactory.ini':
-  ensure  => link,
-  target  => '/var/www/launchpad/server/config/php/etc/php5/mods-available/dreamfactory.ini'
-}->
-exec { 'enable_dreamfactory_settings':
-  command  => '/usr/sbin/php5enmod dreamfactory',
-  provider => posix,
-  notify   => Service['php5-fpm']
-}->
-file_line { '/var/www/launchpad/server/config/php/etc/php5/mods-available/dreamfactory.ini':
-  path   => '/var/www/launchpad/server/config/php/etc/php5/mods-available/dreamfactory.ini',
-  line   => 'display_errors = Off',
-  match  => '.*display_errors.*',
-  notify => Service['php5-fpm']
-}->
-service { 'apache2':
+service { "apache2":
   ensure => stopped,
   enable => false
 }
 
-service { 'php5-fpm':
-  ensure  => running,
-  enable  => true
+## Make the configs
+
+file { "$nginx_path/dsp-locations.conf":
+  ensure => link,
+  target => "$server_config_path/nginx/etc/nginx/dsp-locations.conf",
+}->
+file { "$nginx_path/conf.d/dreamfactory.http.conf":
+  ensure => link,
+  target => "$server_config_path/nginx/etc/nginx/conf.d/dreamfactory.http.conf"
+}->
+file { "$nginx_path/conf.d/ssl":
+  ensure => directory,
+}->
+file { "$nginx_path/conf.d/ssl/dreamfactory.ssl.conf":
+  ensure => present,
+  source => "$server_config_path/nginx/etc/nginx/conf.d/ssl/dreamfactory.ssl.conf-dist"
+}->
+file_line { "add_ssl_cert_key":
+  path     => "$nginx_path/conf.d/ssl/dreamfactory.ssl.conf",
+  line     => "ssl_certificate_key                $nginx_path/conf.d/ssl/$key_file;",
+  multiple => false,
+  match    => ".*\/path\/to\/your\/signed\/certificate\/file.*"
+}->
+file_line { "add_ssl_cert":
+  path     => "$nginx_path/conf.d/ssl/dreamfactory.ssl.conf",
+  line     => "ssl_certificate                $nginx_path/conf.d/ssl/$cert_file;",
+  multiple => false,
+  match    => ".*\/path\/to\/your\/signed\/certificate\/key.*"
+}->
+file { "$nginx_path/conf.d/ssl/$cert_file":
+  ensure => present,
+  mode   => 0440,
+  source => $cert_name
+}->
+file { "$nginx_path/conf.d/ssl/$key_file":
+  ensure => present,
+  mode   => 0440,
+  source => $key_name
+}->
+file { "$nginx_path/conf.d/dreamfactory.php-fpm.conf":
+  ensure => link,
+  target => "$server_config_path/nginx/etc/nginx/conf.d/dreamfactory.php-fpm.conf"
+}->
+file { "$nginx_path/nginx.conf":
+  ensure => link,
+  target => "$server_config_path/nginx/etc/nginx/nginx.conf",
+  notify => Service["nginx"]
+}->
+file { "$nginx_path/sites-enabled/default":
+  ensure => absent
+}->
+file { "/etc/php5/mods-available/dreamfactory.ini":
+  ensure  => link,
+  target  => "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini"
+}->
+file_line { "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini":
+  path   => "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini",
+  line   => "display_errors = 0",
+  match  => ".*display_errors.*",
+  notify => Service["php5-fpm"]
+}->
+file_line { "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini":
+  path   => "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini",
+  line   => "fix_pathinfo = 0",
+  match  => ".*fix_pathinfo.*",
+  notify => Service["cgi"]
+}->
+exec { "enable-dreamfactory-module":
+  command  => "$php_enmod_bin dreamfactory",
+  provider => posix,
+  notify   => Service["php5-fpm"]
+}
+
+##------------------------------------------------------------------------------
+## Create the nginx site config files and link them to sites-available
+##------------------------------------------------------------------------------
+
+## Console
+
+file { "$nginx_path/sites-available/console.conf":
+  ensure  => present,
+  content => "server {
+    listen 80;
+#    listen 443 ssl;
+
+    server_name $console_hostname;
+
+    root $console_root/public;
+
+    error_log $log_path/console/error.log;
+    access_log $log_path/console/access.log combined;
+
+#    include conf.d/ssl/dreamfactory.ssl.conf;
+
+    include dsp-locations.conf;
+}"
+}->
+file { "$nginx_path/sites-enabled/console.conf":
+  ensure => link,
+  target => "$nginx_path/sites-available/console.conf"
+}
+
+## Dashboard
+
+file { "$nginx_path/sites-available/dashboard.conf":
+  ensure  => present,
+  content => "server {
+    listen 80;
+#    listen 443 ssl;
+
+    server_name $dashboard_hostname;
+
+    root $dashboard_root/public;
+
+    error_log $log_path/dashboard/error.log;
+    access_log $log_path/dashboard/access.log combined;
+
+#    include conf.d/ssl/dreamfactory.ssl.conf;
+
+    include dsp-locations.conf;
+}"
+}->
+file { "$nginx_path/sites-enabled/dashboard.conf":
+  ensure => link,
+  target => "$nginx_path/sites-available/dashboard.conf"
+}
+
+## Instances
+
+file { "$nginx_path/sites-available/instance.conf":
+  ensure  => present,
+  content => "server {
+    listen 80 default_server;
+#   listen 443 ssl;
+
+    server_name $instance_hostname;
+
+    root $instance_root/public;
+
+    error_log $log_path/hosted/all.error.log;
+    access_log $log_path/hosted/\$http_host.access.log combined;
+
+#    include conf.d/ssl/dreamfactory.ssl.conf;
+
+    include dsp-locations.conf;
+}"
+}->
+file { "$nginx_path/sites-enabled/instance.conf":
+  ensure => link,
+  target => "$nginx_path/sites-available/instance.conf"
 }
