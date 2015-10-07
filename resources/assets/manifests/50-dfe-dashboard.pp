@@ -75,7 +75,8 @@ exec { 'clear-cache-and-optimize':
   provider    => 'shell',
   cwd         => "$doc_root_base_path/dashboard",
   environment => ["HOME=/home/$user"]
-}->
+}
+
 file { [
   "$release_path/dashboard/$dashboard_branch/bootstrap",
   "$release_path/dashboard/$dashboard_branch/bootstrap/cache",
