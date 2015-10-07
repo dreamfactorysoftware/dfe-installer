@@ -46,13 +46,6 @@ vcsrepo { "$release_path/console/$console_branch":
   ensure => link,
   target => "$release_path/console/$console_branch",
 }->
-exec { 'console-config':
-  command     => "$composer_bin update",
-  user        => $user,
-  provider    => 'shell',
-  cwd         => "$doc_root_base_path/console",
-  environment => [ "HOME=/home/$user", ]
-}->
 file { "$doc_root_base_path/console/.env":
   ensure => present,
   source => "$doc_root_base_path/console/.env-dist",
@@ -60,12 +53,24 @@ file { "$doc_root_base_path/console/.env":
 class { 'iniSettings':
 
 }->
+exec { 'console-config':
+  command     => "$composer_bin update",
+  user        => $user,
+  provider    => 'shell',
+  cwd         => "$doc_root_base_path/console",
+  environment => [ "HOME=/home/$user", ]
+}->
 exec { 'generate-app-key':
   command     => "$artisan key:generate",
   user        => $user,
   provider    => 'shell',
   cwd         => "$doc_root_base_path/console",
   environment => ["HOME=/home/$user"]
+}->
+exec { 'add_console_keys':
+  command  => "cat $doc_root_base_path/console/database/dfe/console.env >> $doc_root_base_path/console/.env",
+  provider => 'shell',
+  user     => $user
 }->
 exec { 'console-setup':
   command     => "$artisan dfe:setup --force --admin-password=\"${admin_pwd}\" ${admin_email}",
@@ -80,11 +85,6 @@ file { "$doc_root_base_path/.dfe.cluster.json":
   group  => $www_group,
   mode   => 0644,
   source => "$doc_root_base_path/console/database/dfe/.dfe.cluster.json"
-}->
-exec { 'add_console_keys':
-  command  => "cat $doc_root_base_path/console/database/dfe/console.env >> $doc_root_base_path/console/.env",
-  provider => 'shell',
-  user     => $user
 }->
 exec { 'add_web_server':
   command     => "$artisan dfe:server create web-${vendor_id} -t web -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c {}",
