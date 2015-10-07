@@ -381,62 +381,6 @@
         "homepage": "https://symfony.com"
     },
     {
-        "name": "dreamfactory/php-utils",
-        "version": "dev-develop",
-        "version_normalized": "dev-develop",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/dreamfactorysoftware/php-utils.git",
-            "reference": "b49fe77cea165f0d2689a506aa8d88b498e3f1d5"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/dreamfactorysoftware/php-utils/zipball/b49fe77cea165f0d2689a506aa8d88b498e3f1d5",
-            "reference": "b49fe77cea165f0d2689a506aa8d88b498e3f1d5",
-            "shasum": ""
-        },
-        "require": {
-            "symfony/dependency-injection": "*",
-            "symfony/http-foundation": "*"
-        },
-        "require-dev": {
-            "laravel/framework": "5.1.*",
-            "phpunit/phpunit": "@stable"
-        },
-        "time": "2015-09-20 01:45:08",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-develop": "1.1.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "DreamFactory\\Library\\Utility\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "Apache-2.0"
-        ],
-        "authors": [
-            {
-                "name": "Jerry Ablan",
-                "email": "jerryablan@dreamfactory.com"
-            }
-        ],
-        "description": "A library of helper classes for PHP",
-        "homepage": "https://www.dreamfactory.com/",
-        "keywords": [
-            "console",
-            "dreamfactory",
-            "laravel",
-            "symfony",
-            "utility"
-        ]
-    },
-    {
         "name": "danielstjules/stringy",
         "version": "1.x-dev",
         "version_normalized": "1.9999999.9999999.9999999-dev",
@@ -1661,58 +1605,6 @@
                 "email": "mike.vanriel@naenius.com"
             }
         ]
-    },
-    {
-        "name": "symfony/class-loader",
-        "version": "2.8.x-dev",
-        "version_normalized": "2.8.9999999.9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/class-loader.git",
-            "reference": "650517ffba127aaedb9c93f9f1cf748b0aef4915"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/class-loader/zipball/650517ffba127aaedb9c93f9f1cf748b0aef4915",
-            "reference": "650517ffba127aaedb9c93f9f1cf748b0aef4915",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.9"
-        },
-        "require-dev": {
-            "symfony/finder": "~2.0,>=2.0.5|~3.0.0",
-            "symfony/phpunit-bridge": "~2.7|~3.0.0"
-        },
-        "time": "2015-09-29 12:32:55",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.8-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Symfony\\Component\\ClassLoader\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony ClassLoader Component",
-        "homepage": "https://symfony.com"
     },
     {
         "name": "barryvdh/laravel-ide-helper",
@@ -3207,70 +3099,6 @@
         ]
     },
     {
-        "name": "phpunit/php-code-coverage",
-        "version": "2.2.x-dev",
-        "version_normalized": "2.2.9999999.9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-            "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/ef1ca6835468857944d5c3b48fa503d5554cff2f",
-            "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3",
-            "phpunit/php-file-iterator": "~1.3",
-            "phpunit/php-text-template": "~1.2",
-            "phpunit/php-token-stream": "~1.3",
-            "sebastian/environment": "^1.3.2",
-            "sebastian/version": "~1.0"
-        },
-        "require-dev": {
-            "ext-xdebug": ">=2.1.4",
-            "phpunit/phpunit": "~4"
-        },
-        "suggest": {
-            "ext-dom": "*",
-            "ext-xdebug": ">=2.2.1",
-            "ext-xmlwriter": "*"
-        },
-        "time": "2015-09-14 06:51:16",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.2.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "src/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Sebastian Bergmann",
-                "email": "sb@sebastian-bergmann.de",
-                "role": "lead"
-            }
-        ],
-        "description": "Library that provides collection, processing, and rendering functionality for PHP code coverage information.",
-        "homepage": "https://github.com/sebastianbergmann/php-code-coverage",
-        "keywords": [
-            "coverage",
-            "testing",
-            "xunit"
-        ]
-    },
-    {
         "name": "phpspec/php-diff",
         "version": "v1.0.2",
         "version_normalized": "1.0.2.0",
@@ -3384,137 +3212,6 @@
             "testing",
             "tests"
         ]
-    },
-    {
-        "name": "dreamfactory/dfe-common",
-        "version": "dev-develop",
-        "version_normalized": "dev-develop",
-        "source": {
-            "type": "git",
-            "url": "git@github.com:dreamfactorysoftware/dfe-common.git",
-            "reference": "d6a6ce111c2045c34a9c8bbab583d72f4e457e78"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/dreamfactorysoftware/dfe-common/zipball/d6a6ce111c2045c34a9c8bbab583d72f4e457e78",
-            "reference": "d6a6ce111c2045c34a9c8bbab583d72f4e457e78",
-            "shasum": ""
-        },
-        "require": {
-            "dreamfactory/php-utils": "1.1.*",
-            "league/flysystem-sftp": "*",
-            "league/flysystem-ziparchive": "*",
-            "wpb/string-blade-compiler": "2.*@dev"
-        },
-        "require-dev": {
-            "barryvdh/laravel-ide-helper": "~2.0",
-            "doctrine/dbal": "~2.3",
-            "dreamfactory/dfe-database": "dev-develop as dev-master",
-            "laravel/framework": "5.1.*",
-            "phpspec/phpspec": "~2.1",
-            "phpunit/phpunit": "~4.0",
-            "way/generators": "~3.0"
-        },
-        "time": "2015-10-03 22:12:42",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-develop": "0.1.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "DreamFactory\\Enterprise\\Common\\": "src/"
-            }
-        },
-        "autoload-dev": {
-            "classmap": [
-                "tests/TestCase.php",
-                "tests/CommandTestCase.php"
-            ]
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Jerry Ablan",
-                "email": "jerryablan@dreamfactory.com"
-            }
-        ],
-        "description": "DreamFactory Enterprise(tm) Common Components",
-        "homepage": "https://www.dreamfactory.com/",
-        "keywords": [
-            "common",
-            "dreamfactory",
-            "fabric",
-            "queue",
-            "utility"
-        ],
-        "support": {
-            "source": "https://github.com/dreamfactorysoftware/dfe-common/tree/develop",
-            "issues": "https://github.com/dreamfactorysoftware/dfe-common/issues"
-        }
-    },
-    {
-        "name": "symfony/dependency-injection",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/dependency-injection.git",
-            "reference": "2114c62a170d3c959d4f4ddfa7cb0a6a0842d076"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/2114c62a170d3c959d4f4ddfa7cb0a6a0842d076",
-            "reference": "2114c62a170d3c959d4f4ddfa7cb0a6a0842d076",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.5.9"
-        },
-        "require-dev": {
-            "symfony/config": "~2.8|~3.0",
-            "symfony/expression-language": "~2.8|~3.0",
-            "symfony/phpunit-bridge": "~2.8|~3.0",
-            "symfony/yaml": "~2.8|~3.0"
-        },
-        "suggest": {
-            "symfony/config": "",
-            "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
-            "symfony/yaml": ""
-        },
-        "time": "2015-10-05 15:24:55",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "3.0-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Symfony\\Component\\DependencyInjection\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony DependencyInjection Component",
-        "homepage": "https://symfony.com"
     },
     {
         "name": "symfony/translation",
@@ -3764,18 +3461,252 @@
         "homepage": "https://symfony.com"
     },
     {
+        "name": "symfony/console",
+        "version": "2.7.x-dev",
+        "version_normalized": "2.7.9999999.9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/console.git",
+            "reference": "c51cf3500a783b6661124b4d81290dfbdbc05fa6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/console/zipball/c51cf3500a783b6661124b4d81290dfbdbc05fa6",
+            "reference": "c51cf3500a783b6661124b4d81290dfbdbc05fa6",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.9"
+        },
+        "require-dev": {
+            "psr/log": "~1.0",
+            "symfony/event-dispatcher": "~2.1",
+            "symfony/phpunit-bridge": "~2.7",
+            "symfony/process": "~2.1"
+        },
+        "suggest": {
+            "psr/log": "For using the console logger",
+            "symfony/event-dispatcher": "",
+            "symfony/process": ""
+        },
+        "time": "2015-10-06 15:07:22",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.7-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\Console\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony Console Component",
+        "homepage": "https://symfony.com"
+    },
+    {
+        "name": "symfony/class-loader",
+        "version": "2.8.x-dev",
+        "version_normalized": "2.8.9999999.9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/class-loader.git",
+            "reference": "6e0eabdfbd6eeb75cedb84a747aa69a32e53b4f8"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/class-loader/zipball/6e0eabdfbd6eeb75cedb84a747aa69a32e53b4f8",
+            "reference": "6e0eabdfbd6eeb75cedb84a747aa69a32e53b4f8",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.9"
+        },
+        "require-dev": {
+            "symfony/finder": "~2.0,>=2.0.5|~3.0.0",
+            "symfony/phpunit-bridge": "~2.7|~3.0.0"
+        },
+        "time": "2015-10-07 07:09:15",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.8-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\ClassLoader\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony ClassLoader Component",
+        "homepage": "https://symfony.com"
+    },
+    {
+        "name": "phpunit/php-code-coverage",
+        "version": "2.2.x-dev",
+        "version_normalized": "2.2.9999999.9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
+            "reference": "eabf68b476ac7d0f73793aada060f1c1a9bf8979"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/eabf68b476ac7d0f73793aada060f1c1a9bf8979",
+            "reference": "eabf68b476ac7d0f73793aada060f1c1a9bf8979",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3",
+            "phpunit/php-file-iterator": "~1.3",
+            "phpunit/php-text-template": "~1.2",
+            "phpunit/php-token-stream": "~1.3",
+            "sebastian/environment": "^1.3.2",
+            "sebastian/version": "~1.0"
+        },
+        "require-dev": {
+            "ext-xdebug": ">=2.1.4",
+            "phpunit/phpunit": "~4"
+        },
+        "suggest": {
+            "ext-dom": "*",
+            "ext-xdebug": ">=2.2.1",
+            "ext-xmlwriter": "*"
+        },
+        "time": "2015-10-06 15:47:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.2.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Sebastian Bergmann",
+                "email": "sb@sebastian-bergmann.de",
+                "role": "lead"
+            }
+        ],
+        "description": "Library that provides collection, processing, and rendering functionality for PHP code coverage information.",
+        "homepage": "https://github.com/sebastianbergmann/php-code-coverage",
+        "keywords": [
+            "coverage",
+            "testing",
+            "xunit"
+        ]
+    },
+    {
+        "name": "symfony/dependency-injection",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/dependency-injection.git",
+            "reference": "30b45667305e516bf681d6063794368d7d509e66"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/30b45667305e516bf681d6063794368d7d509e66",
+            "reference": "30b45667305e516bf681d6063794368d7d509e66",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5.9"
+        },
+        "require-dev": {
+            "symfony/config": "~2.8|~3.0",
+            "symfony/expression-language": "~2.8|~3.0",
+            "symfony/phpunit-bridge": "~2.8|~3.0",
+            "symfony/yaml": "~2.8|~3.0"
+        },
+        "suggest": {
+            "symfony/config": "",
+            "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
+            "symfony/yaml": ""
+        },
+        "time": "2015-10-07 07:44:07",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\DependencyInjection\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony DependencyInjection Component",
+        "homepage": "https://symfony.com"
+    },
+    {
         "name": "phpunit/phpunit",
         "version": "4.8.x-dev",
         "version_normalized": "4.8.9999999.9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/sebastianbergmann/phpunit.git",
-            "reference": "43f0f64a10e76b7c49b1f1ad5676f60b081b11f1"
+            "reference": "bdd199472410fd7e32751f9c814c7e06f2c21bd5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/43f0f64a10e76b7c49b1f1ad5676f60b081b11f1",
-            "reference": "43f0f64a10e76b7c49b1f1ad5676f60b081b11f1",
+            "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/bdd199472410fd7e32751f9c814c7e06f2c21bd5",
+            "reference": "bdd199472410fd7e32751f9c814c7e06f2c21bd5",
             "shasum": ""
         },
         "require": {
@@ -3802,7 +3733,7 @@
         "suggest": {
             "phpunit/php-invoker": "~1.1"
         },
-        "time": "2015-10-06 11:10:54",
+        "time": "2015-10-07 10:39:46",
         "bin": [
             "phpunit"
         ],
@@ -3844,12 +3775,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/laravel/framework.git",
-            "reference": "7cb4ff60616d343acf3d6d82f4ac5853dfab2060"
+            "reference": "89c1df3047296e06e1c4c83bb362ec3f6725177f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/laravel/framework/zipball/7cb4ff60616d343acf3d6d82f4ac5853dfab2060",
-            "reference": "7cb4ff60616d343acf3d6d82f4ac5853dfab2060",
+            "url": "https://api.github.com/repos/laravel/framework/zipball/89c1df3047296e06e1c4c83bb362ec3f6725177f",
+            "reference": "89c1df3047296e06e1c4c83bb362ec3f6725177f",
             "shasum": ""
         },
         "require": {
@@ -3930,7 +3861,7 @@
             "predis/predis": "Required to use the redis cache and queue drivers (~1.0).",
             "pusher/pusher-php-server": "Required to use the Pusher broadcast driver (~2.0)."
         },
-        "time": "2015-10-06 14:22:23",
+        "time": "2015-10-07 01:28:37",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3968,62 +3899,131 @@
         ]
     },
     {
-        "name": "symfony/console",
-        "version": "2.7.x-dev",
-        "version_normalized": "2.7.9999999.9999999-dev",
+        "name": "dreamfactory/php-utils",
+        "version": "dev-develop",
+        "version_normalized": "dev-develop",
         "source": {
             "type": "git",
-            "url": "https://github.com/symfony/console.git",
-            "reference": "c51cf3500a783b6661124b4d81290dfbdbc05fa6"
+            "url": "https://github.com/dreamfactorysoftware/php-utils.git",
+            "reference": "b49fe77cea165f0d2689a506aa8d88b498e3f1d5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/console/zipball/c51cf3500a783b6661124b4d81290dfbdbc05fa6",
-            "reference": "c51cf3500a783b6661124b4d81290dfbdbc05fa6",
+            "url": "https://api.github.com/repos/dreamfactorysoftware/php-utils/zipball/b49fe77cea165f0d2689a506aa8d88b498e3f1d5",
+            "reference": "b49fe77cea165f0d2689a506aa8d88b498e3f1d5",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.3.9"
+            "symfony/dependency-injection": "*",
+            "symfony/http-foundation": "*"
         },
         "require-dev": {
-            "psr/log": "~1.0",
-            "symfony/event-dispatcher": "~2.1",
-            "symfony/phpunit-bridge": "~2.7",
-            "symfony/process": "~2.1"
+            "laravel/framework": "5.1.*",
+            "phpunit/phpunit": "@stable"
         },
-        "suggest": {
-            "psr/log": "For using the console logger",
-            "symfony/event-dispatcher": "",
-            "symfony/process": ""
-        },
-        "time": "2015-10-06 15:07:22",
+        "time": "2015-09-20 01:45:08",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "2.7-dev"
+                "dev-develop": "1.1.x-dev"
             }
         },
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "Symfony\\Component\\Console\\": ""
+                "DreamFactory\\Library\\Utility\\": "src/"
             }
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "MIT"
+            "Apache-2.0"
         ],
         "authors": [
             {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
+                "name": "Jerry Ablan",
+                "email": "jerryablan@dreamfactory.com"
             }
         ],
-        "description": "Symfony Console Component",
-        "homepage": "https://symfony.com"
+        "description": "A library of helper classes for PHP",
+        "homepage": "https://www.dreamfactory.com/",
+        "keywords": [
+            "console",
+            "dreamfactory",
+            "laravel",
+            "symfony",
+            "utility"
+        ]
+    },
+    {
+        "name": "dreamfactory/dfe-common",
+        "version": "dev-develop",
+        "version_normalized": "dev-develop",
+        "source": {
+            "type": "git",
+            "url": "git@github.com:dreamfactorysoftware/dfe-common.git",
+            "reference": "d6a6ce111c2045c34a9c8bbab583d72f4e457e78"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/dreamfactorysoftware/dfe-common/zipball/d6a6ce111c2045c34a9c8bbab583d72f4e457e78",
+            "reference": "d6a6ce111c2045c34a9c8bbab583d72f4e457e78",
+            "shasum": ""
+        },
+        "require": {
+            "dreamfactory/php-utils": "1.1.*",
+            "league/flysystem-sftp": "*",
+            "league/flysystem-ziparchive": "*",
+            "wpb/string-blade-compiler": "2.*@dev"
+        },
+        "require-dev": {
+            "barryvdh/laravel-ide-helper": "~2.0",
+            "doctrine/dbal": "~2.3",
+            "dreamfactory/dfe-database": "dev-develop as dev-master",
+            "laravel/framework": "5.1.*",
+            "phpspec/phpspec": "~2.1",
+            "phpunit/phpunit": "~4.0",
+            "way/generators": "~3.0"
+        },
+        "time": "2015-10-03 22:12:42",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-develop": "0.1.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "DreamFactory\\Enterprise\\Common\\": "src/"
+            }
+        },
+        "autoload-dev": {
+            "classmap": [
+                "tests/TestCase.php",
+                "tests/CommandTestCase.php"
+            ]
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Jerry Ablan",
+                "email": "jerryablan@dreamfactory.com"
+            }
+        ],
+        "description": "DreamFactory Enterprise(tm) Common Components",
+        "homepage": "https://www.dreamfactory.com/",
+        "keywords": [
+            "common",
+            "dreamfactory",
+            "fabric",
+            "queue",
+            "utility"
+        ],
+        "support": {
+            "source": "https://github.com/dreamfactorysoftware/dfe-common/tree/develop",
+            "issues": "https://github.com/dreamfactorysoftware/dfe-common/issues"
+        }
     }
 ]
