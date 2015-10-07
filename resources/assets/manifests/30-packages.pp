@@ -1,3 +1,10 @@
+################################################################################
+# DreamFactory Enterprise(tm) Installer Manifest
+# (c) 2012-∞ by DreamFactory Software, Inc. All Rights Reserved.
+#
+# Installs all required packages
+################################################################################
+
 $_requiredPackages = [
   'nginx-extras',
   'php5',
@@ -13,12 +20,10 @@ $_requiredPackages = [
   'php5-curl',
   'php5-mssql',
   'mongodb',
-  'fcgiwrap',
   'zip',
   'memcached',
   'redis-server',
   'git-core',
-  'git-all',
   'openssl',
   'curl',
 ]
@@ -36,32 +41,34 @@ if ($smtp_host == "localhost") or ($smtp_host == "127.0.0.1") or ($smtp_host == 
 }
 
 ## Install/remove required packages
+
 package { $_requiredPackages:
   ensure  => latest
 }->
 package { $_removePackages:
   ensure => absent
 }->
-exec { 'enable_mcrypt_settings':
-  command  => '/usr/sbin/php5enmod mcrypt',
+exec { 'enable-mcrypt-settings':
+  command  => "$php5enmod_bin mcrypt",
   provider => posix
 }->
-group { 'www-data':
+group { $www_group:
   ensure  => present,
   members => [$user]
 }->
-group { 'mongodb':
+group { "mongodb":
   ensure  => present,
   members => [$user]
 }->
-group { $storage_group:
+group { $group:
   ensure  => present,
   members => [$user, $www_user],
 }
 
 ## Install Composer
+
 exec { 'Install Composer':
-  command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
+  command => "`which curl` -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
   creates => $composer_bin,
   require => Package['curl']
 }

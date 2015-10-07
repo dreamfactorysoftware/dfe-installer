@@ -16,6 +16,7 @@ SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/manifests/
 ENV_FILE=./.env-install
 PHP_BIN=`which php`
+PHP_ENMOD_BIN=`which php5enmod`
 
 ## Who am I?
 if [ $UID -ne 0 ]; then
@@ -52,7 +53,7 @@ _checkPuppetModules() {
     INSTALLED_MODULES=$(puppet module list)
     local _count=0
 
-    for module in puppetlabs-stdlib puppetlabs-vcsrepo puppetlabs-mysql puppetlabs-apt puppetlabs-lvm puppetlabs-inifile wcooley-user_ssh_pubkey
+    for module in puppetlabs-stdlib puppetlabs-vcsrepo puppetlabs-mysql puppetlabs-apt puppetlabs-inifile wcooley-user_ssh_pubkey
     do
         if [[ ${INSTALLED_MODULES} != *"${module}"* ]]; then
             puppet module install ${module} >/dev/null
@@ -64,24 +65,38 @@ _checkPuppetModules() {
         fi
     done
 
-    [ ${_count} -ne 0 ] && _info "   > Installed ${_count} modules"
+    [ ${_count} -ne 0 ] && _info "   > Installed ${_count} required modules"
 }
 
-## Hard-coded defaults
+## Defaults and executable locations
+export FACTER_APP_DEBUG=true
+export FACTER_PREFERRED_MAIL_PACKAGE=postfix
 export FACTER_PHP_BIN=${PHP_BIN}
+export FACTER_PHP_ENMOD_BIN=${PHP_ENMOD_BIN}
 export FACTER_ARTISAN="${PHP_BIN} artisan"
+export FACTER_COMPOSER_BIN=/usr/local/bin/composer
 export FACTER_DEFAULT_LOCAL_MOUNT_NAME=mount-local-1
 export FACTER_FSTAB=/etc/fstab
-export FACTER_MOUNT_OPTIONS=rw
-export FACTER_LVM_NAME=dfe_lvm
-export FACTER_VG_NAME=dfe_vg
 export FACTER_USER_PWD=`openssl rand -base64 32`
 export FACTER_PERCONA_VERSION=5.6
+export FACTER_NGINX_PATH=/etc/nginx
+
+## Paths
+export FACTER_DOC_ROOT_BASE_PATH=/var/www
+export FACTER_SERVER_CONFIG_PATH="${FACTER_DOC_ROOT_BASE_PATH}/launchpad/server/config"
+export FACTER_RELEASE_PATH="${FACTER_DOC_ROOT_BASE_PATH}/_releases"
+export FACTER_CONSOLE_ROOT="${FACTER_DOC_ROOT_BASE_PATH}/console"
+export FACTER_DASHBOARD_ROOT="${FACTER_DOC_ROOT_BASE_PATH}/dashboard"
+export FACTER_INSTANCE_ROOT="${FACTER_DOC_ROOT_BASE_PATH}/launchpad"
+
+## Users & Branches
+export FACTER_USER=dfadmin
+export FACTER_GROUP=dfadmin
+export FACTER_STORAGE_GROUP=dfadmin
 export FACTER_MYSQL_USER=mysql
 export FACTER_MYSQL_GROUP=mysql
 export FACTER_HOME=$HOME
 export FACTER_PWD=${PWD}
-export LC_ALL=en_US.UTF-8
 export FACTER_DB_USER=dfe_user
 export FACTER_DB_PWD=dfe_user
 export FACTER_DB_HOST=localhost
@@ -90,22 +105,12 @@ export FACTER_CONSOLE_VERSION=develop
 export FACTER_CONSOLE_BRANCH=develop
 export FACTER_DASHBOARD_VERSION=develop
 export FACTER_DASHBOARD_BRANCH=develop
-export FACTER_DSP_VERSION=develop
-export FACTER_DSP_BRANCH=develop
-export FACTER_APP_DEBUG=true
-export FACTER_DOC_ROOT_BASE_PATH=/var/www
-export FACTER_RELEASE_PATH=/var/www/_releases
-export FACTER_COMPOSER_BIN=/usr/local/bin/composer
-export FACTER_PREFERRED_MAIL_PACKAGE=postfix
-export FACTER_CONSOLE_PATH=/var/www/console
-export FACTER_DASHBOARD_PATH=/var/www/dashboard
-export FACTER_INSTANCE_PATH=/var/www/launchpad
+export FACTER_INSTANCE_VERSION=develop
+export FACTER_INSTANCE_BRANCH=develop
 
-## Blanks
-export FACTER_USER FACTER_GROUP
+## Blanks filled in by .env-install
 export FACTER_ADMIN_EMAIL FACTER_ADMIN_PWD
 export FACTER_MOUNT_POINT FACTER_DOMAIN FACTER_GH_USER FACTER_GH_PWD
-export FACTER_DEVICE FACTER_VG_SIZE FACTER_FSTYPE
 export FACTER_SMTP_HOST FACTER_SMTP_PORT FACTER_MAIL_FROM_ADDRESS FACTER_MAIL_FROM_NAME
 export FACTER_MAIL_USERNAME FACTER_MAIL_PASSWORD
 
@@ -128,20 +133,23 @@ _checkPuppetModules
 export FACTER_STORAGE_USER=${FACTER_USER}
 export FACTER_STORAGE_PATH=${FACTER_MOUNT_POINT}/${FACTER_STORAGE_PATH}
 export FACTER_SSL_CERT_STUB=$(echo ${FACTER_DOMAIN} | tr '.' '-')
+
+## Repositories from which to pull
 export FACTER_GITHUB_USER_INFO=${FACTER_GH_USER}\:${FACTER_GH_PWD}\@
 export FACTER_CONSOLE_REPO="https://${FACTER_GITHUB_USER_INFO}github.com/dreamfactorysoftware/dfe-console.git"
 export FACTER_DASHBOARD_REPO="https://${FACTER_GITHUB_USER_INFO}github.com/dreamfactorysoftware/dfe-dashboard.git"
 export FACTER_INSTANCE_REPO="https://github.com/dreamfactorysoftware/dreamfactory.git"
 
-_info "Installing..."
+_info "Installing now..."
 
 for manifest in $(ls ./resources/assets/manifests/*.pp)
 do
 	_info "Applying ${manifest}..."
-	puppet apply ${manifest}
+	puppet apply -l ./storage/logs/installer.log "${manifest}"
 
     if [ $? -ne 0 ]; then
-	    break
+        _error "An unexpected result code of $? was returned. Halting."
+	    exit 1
     fi
 done
 
