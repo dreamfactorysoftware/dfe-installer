@@ -69,6 +69,7 @@ _checkPuppetModules() {
 
 ## Hard-coded defaults
 export FACTER_PHP_BIN=${PHP_BIN}
+export FACTER_ARTISAN="${PHP_BIN} artisan"
 export FACTER_DEFAULT_LOCAL_MOUNT_NAME=mount-local-1
 export FACTER_FSTAB=/etc/fstab
 export FACTER_MOUNT_OPTIONS=rw
@@ -92,6 +93,13 @@ export FACTER_DASHBOARD_BRANCH=develop
 export FACTER_DSP_VERSION=develop
 export FACTER_DSP_BRANCH=develop
 export FACTER_APP_DEBUG=true
+export FACTER_DOC_ROOT_BASE_PATH=/var/www
+export FACTER_CONSOLE_PATH=/var/www/console
+export FACTER_DASHBOARD_PATH=/var/www/dashboard
+export FACTER_INSTANCE_PATH=/var/www/launchpad
+export FACTER_RELEASE_PATH=/var/www/_releases
+export FACTER_COMPOSER_BIN=/usr/local/bin/composer
+export FACTER_PREFERRED_MAIL_PACKAGE=postfix
 
 ## Blanks
 export FACTER_USER FACTER_GROUP

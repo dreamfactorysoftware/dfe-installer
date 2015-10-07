@@ -1,16 +1,45 @@
-$base_packages = ['nginx-extras', 'php5', 'php5-fpm', 'php5-mysql', 'php5-redis', 'php5-pgsql', 'php5-mongo', 'php5-ldap', 'php5-memcached', 'php5-dev', 'php5-mcrypt', 'php5-curl', 'php5-mssql', 'mongodb', 'fcgiwrap', 'zip', 'memcached', 'redis-server', 'git-core' ,'git-all', 'openssl', 'curl']
+$_requiredPackages = [
+  'nginx-extras',
+  'php5',
+  'php5-fpm',
+  'php5-mysql',
+  'php5-redis',
+  'php5-pgsql',
+  'php5-mongo',
+  'php5-ldap',
+  'php5-memcached',
+  'php5-dev',
+  'php5-mcrypt',
+  'php5-curl',
+  'php5-mssql',
+  'mongodb',
+  'fcgiwrap',
+  'zip',
+  'memcached',
+  'redis-server',
+  'git-core',
+  'git-all',
+  'openssl',
+  'curl',
+]
 
+$_removePackages = [
+  "apache2",
+  "apache2-bin",
+  "apache2-data",
+  "libapache2-mod-php5",
+]
+
+## If SMTP is local, then install postfix
 if ($smtp_host == "localhost") or ($smtp_host == "127.0.0.1") or ($smtp_host == "127.0.1.1") {
-  $packages = union($base_packages, ['postfix'])
-} else {
-  $packages = $base_packages
+  $_requiredPackages = union($_requiredPackages, [$preferred_mail_package])
 }
 
-# Install required packages
-package { $packages:
+## Install/remove required packages
+package { $_requiredPackages:
   ensure  => latest
 }->
-package { ["apache2", "apache2-bin", "apache2-data", "libapache2-mod-php5"]:
+package { $_removePackages:
   ensure => absent
 }->
 exec { 'enable_mcrypt_settings':
@@ -30,9 +59,9 @@ group { $storage_group:
   members => [$user, $www_user],
 }
 
-# Install Composer
+## Install Composer
 exec { 'Install Composer':
-  command => '/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar /usr/local/bin/composer; chmod a+x /usr/local/bin/composer',
-  creates => '/usr/local/bin/composer',
+  command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
+  creates => $composer_bin,
   require => Package['curl']
 }

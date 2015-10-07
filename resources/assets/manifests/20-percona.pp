@@ -34,10 +34,6 @@ class { 'mysql::server':
   override_options => {
     'mysqld' => {
       'bind-address' => '0.0.0.0',
-    #      'user' => $mysql_user,
-    #      'log-bin' => $mysql_log_bin_path,
-    #      'log-error' => "$mysql_log_path/error.log",
-    #      'slow-query-log-file' => "$mysql_log_path/slow.log"
     }
   },
   restart          => true,
