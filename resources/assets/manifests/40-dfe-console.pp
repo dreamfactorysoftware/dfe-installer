@@ -53,6 +53,10 @@ file { ["/var/www/_releases/console/$console_branch/bootstrap",
   group  => $group,
   mode   => 2775
 }->
+file { "$doc_root_base_path/console/.env":
+  ensure => present,
+  source => "$doc_root_base_path/console/.env-dist",
+}->
 exec { 'console-config':
   command     => "$composer_bin update",
   user        => $user,
@@ -70,10 +74,6 @@ exec { 'generate-app-key':
   provider    => 'shell',
   cwd         => "$doc_root_base_path/console",
   environment => ["HOME=/home/$user"]
-}->
-file { "$doc_root_base_path/console/.env":
-  ensure => present,
-  source => "$doc_root_base_path/console/.env-dist",
 }->
 exec { 'console-setup':
   command     => "$artisan dfe:setup --force --admin-password=\"${admin_pwd}\" ${admin_email}",
