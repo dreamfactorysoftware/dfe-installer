@@ -445,12 +445,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/doctrine/inflector.git",
-            "reference": "3a422c73f7bc556d39571f436b61fd58ccae0eb0"
+            "reference": "097e7ba84f64a427e55008117ef2bb94096731dc"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/doctrine/inflector/zipball/3a422c73f7bc556d39571f436b61fd58ccae0eb0",
-            "reference": "3a422c73f7bc556d39571f436b61fd58ccae0eb0",
+            "url": "https://api.github.com/repos/doctrine/inflector/zipball/097e7ba84f64a427e55008117ef2bb94096731dc",
+            "reference": "097e7ba84f64a427e55008117ef2bb94096731dc",
             "shasum": ""
         },
         "require": {
@@ -459,7 +459,7 @@
         "require-dev": {
             "phpunit/phpunit": "4.*"
         },
-        "time": "2015-09-17 13:29:15",
+        "time": "2015-10-07 18:00:26",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3961,12 +3961,12 @@
         "source": {
             "type": "git",
             "url": "git@github.com:dreamfactorysoftware/dfe-common.git",
-            "reference": "d6a6ce111c2045c34a9c8bbab583d72f4e457e78"
+            "reference": "dec6d9582e659b98e2c16fd03cba97d5d1cfddda"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/dreamfactorysoftware/dfe-common/zipball/d6a6ce111c2045c34a9c8bbab583d72f4e457e78",
-            "reference": "d6a6ce111c2045c34a9c8bbab583d72f4e457e78",
+            "url": "https://api.github.com/repos/dreamfactorysoftware/dfe-common/zipball/dec6d9582e659b98e2c16fd03cba97d5d1cfddda",
+            "reference": "dec6d9582e659b98e2c16fd03cba97d5d1cfddda",
             "shasum": ""
         },
         "require": {
@@ -3984,7 +3984,7 @@
             "phpunit/phpunit": "~4.0",
             "way/generators": "~3.0"
         },
-        "time": "2015-10-03 22:12:42",
+        "time": "2015-10-07 18:10:55",
         "type": "library",
         "extra": {
             "branch-alias": {

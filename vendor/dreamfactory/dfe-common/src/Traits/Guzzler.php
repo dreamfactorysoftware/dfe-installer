@@ -1,7 +1,6 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Request;
 
 /**
@@ -151,6 +150,8 @@ trait Guzzler
      */
     public function guzzleAny($url, $payload = [], $options = [], $method = Request::METHOD_POST, $object = true)
     {
+        $_response = null;
+
         try {
             is_array($payload) && $payload = $this->signRequest($payload);
 
@@ -162,9 +163,7 @@ trait Guzzler
             $_response = $this->getGuzzleClient()->{$method}($url, $options);
 
             return $_response->json(['object' => $object]);
-        } catch (RequestException $_ex) {
-            $_response = $_ex->hasResponse() ? $_ex->getResponse() : null;
-
+        } catch (\Exception $_ex) {
             if (is_object($_response) && method_exists($_response, 'getBody')) {
                 return trim((string)$_response->getBody());
             }
