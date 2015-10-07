@@ -154,7 +154,7 @@ file { [
   "$release_path/console/$console_branch/storage/framework/views",
   "$release_path/console/$console_branch/storage/logs",
 ]:
-  ensure => present,
+  ensure => directory,
   owner  => $www_user,
   group  => $group,
   mode   => 2775
