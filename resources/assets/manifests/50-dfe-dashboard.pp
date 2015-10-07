@@ -10,18 +10,18 @@ vcsrepo { "${release_path}/dashboard/$dashboard_branch":
   revision => $dashboard_version,
 }->
 exec { 'dashboard-config':
-  command     => "${composer_bin}/usr/local/bin/composer update",
+  command     => "${composer_bin} update",
   user        => $user,
   provider    => 'shell',
-  cwd         => '/var/www/dashboard',
+  cwd         => $dashboard_path,
   environment => ["HOME=/home/$user"]
 }->
-file { '/var/www/dashboard/.env':
+file { "$dashboard_path/.env":
   ensure => present,
-  source => '/var/www/dashboard/.env-dist'
+  source => "$dashboard_path/.env-dist",
 }->
 exec { 'add_dashboard_keys':
-  command  => "cat /var/www/console/database/dfe/dashboard.env >> /var/www/dashboard/.env",
+  command  => "cat $console_path/database/dfe/dashboard.env >> $dashboard_path/.env",
   provider => 'shell',
   user     => $user
 }->
@@ -29,11 +29,11 @@ exec { 'generate-app-key':
   command     => "$artisan key:generate",
   user        => $user,
   provider    => 'shell',
-  cwd         => "$doc_root_base_path/dashboard",
+  cwd         => $dashboard_path,
   environment => ["HOME=/home/$user"]
 }
 
-$_env = { 'path' => "/var/www/dashboard/.env", }
+$_env = { 'path' => "$dashboard_path/.env", }
 
 $_settings = {
   '' =>
@@ -65,13 +65,13 @@ $_settings = {
 create_ini_settings($_settings, $_env)
 
 file { [
-  "/var/www/_releases/dashboard/$dashboard_branch/bootstrap",
-  "/var/www/_releases/dashboard/$dashboard_branch/bootstrap/cache",
-  "/var/www/_releases/dashboard/$dashboard_branch/storage",
-  "/var/www/_releases/dashboard/$dashboard_branch/storage/framework",
-  "/var/www/_releases/dashboard/$dashboard_branch/storage/framework/sessions",
-  "/var/www/_releases/dashboard/$dashboard_branch/storage/framework/views",
-  "/var/www/_releases/dashboard/$dashboard_branch/storage/logs",
+  "$release_path/dashboard/$dashboard_branch/bootstrap",
+  "$release_path/dashboard/$dashboard_branch/bootstrap/cache",
+  "$release_path/dashboard/$dashboard_branch/storage",
+  "$release_path/dashboard/$dashboard_branch/storage/framework",
+  "$release_path/dashboard/$dashboard_branch/storage/framework/sessions",
+  "$release_path/dashboard/$dashboard_branch/storage/framework/views",
+  "$release_path/dashboard/$dashboard_branch/storage/logs",
 ]:
   ensure => directory,
   owner  => $www_user,
@@ -82,18 +82,18 @@ exec { 'clear_and_regenerate_cache':
   command     => "$artisan clear-compiled; $artisan cache:clear; $artisan config:clear; $artisan optimize",
   user        => $user,
   provider    => 'shell',
-  cwd         => '/var/www/dashboard',
+  cwd         => $dashboard_path,
   environment => ["HOME=/home/$user"]
 }->
-file { '/var/www/dashboard/storage/logs/laravel.log':
+file { "$dashboard_path/storage/logs/laravel.log":
   ensure => present,
   owner  => $www_user,
   group  => $storage_group,
   mode   => '0664'
 }->
 ## Only make symlink if installed successfully
-file { '/var/www/dashboard':
+file { $dashboard_path:
   ensure => link,
-  target => "/var/www/_releases/dashboard/$dashboard_branch",
+  target => "$release_path/dashboard/$dashboard_branch",
 }
 
