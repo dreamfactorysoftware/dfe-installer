@@ -145,12 +145,13 @@ _info "Installing now..."
 for manifest in $(ls ./resources/assets/manifests/*.pp)
 do
 	_info "Applying ${manifest}..."
-	puppet apply -l ./storage/logs/installer.log "${manifest}"
+	puppet apply -l /tmp/dfe-installer.log "${manifest}"
 
     if [ $? -ne 0 ]; then
         _error "An unexpected result code of $? was returned. Halting."
+        _error "See logged output in file /tmp/dfe-installer.log"
 	    exit 1
     fi
 done
 
-_info "Complete!"
+_info "Complete! Output spooled to /tmp/dfe-installer.log"
