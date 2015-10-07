@@ -64,7 +64,7 @@ _checkPuppetModules() {
         fi
     done
 
-    _info "   > Installed ${_count} modules"
+    [ ${_count} -ne 0 ] && _info "   > Installed ${_count} modules"
 }
 
 ## Hard-coded defaults
