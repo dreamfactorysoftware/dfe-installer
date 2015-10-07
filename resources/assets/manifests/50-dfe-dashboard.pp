@@ -59,7 +59,7 @@ exec { 'dashboard-composer-update':
   command     => "$composer_bin update",
   user        => $user,
   provider    => 'shell',
-  cwd         => "$doc_root_base_path/dashboard",
+  cwd         => "$release_path/dashboard/$dashboard_branch",
   environment => [ "HOME=/home/$user", ]
 }->
 exec { 'generate-app-key':
