@@ -1,45 +1,12 @@
 ## Installs dreamfactorysoftware/dfe-dashboard
 
-vcsrepo { "${release_path}/dashboard/$dashboard_branch":
-  ensure   => present,
-  provider => git,
-  source   => "https://${github_user_info}github.com/dreamfactorysoftware/dfe-dashboard.git",
-  user     => $user,
-  owner    => $user,
-  group    => $www_group,
-  revision => $dashboard_version,
-}->
-exec { 'dashboard-config':
-  command     => "${composer_bin}/usr/local/bin/composer update",
-  user        => $user,
-  provider    => 'shell',
-  cwd         => '/var/www/dashboard',
-  environment => ["HOME=/home/$user"]
-}->
-file { '/var/www/dashboard/.env':
-  ensure => present,
-  source => '/var/www/dashboard/.env-dist'
-}->
-exec { 'add_dashboard_keys':
-  command  => "cat /var/www/console/database/dfe/dashboard.env >> /var/www/dashboard/.env",
-  provider => 'shell',
-  user     => $user
-}->
-exec { 'generate-app-key':
-  command     => "$artisan key:generate",
-  user        => $user,
-  provider    => 'shell',
-  cwd         => "$doc_root_base_path/dashboard",
-  environment => ["HOME=/home/$user"]
-}
-
-$_env = { 'path' => "/var/www/dashboard/.env", }
-
+$_env = { 'path' => "$doc_root_base_path/dashboard/.env", }
+$_appUrl = "http://dashboard.${vendor_id}.${domain}"
 $_settings = {
   '' =>
   {
     'APP_DEBUG' => $app_debug,
-    'APP_URL' => "http://console.${vendor_id}.${domain}",
+    'APP_URL' => $_appUrl,
     'DB_HOST' => $db_host,
     'DB_DATABASE' => $db_name,
     'DB_USERNAME' => $db_user,
@@ -58,42 +25,82 @@ $_settings = {
     'MAIL_USERNAME' => $mail_username,
     'MAIL_PASSWORD' => $mail_password,
     'DFE_HOSTED_BASE_PATH' => $storage_path,
-    'DFE_CONSOLE_API_URL' => "http://console.${vendor_id}.${domain}/api/v1/ops",
+    'DFE_CONSOLE_API_URL' => "$_appUrl/api/v1/ops",
   }
 }
 
-create_ini_settings($_settings, $_env)
+class iniSettings {
+## Create .env file
+  create_ini_settings($_settings, $_env)
+}
 
-file { [
-  "/var/www/_releases/dashboard/$dashboard_branch/bootstrap",
-  "/var/www/_releases/dashboard/$dashboard_branch/bootstrap/cache",
-  "/var/www/_releases/dashboard/$dashboard_branch/storage",
-  "/var/www/_releases/dashboard/$dashboard_branch/storage/framework",
-  "/var/www/_releases/dashboard/$dashboard_branch/storage/framework/sessions",
-  "/var/www/_releases/dashboard/$dashboard_branch/storage/framework/views",
-  "/var/www/_releases/dashboard/$dashboard_branch/storage/logs",
-]:
-  ensure => directory,
-  owner  => $www_user,
-  group  => $group,
-  mode   => 2775,
+vcsrepo { "$release_path/dashboard/$dashboard_branch":
+  ensure   => present,
+  provider => git,
+  source   => $dashboard_repo,
+  user     => $user,
+  owner    => $user,
+  group    => $www_group,
+  revision => $dashboard_version,
+}->
+file { "$doc_root_base_path/dashboard":
+  ensure => link,
+  target => "$release_path/dashboard/$dashboard_branch",
+}->
+exec { 'dashboard-composer-update':
+  command     => "$composer_bin update",
+  user        => $user,
+  provider    => 'shell',
+  cwd         => "$doc_root_base_path/dashboard",
+  environment => [ "HOME=/home/$user", ]
+}->
+file { "$doc_root_base_path/dashboard/.env":
+  ensure => present,
+  source => "$doc_root_base_path/dashboard/.env-dist",
+}->
+class { 'iniSettings':
+
+}->
+exec { 'generate-app-key':
+  command     => "$artisan key:generate",
+  user        => $user,
+  provider    => 'shell',
+  cwd         => "$doc_root_base_path/dashboard",
+  environment => ["HOME=/home/$user"]
+}->
+exec { 'add_dashboard_keys':
+  command  => "cat $doc_root_base_path/console/database/dfe/dashboard.env >> $doc_root_base_path/dashboard/.env",
+  provider => 'shell',
+  user     => $user
 }->
 exec { 'clear_and_regenerate_cache':
   command     => "$artisan clear-compiled; $artisan cache:clear; $artisan config:clear; $artisan optimize",
   user        => $user,
   provider    => 'shell',
-  cwd         => '/var/www/dashboard',
+  cwd         => "$doc_root_base_path/dashboard",
   environment => ["HOME=/home/$user"]
 }->
-file { '/var/www/dashboard/storage/logs/laravel.log':
+file { ["$release_path/dashboard/$dashboard_branch/bootstrap",
+  "$release_path/dashboard/$dashboard_branch/bootstrap/cache",
+  "$release_path/dashboard/$dashboard_branch/storage",
+  "$release_path/dashboard/$dashboard_branch/storage/framework",
+  "$release_path/dashboard/$dashboard_branch/storage/framework/sessions",
+  "$release_path/dashboard/$dashboard_branch/storage/framework/views",
+  "$release_path/dashboard/$dashboard_branch/storage/logs",]:
+  ensure => present,
+  owner  => $www_user,
+  group  => $group,
+  mode   => 2775
+}->
+file { "$doc_root_base_path/dashboard/storage/logs/laravel.log":
   ensure => present,
   owner  => $www_user,
   group  => $storage_group,
-  mode   => '0664'
+  mode   => 0664
 }->
 ## Only make symlink if installed successfully
-file { '/var/www/dashboard':
+file { '$doc_root_base_path/dashboard':
   ensure => link,
-  target => "/var/www/_releases/dashboard/$dashboard_branch",
+  target => "$release_path/dashboard/$dashboard_branch",
 }
 
