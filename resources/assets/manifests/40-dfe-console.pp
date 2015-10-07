@@ -42,7 +42,8 @@ vcsrepo { "$release_path/console/$console_branch":
   owner    => $user,
   group    => $www_group,
   revision => $console_version
-}->file { "$doc_root_base_path/console":
+}->
+file { "$doc_root_base_path/console":
   ensure => link,
   target => "$release_path/console/$console_branch",
 }->

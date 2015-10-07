@@ -47,19 +47,20 @@ file { "$doc_root_base_path/dashboard":
   ensure => link,
   target => "$release_path/dashboard/$dashboard_branch",
 }->
+file { "$doc_root_base_path/dashboard/.env":
+  ensure => present,
+  source => "$doc_root_base_path/dashboard/.env-dist",
+}->
+
+class { 'iniSettings':
+
+}->
 exec { 'dashboard-composer-update':
   command     => "$composer_bin update",
   user        => $user,
   provider    => 'shell',
   cwd         => "$doc_root_base_path/dashboard",
   environment => [ "HOME=/home/$user", ]
-}->
-file { "$doc_root_base_path/dashboard/.env":
-  ensure => present,
-  source => "$doc_root_base_path/dashboard/.env-dist",
-}->
-class { 'iniSettings':
-
 }->
 exec { 'generate-app-key':
   command     => "$artisan key:generate",
@@ -103,4 +104,3 @@ file { '$doc_root_base_path/dashboard':
   ensure => link,
   target => "$release_path/dashboard/$dashboard_branch",
 }
-
