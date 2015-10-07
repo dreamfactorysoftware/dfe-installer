@@ -1,22 +1,22 @@
-vcsrepo { "/var/www/_releases/dreamfactory/$dsp_branch":
+vcsrepo { "$release_path/dreamfactory/$dsp_branch":
   ensure   => present,
   provider => git,
-  source   => "https://${github_user_info}github.com/dreamfactorysoftware/dreamfactory.git",
+  source   => $instance_repo,
   user     => $user,
-  owner    => $group,
+  owner    => $user,
   group    => $www_group,
   revision => $dsp_version
 }->
-file { '/var/www/launchpad':
+file { "$doc_root_base_path/launchpad":
   ensure => link,
-  target => "/var/www/_releases/dreamfactory/$dsp_branch",
+  target => "$release_path/dreamfactory/$dsp_branch",
 }->
-file { '/var/www/launchpad/.env':
+file { "$doc_root_base_path/launchpad/.env":
   ensure => present,
   owner  => $user,
   group  => $www_group,
   mode   => 0775,
-  source => '/var/www/launchpad/.env-dist'
+  source => "$doc_root_base_path/launchpad/.env-dist"
 }->
 ini_setting { 'SMTP_DRIVER':
   ensure  => present,
@@ -54,20 +54,20 @@ ini_setting { 'MAIL_PASSWORD':
   value   => "${mail_password}"
 }->
 exec { 'launchpad-config':
-  command     => '/usr/local/bin/composer update',
+  command     => "$composer_bin update",
   user        => $user,
   provider    => 'shell',
   cwd         => '/var/www/launchpad',
   environment => ["HOME=/home/$user"]
 }->
 file { [
-  "/var/www/_releases/dreamfactory/$dsp_branch/bootstrap/cache",
-  "/var/www/_releases/dreamfactory/$dsp_branch/storage",
-  "/var/www/_releases/dreamfactory/$dsp_branch/storage/logs",
-  "/var/www/_releases/dreamfactory/$dsp_branch/storage/framework",
-  "/var/www/_releases/dreamfactory/$dsp_branch/storage/framework/db",
-  "/var/www/_releases/dreamfactory/$dsp_branch/storage/framework/sessions",
-  "/var/www/_releases/dreamfactory/$dsp_branch/storage/framework/views"]:
+  "$release_path/dreamfactory/$dsp_branch/bootstrap/cache",
+  "$release_path/dreamfactory/$dsp_branch/storage",
+  "$release_path/dreamfactory/$dsp_branch/storage/logs",
+  "$release_path/dreamfactory/$dsp_branch/storage/framework",
+  "$release_path/dreamfactory/$dsp_branch/storage/framework/db",
+  "$release_path/dreamfactory/$dsp_branch/storage/framework/sessions",
+  "$release_path/dreamfactory/$dsp_branch/storage/framework/views"]:
   ensure => directory,
   owner  => $user,
   group  => $www_group,

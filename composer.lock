@@ -156,12 +156,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/inflector.git",
-                "reference": "3a422c73f7bc556d39571f436b61fd58ccae0eb0"
+                "reference": "097e7ba84f64a427e55008117ef2bb94096731dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/inflector/zipball/3a422c73f7bc556d39571f436b61fd58ccae0eb0",
-                "reference": "3a422c73f7bc556d39571f436b61fd58ccae0eb0",
+                "url": "https://api.github.com/repos/doctrine/inflector/zipball/097e7ba84f64a427e55008117ef2bb94096731dc",
+                "reference": "097e7ba84f64a427e55008117ef2bb94096731dc",
                 "shasum": ""
             },
             "require": {
@@ -215,7 +215,7 @@
                 "singularize",
                 "string"
             ],
-            "time": "2015-09-17 13:29:15"
+            "time": "2015-10-07 18:00:26"
         },
         {
             "name": "dreamfactory/dfe-common",
@@ -223,12 +223,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:dreamfactorysoftware/dfe-common.git",
-                "reference": "d6a6ce111c2045c34a9c8bbab583d72f4e457e78"
+                "reference": "dec6d9582e659b98e2c16fd03cba97d5d1cfddda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dreamfactorysoftware/dfe-common/zipball/d6a6ce111c2045c34a9c8bbab583d72f4e457e78",
-                "reference": "d6a6ce111c2045c34a9c8bbab583d72f4e457e78",
+                "url": "https://api.github.com/repos/dreamfactorysoftware/dfe-common/zipball/dec6d9582e659b98e2c16fd03cba97d5d1cfddda",
+                "reference": "dec6d9582e659b98e2c16fd03cba97d5d1cfddda",
                 "shasum": ""
             },
             "require": {
@@ -285,7 +285,7 @@
                 "source": "https://github.com/dreamfactorysoftware/dfe-common/tree/develop",
                 "issues": "https://github.com/dreamfactorysoftware/dfe-common/issues"
             },
-            "time": "2015-10-03 22:12:42"
+            "time": "2015-10-07 18:10:55"
         },
         {
             "name": "dreamfactory/php-utils",
@@ -492,12 +492,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "7cb4ff60616d343acf3d6d82f4ac5853dfab2060"
+                "reference": "89c1df3047296e06e1c4c83bb362ec3f6725177f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/7cb4ff60616d343acf3d6d82f4ac5853dfab2060",
-                "reference": "7cb4ff60616d343acf3d6d82f4ac5853dfab2060",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/89c1df3047296e06e1c4c83bb362ec3f6725177f",
+                "reference": "89c1df3047296e06e1c4c83bb362ec3f6725177f",
                 "shasum": ""
             },
             "require": {
@@ -612,7 +612,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2015-10-06 14:22:23"
+            "time": "2015-10-07 01:28:37"
         },
         {
             "name": "league/flysystem",
@@ -1443,12 +1443,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dependency-injection.git",
-                "reference": "2114c62a170d3c959d4f4ddfa7cb0a6a0842d076"
+                "reference": "30b45667305e516bf681d6063794368d7d509e66"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/2114c62a170d3c959d4f4ddfa7cb0a6a0842d076",
-                "reference": "2114c62a170d3c959d4f4ddfa7cb0a6a0842d076",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/30b45667305e516bf681d6063794368d7d509e66",
+                "reference": "30b45667305e516bf681d6063794368d7d509e66",
                 "shasum": ""
             },
             "require": {
@@ -1492,7 +1492,7 @@
             ],
             "description": "Symfony DependencyInjection Component",
             "homepage": "https://symfony.com",
-            "time": "2015-10-05 15:24:55"
+            "time": "2015-10-07 07:44:07"
         },
         {
             "name": "symfony/dom-crawler",
@@ -3021,12 +3021,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f"
+                "reference": "eabf68b476ac7d0f73793aada060f1c1a9bf8979"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/ef1ca6835468857944d5c3b48fa503d5554cff2f",
-                "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/eabf68b476ac7d0f73793aada060f1c1a9bf8979",
+                "reference": "eabf68b476ac7d0f73793aada060f1c1a9bf8979",
                 "shasum": ""
             },
             "require": {
@@ -3075,7 +3075,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-09-14 06:51:16"
+            "time": "2015-10-06 15:47:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -3261,12 +3261,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "43f0f64a10e76b7c49b1f1ad5676f60b081b11f1"
+                "reference": "bdd199472410fd7e32751f9c814c7e06f2c21bd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/43f0f64a10e76b7c49b1f1ad5676f60b081b11f1",
-                "reference": "43f0f64a10e76b7c49b1f1ad5676f60b081b11f1",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/bdd199472410fd7e32751f9c814c7e06f2c21bd5",
+                "reference": "bdd199472410fd7e32751f9c814c7e06f2c21bd5",
                 "shasum": ""
             },
             "require": {
@@ -3325,7 +3325,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-10-06 11:10:54"
+            "time": "2015-10-07 10:39:46"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -3761,12 +3761,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/class-loader.git",
-                "reference": "650517ffba127aaedb9c93f9f1cf748b0aef4915"
+                "reference": "6e0eabdfbd6eeb75cedb84a747aa69a32e53b4f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/class-loader/zipball/650517ffba127aaedb9c93f9f1cf748b0aef4915",
-                "reference": "650517ffba127aaedb9c93f9f1cf748b0aef4915",
+                "url": "https://api.github.com/repos/symfony/class-loader/zipball/6e0eabdfbd6eeb75cedb84a747aa69a32e53b4f8",
+                "reference": "6e0eabdfbd6eeb75cedb84a747aa69a32e53b4f8",
                 "shasum": ""
             },
             "require": {
@@ -3803,7 +3803,7 @@
             ],
             "description": "Symfony ClassLoader Component",
             "homepage": "https://symfony.com",
-            "time": "2015-09-29 12:32:55"
+            "time": "2015-10-07 07:09:15"
         },
         {
             "name": "symfony/yaml",

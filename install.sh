@@ -64,7 +64,7 @@ _checkPuppetModules() {
         fi
     done
 
-    _info "   > Installed ${_count} modules"
+    [ ${_count} -ne 0 ] && _info "   > Installed ${_count} modules"
 }
 
 ## Hard-coded defaults
@@ -94,12 +94,12 @@ export FACTER_DSP_VERSION=develop
 export FACTER_DSP_BRANCH=develop
 export FACTER_APP_DEBUG=true
 export FACTER_DOC_ROOT_BASE_PATH=/var/www
-export FACTER_CONSOLE_PATH=/var/www/console
-export FACTER_DASHBOARD_PATH=/var/www/dashboard
-export FACTER_INSTANCE_PATH=/var/www/launchpad
 export FACTER_RELEASE_PATH=/var/www/_releases
 export FACTER_COMPOSER_BIN=/usr/local/bin/composer
 export FACTER_PREFERRED_MAIL_PACKAGE=postfix
+export FACTER_CONSOLE_PATH=/var/www/console
+export FACTER_DASHBOARD_PATH=/var/www/dashboard
+export FACTER_INSTANCE_PATH=/var/www/launchpad
 
 ## Blanks
 export FACTER_USER FACTER_GROUP
@@ -129,6 +129,9 @@ export FACTER_STORAGE_USER=${FACTER_USER}
 export FACTER_STORAGE_PATH=${FACTER_MOUNT_POINT}/${FACTER_STORAGE_PATH}
 export FACTER_SSL_CERT_STUB=$(echo ${FACTER_DOMAIN} | tr '.' '-')
 export FACTER_GITHUB_USER_INFO=${FACTER_GH_USER}\:${FACTER_GH_PWD}\@
+export FACTER_CONSOLE_REPO="https://${FACTER_GITHUB_USER_INFO}github.com/dreamfactorysoftware/dfe-console.git"
+export FACTER_DASHBOARD_REPO="https://${FACTER_GITHUB_USER_INFO}github.com/dreamfactorysoftware/dfe-dashboard.git"
+export FACTER_INSTANCE_REPO="https://github.com/dreamfactorysoftware/dreamfactory.git"
 
 _info "Installing..."
 
