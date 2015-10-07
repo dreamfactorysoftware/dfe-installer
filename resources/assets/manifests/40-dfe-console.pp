@@ -56,17 +56,6 @@ exec { 'console-config':
   provider    => 'shell',
   cwd         => "$doc_root_base_path/console",
   environment => [ "HOME=/home/$user", ]
-}->
-file { "$doc_root_base_path/console/.env":
-  ensure => present,
-  source => "$doc_root_base_path/console/.env-dist",
-}->
-file { "$doc_root_base_path/.dfe.cluster.json":
-  ensure => present,
-  owner  => $user,
-  group  => $www_group,
-  mode   => 0644,
-  source => "$doc_root_base_path/console/database/dfe/.dfe.cluster.json"
 }
 
 ## Create .env file
@@ -79,17 +68,29 @@ exec { 'generate-app-key':
   cwd         => "$doc_root_base_path/console",
   environment => ["HOME=/home/$user"]
 }->
+file { "$doc_root_base_path/console/.env":
+  ensure => present,
+  source => "$doc_root_base_path/console/.env-dist",
+}->
 exec { 'console-setup':
   command     => "$artisan dfe:setup --force --admin-password=\"${admin_pwd}\" ${admin_email}",
   user        => $user,
   provider    => 'shell',
   cwd         => "$doc_root_base_path/console",
   environment => ["HOME=/home/$user"]
+}->
+file { "$doc_root_base_path/.dfe.cluster.json":
+  ensure => present,
+  owner  => $user,
+  group  => $www_group,
+  mode   => 0644,
+  source => "$doc_root_base_path/console/database/dfe/.dfe.cluster.json"
 }->exec { 'add_console_keys':
   command  => "cat $doc_root_base_path/console/database/dfe/console.env >> $doc_root_base_path/console/.env",
   provider => 'shell',
   user     => $user
-}->
+}
+
 exec { 'add_web_server':
   command     => "$artisan dfe:server create web-${vendor_id} -t web -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c {}",
   user        => $user,
