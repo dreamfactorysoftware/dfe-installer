@@ -54,8 +54,7 @@ exec { 'add_dashboard_keys':
   command  => "cat $doc_root_base_path/console/database/dfe/dashboard.env >> $doc_root_base_path/dashboard/.env",
   provider => 'shell',
   user     => $user
-}
-
+}->
 exec { 'dashboard-composer-update':
   command     => "$composer_bin update",
   user        => $user,
@@ -70,26 +69,28 @@ exec { 'generate-app-key':
   cwd         => "$doc_root_base_path/dashboard",
   environment => ["HOME=/home/$user"]
 }->
-exec { 'clear_and_regenerate_cache':
+exec { 'clear-cache-and-optimize':
   command     => "$artisan clear-compiled; $artisan cache:clear; $artisan config:clear; $artisan optimize",
   user        => $user,
   provider    => 'shell',
   cwd         => "$doc_root_base_path/dashboard",
   environment => ["HOME=/home/$user"]
 }->
-file { ["$release_path/dashboard/$dashboard_branch/bootstrap",
+file { [
+  "$release_path/dashboard/$dashboard_branch/bootstrap",
   "$release_path/dashboard/$dashboard_branch/bootstrap/cache",
   "$release_path/dashboard/$dashboard_branch/storage",
   "$release_path/dashboard/$dashboard_branch/storage/framework",
   "$release_path/dashboard/$dashboard_branch/storage/framework/sessions",
   "$release_path/dashboard/$dashboard_branch/storage/framework/views",
-  "$release_path/dashboard/$dashboard_branch/storage/logs",]:
+  "$release_path/dashboard/$dashboard_branch/storage/logs",
+]:
   ensure => present,
   owner  => $www_user,
   group  => $group,
   mode   => 2775
 }->
-file { "$doc_root_base_path/dashboard/storage/logs/laravel.log":
+file { "$release_path/dashboard/$dashboard_branch/storage/logs/laravel.log":
   ensure => present,
   owner  => $www_user,
   group  => $storage_group,

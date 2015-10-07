@@ -131,7 +131,7 @@ export FACTER_SSL_CERT_STUB=$(echo ${FACTER_DOMAIN} | tr '.' '-')
 export FACTER_GITHUB_USER_INFO=${FACTER_GH_USER}\:${FACTER_GH_PWD}\@
 export FACTER_CONSOLE_REPO="https://${FACTER_GITHUB_USER_INFO}github.com/dreamfactorysoftware/dfe-console.git"
 export FACTER_DASHBOARD_REPO="https://${FACTER_GITHUB_USER_INFO}github.com/dreamfactorysoftware/dfe-dashboard.git"
-export FACTER_INSTANCE_REPO="https://${FACTER_GITHUB_USER_INFO}github.com/dreamfactorysoftware/dreamfactory.git"
+export FACTER_INSTANCE_REPO="https://github.com/dreamfactorysoftware/dreamfactory.git"
 
 _info "Installing..."
 
