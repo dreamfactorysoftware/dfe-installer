@@ -57,9 +57,9 @@ file { "$doc_root_base_path/console/.env":
   ensure => present,
   source => "$doc_root_base_path/console/.env-dist",
 }->
-iniSettings{
-}
-->
+class { 'iniSettings':
+
+}->
 exec { 'generate-app-key':
   command     => "$artisan key:generate",
   user        => $user,
