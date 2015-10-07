@@ -43,10 +43,6 @@ vcsrepo { "$release_path/dashboard/$dashboard_branch":
   group    => $www_group,
   revision => $dashboard_version,
 }->
-file { "$doc_root_base_path/dashboard":
-  ensure => link,
-  target => "$release_path/dashboard/$dashboard_branch",
-}->
 file { "$doc_root_base_path/dashboard/.env":
   ensure => present,
   source => "$doc_root_base_path/dashboard/.env-dist",
