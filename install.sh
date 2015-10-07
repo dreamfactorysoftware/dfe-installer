@@ -68,7 +68,7 @@ _checkPuppetModules() {
 }
 
 ## Hard-coded defaults
-eexport FACTER_PHP_BIN=${PHP_BIN}
+export FACTER_PHP_BIN=${PHP_BIN}
 export FACTER_ARTISAN="${PHP_BIN} artisan"
 export FACTER_DEFAULT_LOCAL_MOUNT_NAME=mount-local-1
 export FACTER_FSTAB=/etc/fstab
