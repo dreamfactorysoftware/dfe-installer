@@ -58,7 +58,8 @@ exec { 'add_dashboard_keys':
   command  => "cat $doc_root_base_path/console/database/dfe/dashboard.env >> $doc_root_base_path/dashboard/.env",
   provider => 'shell',
   user     => $user
-}->
+}
+
 exec { 'dashboard-composer-update':
   command     => "$composer_bin update",
   user        => $user,
@@ -99,7 +100,7 @@ file { "$doc_root_base_path/dashboard/storage/logs/laravel.log":
   mode   => 0664
 }->
 ## Only make symlink if installed successfully
-file { '$doc_root_base_path/dashboard':
+file { "$doc_root_base_path/dashboard":
   ensure => link,
   target => "$release_path/dashboard/$dashboard_branch",
 }

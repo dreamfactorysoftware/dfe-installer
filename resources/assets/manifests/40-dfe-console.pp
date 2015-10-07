@@ -55,7 +55,7 @@ class { 'iniSettings':
 
 }
 
-exec { 'console-config':
+exec { 'console-composer-update':
   command     => "$composer_bin update",
   user        => $user,
   provider    => 'shell',
