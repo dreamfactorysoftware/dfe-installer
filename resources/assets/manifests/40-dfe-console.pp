@@ -29,6 +29,11 @@ $_settings = {
   }
 }
 
+class iniSettings {
+## Create .env file
+  create_ini_settings($_settings, $_env)
+}
+
 vcsrepo { "$release_path/console/$console_branch":
   ensure   => present,
   provider => git,
@@ -41,33 +46,20 @@ vcsrepo { "$release_path/console/$console_branch":
   ensure => link,
   target => "$release_path/console/$console_branch",
 }->
-file { ["/var/www/_releases/console/$console_branch/bootstrap",
-  "/var/www/_releases/console/$console_branch/bootstrap/cache",
-  "/var/www/_releases/console/$console_branch/storage",
-  "/var/www/_releases/console/$console_branch/storage/framework",
-  "/var/www/_releases/console/$console_branch/storage/framework/sessions",
-  "/var/www/_releases/console/$console_branch/storage/framework/views",
-  "/var/www/_releases/console/$console_branch/storage/logs",]:
-  ensure => present,
-  owner  => $www_user,
-  group  => $group,
-  mode   => 2775
-}->
-file { "$doc_root_base_path/console/.env":
-  ensure => present,
-  source => "$doc_root_base_path/console/.env-dist",
-}->
 exec { 'console-config':
   command     => "$composer_bin update",
   user        => $user,
   provider    => 'shell',
   cwd         => "$doc_root_base_path/console",
   environment => [ "HOME=/home/$user", ]
+}->
+file { "$doc_root_base_path/console/.env":
+  ensure => present,
+  source => "$doc_root_base_path/console/.env-dist",
+}->
+iniSettings{
 }
-
-## Create .env file
-create_ini_settings($_settings, $_env)
-
+->
 exec { 'generate-app-key':
   command     => "$artisan key:generate",
   user        => $user,
@@ -88,7 +80,8 @@ file { "$doc_root_base_path/.dfe.cluster.json":
   group  => $www_group,
   mode   => 0644,
   source => "$doc_root_base_path/console/database/dfe/.dfe.cluster.json"
-}->exec { 'add_console_keys':
+}->
+exec { 'add_console_keys':
   command  => "cat $doc_root_base_path/console/database/dfe/console.env >> $doc_root_base_path/console/.env",
   provider => 'shell',
   user     => $user
@@ -149,8 +142,19 @@ exec { 'clear_and_regenerate_cache':
   provider    => 'shell',
   cwd         => "$doc_root_base_path/console",
   environment => ["HOME=/home/$user"]
-}
-
+}->
+file { ["$release_path/console/$console_branch/bootstrap",
+  "$release_path/console/$console_branch/bootstrap/cache",
+  "$release_path/console/$console_branch/storage",
+  "$release_path/console/$console_branch/storage/framework",
+  "$release_path/console/$console_branch/storage/framework/sessions",
+  "$release_path/console/$console_branch/storage/framework/views",
+  "$release_path/console/$console_branch/storage/logs",]:
+  ensure => present,
+  owner  => $www_user,
+  group  => $group,
+  mode   => 2775
+}->
 file { "$doc_root_base_path/console/storage/logs/laravel.log":
   ensure => present,
   owner  => $www_user,
