@@ -53,8 +53,7 @@ file { "$doc_root_base_path/console/.env":
 }->
 class { 'iniSettings':
 
-}
-
+}->
 exec { 'console-composer-update':
   command     => "$composer_bin update",
   user        => $user,
