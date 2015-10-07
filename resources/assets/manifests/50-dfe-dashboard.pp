@@ -51,9 +51,13 @@ file { "$doc_root_base_path/dashboard/.env":
   ensure => present,
   source => "$doc_root_base_path/dashboard/.env-dist",
 }->
-
 class { 'iniSettings':
 
+}->
+exec { 'add_dashboard_keys':
+  command  => "cat $doc_root_base_path/console/database/dfe/dashboard.env >> $doc_root_base_path/dashboard/.env",
+  provider => 'shell',
+  user     => $user
 }->
 exec { 'dashboard-composer-update':
   command     => "$composer_bin update",
@@ -68,11 +72,6 @@ exec { 'generate-app-key':
   provider    => 'shell',
   cwd         => "$doc_root_base_path/dashboard",
   environment => ["HOME=/home/$user"]
-}->
-exec { 'add_dashboard_keys':
-  command  => "cat $doc_root_base_path/console/database/dfe/dashboard.env >> $doc_root_base_path/dashboard/.env",
-  provider => 'shell',
-  user     => $user
 }->
 exec { 'clear_and_regenerate_cache':
   command     => "$artisan clear-compiled; $artisan cache:clear; $artisan config:clear; $artisan optimize",

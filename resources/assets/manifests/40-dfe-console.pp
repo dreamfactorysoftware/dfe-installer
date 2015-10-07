@@ -68,17 +68,17 @@ exec { 'generate-app-key':
   cwd         => "$doc_root_base_path/console",
   environment => ["HOME=/home/$user"]
 }->
-exec { 'add_console_keys':
-  command  => "cat $doc_root_base_path/console/database/dfe/console.env >> $doc_root_base_path/console/.env",
-  provider => 'shell',
-  user     => $user
-}->
 exec { 'console-setup':
   command     => "$artisan dfe:setup --force --admin-password=\"${admin_pwd}\" ${admin_email}",
   user        => $user,
   provider    => 'shell',
   cwd         => "$doc_root_base_path/console",
   environment => ["HOME=/home/$user"]
+}->
+exec { 'add_console_keys':
+  command  => "cat $doc_root_base_path/console/database/dfe/console.env >> $doc_root_base_path/console/.env",
+  provider => 'shell',
+  user     => $user
 }->
 file { "$doc_root_base_path/.dfe.cluster.json":
   ensure => present,
