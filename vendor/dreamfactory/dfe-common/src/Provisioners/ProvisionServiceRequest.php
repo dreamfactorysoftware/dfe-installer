@@ -2,9 +2,9 @@
 
 use DreamFactory\Enterprise\Common\Contracts\PrivatePathAware;
 use DreamFactory\Enterprise\Common\Contracts\ResourceProvisioner;
-use DreamFactory\Enterprise\Common\Facades\InstanceStorage;
 use DreamFactory\Enterprise\Database\Models\Instance;
 use DreamFactory\Enterprise\Services\Facades\Provision;
+use DreamFactory\Enterprise\Storage\Facades\InstanceStorage;
 use League\Flysystem\Filesystem;
 
 class ProvisionServiceRequest extends BaseRequest
@@ -28,8 +28,7 @@ class ProvisionServiceRequest extends BaseRequest
             'storage'     => $storage,
             'deprovision' => !!$deprovision,
             'force'       => !!$force,
-        ],
-            $options);
+        ], $options);
 
         parent::__construct($_contents);
     }

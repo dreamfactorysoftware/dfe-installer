@@ -223,12 +223,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:dreamfactorysoftware/dfe-common.git",
-                "reference": "dec6d9582e659b98e2c16fd03cba97d5d1cfddda"
+                "reference": "736a0b560cb732d31b7fb3d9937b75ee98bec129"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dreamfactorysoftware/dfe-common/zipball/dec6d9582e659b98e2c16fd03cba97d5d1cfddda",
-                "reference": "dec6d9582e659b98e2c16fd03cba97d5d1cfddda",
+                "url": "https://api.github.com/repos/dreamfactorysoftware/dfe-common/zipball/736a0b560cb732d31b7fb3d9937b75ee98bec129",
+                "reference": "736a0b560cb732d31b7fb3d9937b75ee98bec129",
                 "shasum": ""
             },
             "require": {
@@ -285,7 +285,7 @@
                 "source": "https://github.com/dreamfactorysoftware/dfe-common/tree/develop",
                 "issues": "https://github.com/dreamfactorysoftware/dfe-common/issues"
             },
-            "time": "2015-10-07 18:10:55"
+            "time": "2015-10-07 18:58:31"
         },
         {
             "name": "dreamfactory/php-utils",
@@ -3261,12 +3261,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "bdd199472410fd7e32751f9c814c7e06f2c21bd5"
+                "reference": "a94caf98b280a6c74b62651605db394f30185143"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/bdd199472410fd7e32751f9c814c7e06f2c21bd5",
-                "reference": "bdd199472410fd7e32751f9c814c7e06f2c21bd5",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a94caf98b280a6c74b62651605db394f30185143",
+                "reference": "a94caf98b280a6c74b62651605db394f30185143",
                 "shasum": ""
             },
             "require": {
@@ -3325,7 +3325,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-10-07 10:39:46"
+            "time": "2015-10-07 21:18:03"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
