@@ -37,6 +37,9 @@ vcsrepo { "$release_path/console/$console_branch":
   owner    => $user,
   group    => $www_group,
   revision => $console_version
+}->file { "$doc_root_base_path/console":
+  ensure => link,
+  target => "$release_path/console/$console_branch",
 }->
 file { ["/var/www/_releases/console/$console_branch/bootstrap",
   "/var/www/_releases/console/$console_branch/bootstrap/cache",
@@ -147,14 +150,11 @@ exec { 'clear_and_regenerate_cache':
   provider    => 'shell',
   cwd         => "$doc_root_base_path/console",
   environment => ["HOME=/home/$user"]
-}->
+}
+
 file { "$doc_root_base_path/console/storage/logs/laravel.log":
   ensure => present,
   owner  => $www_user,
   group  => $storage_group,
   mode   => 0664
-}->
-file { "$doc_root_base_path/console":
-  ensure => link,
-  target => "$release_path/console/$console_branch",
 }
