@@ -1,4 +1,9 @@
-# Setup the user and the ssh keys
+################################################################################
+# DreamFactory Enterprise(tm) Installer Manifest
+# (c) 2012-∞ by DreamFactory Software, Inc. All Rights Reserved.
+#
+# users, groups, sudo
+################################################################################
 
 group { $group:
   ensure => present
