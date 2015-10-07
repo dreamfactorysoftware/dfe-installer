@@ -92,8 +92,7 @@ file { "$doc_root_base_path/.dfe.cluster.json":
   command  => "cat $doc_root_base_path/console/database/dfe/console.env >> $doc_root_base_path/console/.env",
   provider => 'shell',
   user     => $user
-}
-
+}->
 exec { 'add_web_server':
   command     => "$artisan dfe:server create web-${vendor_id} -t web -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c {}",
   user        => $user,
