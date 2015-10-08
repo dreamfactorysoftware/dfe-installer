@@ -49,7 +49,7 @@ package { $_removePackages:
   ensure => absent
 }->
 exec { 'enable-mcrypt-settings':
-  command  => "$php5enmod_bin mcrypt",
+  command  => "$php_enmod_bin mcrypt",
   provider => posix
 }->
 group { $www_group:
