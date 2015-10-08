@@ -24,7 +24,7 @@
   "repositories":      [
     {
       "type": "vcs",
-      "url":  "git@github.com:dreamfactorysoftware/dfe-common.git"
+      "url":  "https://github.com/dreamfactorysoftware/dfe-common.git"
     }
   ],
   "require":           {
