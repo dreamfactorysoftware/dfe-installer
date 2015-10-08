@@ -9,6 +9,7 @@
 
 $cert_file = "star-${vendor_id}-${ssl_cert_stub}.pem"
 $key_file = "star-${vendor_id}-${ssl_cert_stub}.key"
+
 $cert_name = "$pwd/SSL/$cert_file"
 $key_name = "$pwd/SSL/$key_file"
 

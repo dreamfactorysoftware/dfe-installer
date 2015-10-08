@@ -15,9 +15,9 @@ file { [
   $mount_point,
   $doc_root_base_path,
   $release_path,
-  "$release_path/console",
-  "$release_path/dashboard",
-  "$release_path/dreamfactory",
+  $console_release,
+  $dashboard_release,
+  $instance_release,
 ]:
   ensure => directory,
   owner  => $user,
@@ -33,7 +33,8 @@ file { [
   "$log_path/console",
   "$log_path/dashboard",
   "$log_path/hosted",
-  "$mount_point/trash",]:
+  "$mount_point/trash",
+]:
   ensure  => directory,
   owner   => $storage_user,
   group   => $group,
@@ -42,6 +43,9 @@ file { [
 
 ## And our indicator files
 
-file { [ "$doc_root_base_path/.dfe-managed", "$doc_root_base_path/.maintenace-mode.off"]:
+file { [
+  "$doc_root_base_path/.dfe-managed",
+  "$doc_root_base_path/.maintenace-mode.off",
+]:
   ensure => present,
 }

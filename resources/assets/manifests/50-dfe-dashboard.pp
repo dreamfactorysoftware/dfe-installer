@@ -5,7 +5,7 @@
 # Install dreamfactory/dfe-dashboard
 ################################################################################
 
-$_env = { 'path' => "$dashboard_path/.env", }
+$_env = { 'path' => "$dashboard_root/.env", }
 $_appUrl = "http://dashboard.${vendor_id}.${domain}"
 $_settings = {
   '' =>
@@ -39,7 +39,7 @@ class iniSettings {
   create_ini_settings($_settings, $_env)
 }
 
-vcsrepo { "$release_path/dashboard/$dashboard_branch":
+vcsrepo { "$dashboard_release/$dashboard_branch":
   ensure   => present,
   provider => git,
   source   => $dashboard_repo,
@@ -48,19 +48,19 @@ vcsrepo { "$release_path/dashboard/$dashboard_branch":
   group    => $www_group,
   revision => $dashboard_version,
 }->
-file { $dashboard_path:
+file { $dashboard_root:
   ensure => link,
-  target => "$release_path/dashboard/$dashboard_branch",
+  target => "$dashboard_release/$dashboard_branch",
 }->
-file { "$dashboard_path/.env":
+file { "$dashboard_root/.env":
   ensure => present,
-  source => "$dashboard_path/.env-dist",
+  source => "$dashboard_root/.env-dist",
 }->
 class { 'iniSettings':
   ## Applies INI settings in $_settings to .env
 }->
 exec { 'add_dashboard_keys':
-  command  => "cat $console_path/database/dfe/dashboard.env >> $dashboard_path/.env",
+  command  => "cat $console_root/database/dfe/dashboard.env >> $dashboard_root/.env",
   provider => 'shell',
   user     => $user
 }->
@@ -68,39 +68,39 @@ exec { 'dashboard-composer-update':
   command     => "$composer_bin update",
   user        => $user,
   provider    => 'shell',
-  cwd         => $dashboard_path,
+  cwd         => $dashboard_root,
   environment => [ "HOME=/home/$user", ]
 }->
 exec { 'generate-app-key':
   command     => "$artisan key:generate",
   user        => $user,
   provider    => 'shell',
-  cwd         => $dashboard_path,
+  cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { 'clear-cache-and-optimize':
   command     => "$artisan clear-compiled ; $artisan cache:clear ; $artisan config:clear ; $artisan route:clear ; $artisan optimize",
   user        => $user,
   provider    => 'shell',
-  cwd         => $dashboard_path,
+  cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
 }
 
 file { [
-  "$dashboard_path/bootstrap",
-  "$dashboard_path/bootstrap/cache",
-  "$dashboard_path/storage",
-  "$dashboard_path/storage/framework",
-  "$dashboard_path/storage/framework/sessions",
-  "$dashboard_path/storage/framework/views",
-  "$dashboard_path/storage/logs",
+  "$dashboard_root/bootstrap",
+  "$dashboard_root/bootstrap/cache",
+  "$dashboard_root/storage",
+  "$dashboard_root/storage/framework",
+  "$dashboard_root/storage/framework/sessions",
+  "$dashboard_root/storage/framework/views",
+  "$dashboard_root/storage/logs",
 ]:
   ensure => directory,
   owner  => $www_user,
   group  => $group,
   mode   => 2775
 }->
-file { "$dashboard_path/storage/logs/laravel.log":
+file { "$dashboard_root/storage/logs/laravel.log":
   ensure => present,
   owner  => $www_user,
   group  => $group,
