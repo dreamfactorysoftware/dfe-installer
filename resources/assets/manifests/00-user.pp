@@ -67,7 +67,7 @@ file { [
   "/home/$user/.ssh/known_hosts",
   "/home/$user/.ssh/authorized_keys",
 ]:
-  ensure => present,
+  ensure => file,
   owner  => $user,
   group  => $group,
   mode   => 0600,
