@@ -30,7 +30,7 @@ $_settings = {
     'MAIL_USERNAME'        => $mail_username,
     'MAIL_PASSWORD'        => $mail_password,
     'DFE_HOSTED_BASE_PATH' => $storage_path,
-    'DFE_CONSOLE_API_URL'  => "$_appUrl/api/v1/ops",
+    'DFE_CONSOLE_API_URL'  => "http://console.${vendor_id}.${domain}/api/v1/ops",
   }
 }
 
