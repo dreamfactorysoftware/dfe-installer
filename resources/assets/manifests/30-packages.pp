@@ -5,7 +5,7 @@
 # Installs all required packages
 ################################################################################
 
-$_requiredPackages = [
+$_basePackages = [
   'nginx-extras',
   'php5',
   'php5-fpm',
@@ -37,7 +37,9 @@ $_removePackages = [
 
 ## If SMTP is local, then install postfix
 if ($smtp_host == "localhost") or ($smtp_host == "127.0.0.1") or ($smtp_host == "127.0.1.1") {
-  $_requiredPackages = union($_requiredPackages, [$preferred_mail_package])
+  $_requiredPackages = union($_basePackages, [$preferred_mail_package])
+} else {
+  $_requiredPackages = $_basePackages
 }
 
 ## Install/remove required packages
