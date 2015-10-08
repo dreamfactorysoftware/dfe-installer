@@ -50,12 +50,6 @@ host { "localhost":
 
 ## Create and seed /home/$user
 
-file { "/home/$user/.composer":
-  ensure => directory,
-  owner  => $user,
-  group  => $group,
-  mode   => 2775,
-}->
 file { "/home/$user/.gitconfig":
   ensure => present,
   owner  => $user,
@@ -63,10 +57,7 @@ file { "/home/$user/.gitconfig":
   mode   => 0664,
   source => "$pwd/resources/assets/git/gitconfig",
 }->
-file { [
-  "/home/$user/.ssh/known_hosts",
-  "/home/$user/.ssh/authorized_keys",
-]:
+file { "/home/$user/.ssh/authorized_keys":
   ensure => file,
   owner  => $user,
   group  => $group,
@@ -76,6 +67,13 @@ exec { 'add-github-to-known-hosts':
   command  => "/usr/bin/ssh-keyscan -H github.com >> /home/$user/.ssh/known_hosts",
   provider => 'shell',
   user     => $user,
+}
+
+file { "/home/$user/.composer":
+  ensure => directory,
+  owner  => $user,
+  group  => $group,
+  mode   => 2775,
 }->
 file { "/home/$user/.composer/auth.json":
   ensure => present,
