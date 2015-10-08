@@ -51,11 +51,8 @@ apt::source { "percona.trusty":
     "deb" => true
   },
   notify   => Exec["apt-update"]
-}
-
-
-## Create the database "dfe_local"
-
+}->
+  ## Create the database "dfe_local"
 mysql::db { $db_name:
   ensure   => present,
   charset  => "utf8",
@@ -63,10 +60,8 @@ mysql::db { $db_name:
   user     => $db_user,
   password => $db_pwd,
   sql      => "$pwd/resources/assets/sql/dfe_local.schema.sql"
-}
-
-## Grant access to the DFE app user
-
+}->
+  ## Grant access to the DFE app user
 mysql_grant { "${db_user}@${db_host}/*.*":
   ensure     => present,
   options    => ["GRANT"],
@@ -74,10 +69,8 @@ mysql_grant { "${db_user}@${db_host}/*.*":
   table      => "*.*",
   user       => "${db_user}@${db_host}",
   require    => Mysql::Db[$db_name]
-}
-
-## Add dfadmin to the mysql group
-
+}->
+  ## Add dfadmin to the mysql group
 group { "mysql":
   ensure  => present,
   members => [$user]
