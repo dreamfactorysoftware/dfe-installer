@@ -46,13 +46,6 @@ file { "$instance_root/.env":
 class { 'iniSettings':
   ## Applies INI settings in $_settings to .env
 }->
-exec { 'launchpad-composer-update':
-  command     => "$composer_bin update",
-  user        => $user,
-  provider    => 'shell',
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"]
-}->
   ## Make sure the directories are created with the right perms
 file { [
   "$instance_release/$instance_branch/bootstrap/cache",
@@ -66,4 +59,11 @@ file { [
   owner  => $user,
   group  => $www_group,
   mode   => 2775,
+}->
+exec { 'launchpad-composer-update':
+  command     => "$composer_bin update",
+  user        => $user,
+  provider    => 'shell',
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"]
 }

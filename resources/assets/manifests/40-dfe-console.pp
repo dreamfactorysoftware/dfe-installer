@@ -29,7 +29,7 @@ $_settings = {
     'MAIL_USERNAME'        => $mail_username,
     'MAIL_PASSWORD'        => $mail_password,
     'DFE_HOSTED_BASE_PATH' => $storage_path,
-    'DFE_CONSOLE_API_URL'  => "$_appUrl/api/v1/ops",
+    'DFE_CONSOLE_API_URL'  => "http://console.${vendor_id}.${domain}/api/v1/ops",
   }
 }
 
@@ -57,6 +57,20 @@ file { "$console_root/.env":
 }->
 class { 'iniSettings':
   ## Applies INI settings in $_settings to .env
+}->
+file { [
+  "$console_root/bootstrap",
+  "$console_root/bootstrap/cache",
+  "$console_root/storage",
+  "$console_root/storage/framework",
+  "$console_root/storage/framework/sessions",
+  "$console_root/storage/framework/views",
+  "$console_root/storage/logs",
+]:
+  ensure => directory,
+  owner  => $www_user,
+  group  => $group,
+  mode   => 2775
 }->
 exec { 'console-composer-update':
   command     => "$composer_bin update",
@@ -138,28 +152,13 @@ exec { 'add_db_to_cluster':
   provider    => 'shell',
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
-}
-
+}->
 exec { 'clear-cache-and-optimize':
   command     => "$artisan clear-compiled; $artisan cache:clear; $artisan config:clear; $artisan optimize",
   user        => $user,
   provider    => 'shell',
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
-}->
-file { [
-  "$console_root/bootstrap",
-  "$console_root/bootstrap/cache",
-  "$console_root/storage",
-  "$console_root/storage/framework",
-  "$console_root/storage/framework/sessions",
-  "$console_root/storage/framework/views",
-  "$console_root/storage/logs",
-]:
-  ensure => directory,
-  owner  => $www_user,
-  group  => $group,
-  mode   => 2775
 }->
 file { "$console_root/storage/logs/laravel.log":
   ensure => present,

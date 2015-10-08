@@ -30,7 +30,7 @@ $_settings = {
     'MAIL_USERNAME'        => $mail_username,
     'MAIL_PASSWORD'        => $mail_password,
     'DFE_HOSTED_BASE_PATH' => $storage_path,
-    'DFE_CONSOLE_API_URL'  => "$_appUrl/api/v1/ops",
+    'DFE_CONSOLE_API_URL'  => "http://console.${vendor_id}.${domain}/api/v1/ops",
   }
 }
 
@@ -64,6 +64,20 @@ exec { 'add_dashboard_keys':
   provider => 'shell',
   user     => $user
 }->
+file { [
+  "$dashboard_root/bootstrap",
+  "$dashboard_root/bootstrap/cache",
+  "$dashboard_root/storage",
+  "$dashboard_root/storage/framework",
+  "$dashboard_root/storage/framework/sessions",
+  "$dashboard_root/storage/framework/views",
+  "$dashboard_root/storage/logs",
+]:
+  ensure => directory,
+  owner  => $www_user,
+  group  => $group,
+  mode   => 2775
+}->
 exec { 'dashboard-composer-update':
   command     => "$composer_bin update",
   user        => $user,
@@ -84,21 +98,6 @@ exec { 'clear-cache-and-optimize':
   provider    => 'shell',
   cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
-}
-
-file { [
-  "$dashboard_root/bootstrap",
-  "$dashboard_root/bootstrap/cache",
-  "$dashboard_root/storage",
-  "$dashboard_root/storage/framework",
-  "$dashboard_root/storage/framework/sessions",
-  "$dashboard_root/storage/framework/views",
-  "$dashboard_root/storage/logs",
-]:
-  ensure => directory,
-  owner  => $www_user,
-  group  => $group,
-  mode   => 2775
 }->
 file { "$dashboard_root/storage/logs/laravel.log":
   ensure => present,

@@ -30,7 +30,8 @@ service { "nginx":
 service { "php5-fpm":
   ensure  => running,
   enable  => true
-}->
+}
+
 service { "apache2":
   ensure => stopped,
   enable => false
@@ -39,12 +40,16 @@ service { "apache2":
 ## Make the configs
 
 file { "$nginx_path/dsp-locations.conf":
-  ensure => link,
-  target => "$server_config_path/nginx/etc/nginx/dsp-locations.conf",
+  ensure => present,
+  source => "$server_config_path/nginx/etc/nginx/dsp-locations.conf",
 }->
 file { "$nginx_path/conf.d/dreamfactory.http.conf":
-  ensure => link,
-  target => "$server_config_path/nginx/etc/nginx/conf.d/dreamfactory.http.conf"
+  ensure => present,
+  source => "$server_config_path/nginx/etc/nginx/conf.d/dreamfactory.http.conf"
+}->
+file { "$nginx_path/conf.d/dreamfactory.php-fpm.conf":
+  ensure => present,
+  source => "$server_config_path/nginx/etc/nginx/conf.d/dreamfactory.php-fpm.conf"
 }->
 file { "$nginx_path/conf.d/ssl":
   ensure => directory,
@@ -53,32 +58,28 @@ file { "$nginx_path/conf.d/ssl/dreamfactory.ssl.conf":
   ensure => present,
   source => "$server_config_path/nginx/etc/nginx/conf.d/ssl/dreamfactory.ssl.conf-dist"
 }->
-file_line { "add_ssl_cert_key":
-  path     => "$nginx_path/conf.d/ssl/dreamfactory.ssl.conf",
-  line     => "ssl_certificate_key                $nginx_path/conf.d/ssl/$key_file;",
-  multiple => false,
-  match    => ".*\/path\/to\/your\/signed\/certificate\/file.*"
-}->
-file_line { "add_ssl_cert":
-  path     => "$nginx_path/conf.d/ssl/dreamfactory.ssl.conf",
-  line     => "ssl_certificate                $nginx_path/conf.d/ssl/$cert_file;",
-  multiple => false,
-  match    => ".*\/path\/to\/your\/signed\/certificate\/key.*"
-}->
-file { "$nginx_path/conf.d/ssl/$cert_file":
-  ensure => present,
-  mode   => 0440,
-  source => $cert_name
-}->
-file { "$nginx_path/conf.d/ssl/$key_file":
-  ensure => present,
-  mode   => 0440,
-  source => $key_name
-}->
-file { "$nginx_path/conf.d/dreamfactory.php-fpm.conf":
-  ensure => link,
-  target => "$server_config_path/nginx/etc/nginx/conf.d/dreamfactory.php-fpm.conf"
-}->
+  #file_line { "add_ssl_cert_key":
+  #  path     => "$nginx_path/conf.d/ssl/dreamfactory.ssl.conf",
+  #  line     => "ssl_certificate_key                $nginx_path/conf.d/ssl/$key_file;",
+  #  multiple => false,
+  #  match    => ".*/path/to/your/signed/certificate/file.*"
+  #}->
+  #file_line { "add_ssl_cert":
+  #  path     => "$nginx_path/conf.d/ssl/dreamfactory.ssl.conf",
+  #  line     => "ssl_certificate                $nginx_path/conf.d/ssl/$cert_file;",
+  #  multiple => false,
+  #  match    => ".*/path/to/your/signed/certificate/key.*"
+  #}->
+  #file { "$nginx_path/conf.d/ssl/$cert_file":
+  #  ensure => present,
+  #  mode   => 0440,
+  #  source => $cert_name
+  #}->
+  #file { "$nginx_path/conf.d/ssl/$key_file":
+  #  ensure => present,
+  #  mode   => 0440,
+  #  source => $key_name
+  #}->
 file { "$nginx_path/nginx.conf":
   ensure => link,
   target => "$server_config_path/nginx/etc/nginx/nginx.conf",
@@ -101,14 +102,10 @@ exec { "enable-dreamfactory-module":
   command  => "$php_enmod_bin dreamfactory",
   provider => posix,
   notify   => Service["php5-fpm"]
-}
-
-##------------------------------------------------------------------------------
-## Create the nginx site config files and link them to sites-available
-##------------------------------------------------------------------------------
-
-## Console
-
+}->
+  ##------------------------------------------------------------------------------
+  ## Create the nginx site config files and link them to sites-available
+  ##------------------------------------------------------------------------------
 file { "$nginx_path/sites-available/console.conf":
   ensure  => present,
   content => "server {
@@ -130,10 +127,8 @@ file { "$nginx_path/sites-available/console.conf":
 file { "$nginx_path/sites-enabled/console.conf":
   ensure => link,
   target => "$nginx_path/sites-available/console.conf"
-}
-
-## Dashboard
-
+}->
+  ## Dashboard
 file { "$nginx_path/sites-available/dashboard.conf":
   ensure  => present,
   content => "server {
@@ -155,10 +150,8 @@ file { "$nginx_path/sites-available/dashboard.conf":
 file { "$nginx_path/sites-enabled/dashboard.conf":
   ensure => link,
   target => "$nginx_path/sites-available/dashboard.conf"
-}
-
-## Instances
-
+}->
+  ## Instances
 file { "$nginx_path/sites-available/instance.conf":
   ensure  => present,
   content => "server {
