@@ -391,7 +391,7 @@ CREATE TABLE `server_t` (
   `server_type_id` INT(11)       NOT NULL,
   `server_id_text` VARCHAR(64)   NOT NULL,
   `host_text`      VARCHAR(1024) NOT NULL,
-  `mount_id`       INT(11)       DEFAULT NULL,
+  `mount_id`       INT(11)                DEFAULT NULL,
   `config_text`    MEDIUMTEXT,
   `create_date`    DATETIME      NOT NULL,
   `lmod_date`      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -974,9 +974,8 @@ VALUES (1, NULL, 'Development', NOW(), NOW()), (2, NULL, 'Production', NOW(), NO
 * The default local mount
 ********************************************************************************/
 
-# This is now done via command line
-# INSERT INTO `mount_t` (`mount_type_nbr`, `mount_id_text`, `root_path_text`, `owner_id`, `owner_type_nbr`, `config_text`, `create_date`)
-# VALUES (0, 'mount-local-1', '/data/storage/', NULL, NULL, '{"disk":"local"}', NOW());
+INSERT INTO `mount_t` (`mount_type_nbr`, `mount_id_text`, `root_path_text`, `owner_id`, `owner_type_nbr`, `config_text`, `create_date`)
+VALUES (0, 'mount-local-1', '/data/storage/', NULL, NULL, '{"disk":"local"}', NOW());
 
 /********************************************************************************
 * The types of servers allowed in clusters
