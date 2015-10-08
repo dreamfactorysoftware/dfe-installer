@@ -116,8 +116,6 @@ export FACTER_INSTANCE_BRANCH=develop
 ## Blanks filled in by .env-install
 export FACTER_ADMIN_EMAIL FACTER_ADMIN_PWD
 export FACTER_MOUNT_POINT FACTER_DOMAIN FACTER_GH_USER FACTER_GH_PWD
-export FACTER_SMTP_HOST FACTER_SMTP_PORT FACTER_MAIL_FROM_ADDRESS FACTER_MAIL_FROM_NAME
-export FACTER_MAIL_USERNAME FACTER_MAIL_PASSWORD
 
 ## Header
 sectionHeader " ${B1}DreamFactory Enterprise(tm)${B2} ${SYSTEM_TYPE} Installer v${VERSION}"
@@ -144,6 +142,14 @@ export FACTER_GITHUB_USER_INFO=${FACTER_GH_USER}\:${FACTER_GH_PWD}\@
 export FACTER_CONSOLE_REPO="https://${FACTER_GITHUB_USER_INFO}github.com/dreamfactorysoftware/dfe-console.git"
 export FACTER_DASHBOARD_REPO="https://${FACTER_GITHUB_USER_INFO}github.com/dreamfactorysoftware/dfe-dashboard.git"
 export FACTER_INSTANCE_REPO="https://github.com/dreamfactorysoftware/dreamfactory.git"
+
+## Mail
+export FACTER_SMTP_HOST=localhost
+export FACTER_SMTP_PORT=25
+export FACTER_MAIL_FROM_ADDRESS="no.reply@${FACTER_DOMAIN}"
+export FACTER_MAIL_FROM_NAME=${FACTER_DOMAIN}
+export FACTER_MAIL_USERNAME=
+export FACTER_MAIL_PASSWORD=
 
 _info "Installing now..."
 
