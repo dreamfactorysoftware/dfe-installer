@@ -24,11 +24,11 @@ include stdlib
 ## We"re using nginx/php5-fpm and not apache
 
 service { "nginx":
-  ensure  => running,
+  ensure  => 'running',
   enable  => true
 }->
 service { "php5-fpm":
-  ensure  => running,
+  ensure  => 'running',
   enable  => true
 }
 
@@ -108,6 +108,7 @@ exec { "enable-dreamfactory-module":
   ##------------------------------------------------------------------------------
 file { "$nginx_path/sites-available/console.conf":
   ensure  => present,
+  notify  => Service['nginx'],
   content => "server {
     listen 80;
 #    listen 443 ssl;
@@ -131,6 +132,7 @@ file { "$nginx_path/sites-enabled/console.conf":
   ## Dashboard
 file { "$nginx_path/sites-available/dashboard.conf":
   ensure  => present,
+  notify  => Service['nginx'],
   content => "server {
     listen 80;
 #    listen 443 ssl;
@@ -154,6 +156,7 @@ file { "$nginx_path/sites-enabled/dashboard.conf":
   ## Instances
 file { "$nginx_path/sites-available/instance.conf":
   ensure  => present,
+  notify  => Service['nginx'],
   content => "server {
     listen 80 default_server;
 #   listen 443 ssl;
@@ -172,5 +175,5 @@ file { "$nginx_path/sites-available/instance.conf":
 }->
 file { "$nginx_path/sites-enabled/instance.conf":
   ensure => link,
-  target => "$nginx_path/sites-available/instance.conf"
+  target => "$nginx_path/sites-available/instance.conf",
 }
