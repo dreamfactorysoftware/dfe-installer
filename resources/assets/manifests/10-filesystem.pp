@@ -36,7 +36,7 @@ file { [
   "$mount_point/trash",
 ]:
   ensure  => directory,
-  owner   => $storage_user,
+  owner   => $www_user,
   group   => $group,
   mode    => 2775,
 }
