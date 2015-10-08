@@ -68,7 +68,7 @@ group { $group:
 ## Install Composer
 
 exec { 'Install Composer':
-  command => "`which curl` -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
+  command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
   creates => $composer_bin,
   require => Package['curl']
 }
