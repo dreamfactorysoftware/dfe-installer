@@ -52,10 +52,8 @@ exec { 'launchpad-composer-update':
   provider    => 'shell',
   cwd         => $instance_root,
   environment => ["HOME=/home/$user"]
-}
-
-## Make sure the directories are created with the right perms
-
+}->
+  ## Make sure the directories are created with the right perms
 file { [
   "$instance_release/$instance_branch/bootstrap/cache",
   "$instance_release/$instance_branch/storage",

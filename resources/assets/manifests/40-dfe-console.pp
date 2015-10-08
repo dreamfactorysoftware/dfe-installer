@@ -77,7 +77,7 @@ exec { 'console-setup':
   user        => $user,
   provider    => 'shell',
   cwd         => $console_root,
-  environment => ["HOME = /home/$user"]
+  environment => ["HOME=/home/$user"]
 }->
 exec { 'add_console_keys':
   command  => "cat $console_root/database/dfe/console.env >> $console_root/.env",
@@ -102,42 +102,42 @@ exec { 'add_app_server':
   user        => $user,
   provider    => 'shell',
   cwd         => $console_root,
-  environment => ["HOME =/home/$user"]
+  environment => ["HOME=/home/$user"]
 }->
 exec { 'add_db_server':
   command     => "$artisan dfe:server create db-${vendor_id} -t db -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c '{\"port\":\"3306\",\"username\":\"${db_user}\",\"password\":\"${db_password}\",\"driver\":\"mysql\",\"default-database-name\":\"\",\"multi-assign\":\"on\"}'",
   user        => $user,
   provider    => 'shell',
   cwd         => $console_root,
-  environment => ["HOME = /home/$user"]
+  environment => ["HOME=/home/$user"]
 }->
 exec { 'add_cluster':
   command     => "$artisan dfe:cluster create cluster-${vendor_id} --subdomain ${vendor_id}.${domain}",
   user        => $user,
   provider    => 'shell',
   cwd         => $console_root,
-  environment => ["HOME = /home/$user"]
+  environment => ["HOME=/home/$user"]
 }->
 exec { 'add_web_to_cluster':
   command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id web-${vendor_id}",
   user        => $user,
   provider    => 'shell',
   cwd         => $console_root,
-  environment => ["HOME = /home/$user"]
+  environment => ["HOME=/home/$user"]
 }->
 exec { 'add_app_to_cluster':
   command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id app-${vendor_id}",
   user        => $user,
   provider    => 'shell',
   cwd         => $console_root,
-  environment => ["HOME = /home/$user"]
+  environment => ["HOME=/home/$user"]
 }->
 exec { 'add_db_to_cluster':
   command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id db-${vendor_id}",
   user        => $user,
   provider    => 'shell',
   cwd         => $console_root,
-  environment => ["HOME = /home/$user"]
+  environment => ["HOME=/home/$user"]
 }
 
 exec { 'clear-cache-and-optimize':
