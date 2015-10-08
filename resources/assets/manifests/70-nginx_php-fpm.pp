@@ -97,12 +97,6 @@ file_line { "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini":
   match  => ".*display_errors.*",
   notify => Service["php5-fpm"]
 }->
-file_line { "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini":
-  path   => "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini",
-  line   => "fix_pathinfo = 0",
-  match  => ".*fix_pathinfo.*",
-  notify => Service["cgi"]
-}->
 exec { "enable-dreamfactory-module":
   command  => "$php_enmod_bin dreamfactory",
   provider => posix,
