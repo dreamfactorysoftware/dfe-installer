@@ -70,7 +70,7 @@ _checkPuppetModules() {
 
 ## Defaults and executable locations
 export FACTER_APP_DEBUG=true
-export FACTER_PREFERRED_MAIL_PACKAGE=postfix
+export FACTER_PREFERRED_MAIL_PACKAGE=exim4
 export FACTER_PHP_BIN=${PHP_BIN}
 export FACTER_PHP_ENMOD_BIN=${PHP_ENMOD_BIN}
 export FACTER_ARTISAN="${PHP_BIN} artisan"
