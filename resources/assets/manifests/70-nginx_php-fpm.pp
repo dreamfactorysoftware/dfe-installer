@@ -16,8 +16,8 @@ $key_name = "$pwd/SSL/$key_file"
 ## Hostnames
 
 $instance_hostname = "*.${vendor_id}.${domain}"
-$console_hostname = "console.${vendor_id}.${domain} console.local"
-$dashboard_hostname = "dashboard.${vendor_id}.${domain} dashboard.local"
+$console_hostname = "console.${vendor_id}.${domain}"
+$dashboard_hostname = "dashboard.${vendor_id}.${domain}"
 
 include stdlib
 
@@ -39,53 +39,30 @@ service { "apache2":
 
 ## Make the configs
 
-file { "$nginx_path/dsp-locations.conf":
+file { "$nginx_path/dfe-locations.conf":
   ensure => present,
-  source => "$server_config_path/nginx/etc/nginx/dsp-locations.conf",
+  source => "$pwd/resources/assets/etc/nginx/dfe-locations.conf",
 }->
-file { "$nginx_path/conf.d/dreamfactory.http.conf":
+file { "$nginx_path/conf.d/dfe.conf":
   ensure => present,
-  source => "$server_config_path/nginx/etc/nginx/conf.d/dreamfactory.http.conf"
-}->
-file { "$nginx_path/conf.d/dreamfactory.php-fpm.conf":
-  ensure => present,
-  source => "$server_config_path/nginx/etc/nginx/conf.d/dreamfactory.php-fpm.conf"
+  source => "$pwd/resources/assets/etc/nginx/conf.d/dfe.conf"
 }->
 file { "$nginx_path/conf.d/ssl":
   ensure => directory,
 }->
-file { "$nginx_path/conf.d/ssl/dreamfactory.ssl.conf":
+file { "$nginx_path/conf.d/ssl/dfe-instance.conf":
   ensure => present,
-  source => "$server_config_path/nginx/etc/nginx/conf.d/ssl/dreamfactory.ssl.conf-dist"
+  source => "$pwd/resources/assets/etc/nginx/conf.d/ssl/dfe-instance.conf"
 }->
-  #file_line { "add_ssl_cert_key":
-  #  path     => "$nginx_path/conf.d/ssl/dreamfactory.ssl.conf",
-  #  line     => "ssl_certificate_key                $nginx_path/conf.d/ssl/$key_file;",
-  #  multiple => false,
-  #  match    => ".*/path/to/your/signed/certificate/file.*"
-  #}->
-  #file_line { "add_ssl_cert":
-  #  path     => "$nginx_path/conf.d/ssl/dreamfactory.ssl.conf",
-  #  line     => "ssl_certificate                $nginx_path/conf.d/ssl/$cert_file;",
-  #  multiple => false,
-  #  match    => ".*/path/to/your/signed/certificate/key.*"
-  #}->
-  #file { "$nginx_path/conf.d/ssl/$cert_file":
-  #  ensure => present,
-  #  mode   => 0440,
-  #  source => $cert_name
-  #}->
-  #file { "$nginx_path/conf.d/ssl/$key_file":
-  #  ensure => present,
-  #  mode   => 0440,
-  #  source => $key_name
-  #}->
 file { "$nginx_path/nginx.conf":
   ensure => link,
-  target => "$server_config_path/nginx/etc/nginx/nginx.conf",
+  target => "$pwd/resources/assets/etc/nginx/nginx.conf",
   notify => Service["nginx"]
 }->
 file { "$nginx_path/sites-enabled/default":
+  ensure => absent
+}->
+file { "$nginx_path/sites-available/default":
   ensure => absent
 }->
 file { "/etc/php5/mods-available/dreamfactory.ini":
@@ -106,74 +83,162 @@ exec { "enable-dreamfactory-module":
   ##------------------------------------------------------------------------------
   ## Create the nginx site config files and link them to sites-available
   ##------------------------------------------------------------------------------
-file { "$nginx_path/sites-available/console.conf":
+file { "$nginx_path/sites-available/10-dfe-console.conf":
   ensure  => present,
   notify  => Service['nginx'],
-  content => "server {
+  content => "##**************************************************************************
+##	This file was distributed with DreamFactory Enterprise(tm) Installer
+##	Copyright 2015-2115 DreamFactory Software, Inc. All Rights Reserved.
+##
+##	Licensed under the Apache License, Version 2.0 (the \"License\");
+##	you may not use this file except in compliance with the License.
+##	You may obtain a copy of the License at
+##
+##	http://www.apache.org/licenses/LICENSE-2.0
+##
+##	Unless required by applicable law or agreed to in writing, software
+##	distributed under the License is distributed on an \"AS IS\" BASIS,
+##	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+##	See the License for the specific language governing permissions and
+##	limitations under the License.
+##**************************************************************************
+
+##**************************************************************************
+## Configures a single server for HTTP and HTTPS
+##**************************************************************************
+
+server {
     listen 80;
 #    listen 443 ssl;
 
-    server_name $console_hostname;
+    server_name $console_hostname console.local;
 
     root $console_root/public;
 
     error_log $log_path/console/error.log;
     access_log $log_path/console/access.log combined;
 
-#    include conf.d/ssl/dreamfactory.ssl.conf;
+#    include conf.d/ssl/dfe-instance.conf;
 
-    include dsp-locations.conf;
+    include dfe-locations.conf;
 }"
 }->
-file { "$nginx_path/sites-enabled/console.conf":
+file { "$nginx_path/sites-enabled/10-dfe-console.conf":
   ensure => link,
-  target => "$nginx_path/sites-available/console.conf"
+  target => "$nginx_path/sites-available/10-dfe-console.conf"
 }->
   ## Dashboard
-file { "$nginx_path/sites-available/dashboard.conf":
+file { "$nginx_path/sites-available/20-dfe-dashboard.conf":
   ensure  => present,
   notify  => Service['nginx'],
-  content => "server {
+  content => "##**************************************************************************
+##	This file was distributed with DreamFactory Enterprise(tm) Installer
+##	Copyright 2015-2115 DreamFactory Software, Inc. All Rights Reserved.
+##
+##	Licensed under the Apache License, Version 2.0 (the \"License\");
+##	you may not use this file except in compliance with the License.
+##	You may obtain a copy of the License at
+##
+##	http://www.apache.org/licenses/LICENSE-2.0
+##
+##	Unless required by applicable law or agreed to in writing, software
+##	distributed under the License is distributed on an \"AS IS\" BASIS,
+##	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+##	See the License for the specific language governing permissions and
+##	limitations under the License.
+##**************************************************************************
+
+##**************************************************************************
+## Configures a single server for HTTP and HTTPS
+##**************************************************************************
+
+server {
     listen 80;
 #    listen 443 ssl;
 
-    server_name $dashboard_hostname;
+    server_name $dashboard_hostname dashboard.local;
 
     root $dashboard_root/public;
 
     error_log $log_path/dashboard/error.log;
     access_log $log_path/dashboard/access.log combined;
 
-#    include conf.d/ssl/dreamfactory.ssl.conf;
+#    include conf.d/ssl/dfe-instance.conf;
 
-    include dsp-locations.conf;
+    include dfe-locations.conf;
 }"
 }->
-file { "$nginx_path/sites-enabled/dashboard.conf":
+file { "$nginx_path/sites-enabled/20-dfe-dashboard.conf":
   ensure => link,
-  target => "$nginx_path/sites-available/dashboard.conf"
+  target => "$nginx_path/sites-available/20-dfe-dashboard.conf"
 }->
   ## Instances
-file { "$nginx_path/sites-available/instance.conf":
+file { "$nginx_path/sites-available/00-dfe-instance.conf":
   ensure  => present,
   notify  => Service['nginx'],
-  content => "server {
-    listen 80 default_server;
-#   listen 443 ssl;
+  content => "##**************************************************************************
+##	This file was distributed with DreamFactory Enterprise(tm) Installer
+##	Copyright 2015-2115 DreamFactory Software, Inc. All Rights Reserved.
+##
+##	Licensed under the Apache License, Version 2.0 (the \"License\");
+##	you may not use this file except in compliance with the License.
+##	You may obtain a copy of the License at
+##
+##	http://www.apache.org/licenses/LICENSE-2.0
+##
+##	Unless required by applicable law or agreed to in writing, software
+##	distributed under the License is distributed on an \"AS IS\" BASIS,
+##	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+##	See the License for the specific language governing permissions and
+##	limitations under the License.
+##**************************************************************************
 
-    server_name $instance_hostname;
+##**************************************************************************
+## Configures two separate servers for HTTP and HTTPS
+##**************************************************************************
 
-    root $instance_root/public;
+# [instance].local:80
+server {
+	listen 80 default_server;
 
-    error_log $log_path/hosted/all.error.log;
-    access_log $log_path/hosted/\$http_host.access.log combined;
+	server_name $instance_hostname;
 
-#    include conf.d/ssl/dreamfactory.ssl.conf;
+	# Doc root
+	root $instance_root/public;
 
-    include dsp-locations.conf;
-}"
+	# Change locations/names as you please
+	error_log $log_path/hosted/all.error.log;
+	access_log $log_path/hosted/\$http_host.access.log combined;
+
+	# Our DSP locations
+	include dfe-locations.conf;
+}
+
+# Uncomment to enable SSL
+# [instance].local:443
+#server {
+#	listen 443 ssl;
+#
+#	server_name $instance_hostname;
+#
+#	# Doc root
+#	root $instance_root/public;
+#
+#	# Change locations/names as you please
+#	error_log $log_path/hosted/all.error.log;
+#	access_log $log_path/hosted/\$http_host.access.log combined;
+#
+#	# SSL config
+#	# This way you can keep it locked down a little better
+#	# or not. Just uncomment the directives and remove the include.
+#	include conf.d/ssl/dfe-instance.conf;
+#
+#	# Our DSP locations
+#	include dfe-locations.conf;
+#}
+"
 }->
-file { "$nginx_path/sites-enabled/instance.conf":
+file { "$nginx_path/sites-enabled/00-dfe-instance.conf":
   ensure => link,
-  target => "$nginx_path/sites-available/instance.conf",
+  target => "$nginx_path/sites-available/00-dfe-instance.conf",
 }
