@@ -63,18 +63,21 @@ file { "/home/$user/.gitconfig":
   group  => $group,
   mode   => 0664,
   source => "$pwd/resources/assets/git/gitconfig",
-}->
-file { "/home/$user/.ssh/known_hosts":
-  ensure => present,
-  owner  => $user,
-  group  => $group,
-  mode   => 0600,
-}->
-exec { 'add-github-to-known-hosts':
-  command  => "/usr/bin/ssh-keyscan -H github.com >> /home/$user/.ssh/known_hosts",
-  provider => 'shell',
-  user     => $user,
 }
+
+## This isn't really necessary
+#->
+#file { "/home/$user/.ssh/known_hosts":
+#  ensure => present,
+#  owner  => $user,
+#  group  => $group,
+#  mode   => 0600,
+#}->
+#exec { 'add-github-to-known-hosts':
+#  command  => "/usr/bin/ssh-keyscan -H github.com >> /home/$user/.ssh/known_hosts",
+#  provider => 'shell',
+#  user     => $user,
+#}
 
 file { "/home/$user/.composer":
   ensure => directory,
