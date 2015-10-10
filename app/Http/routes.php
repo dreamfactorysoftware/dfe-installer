@@ -3,6 +3,7 @@ use DreamFactory\Enterprise\Common\Providers\InspectionServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+/** @noinspection PhpUndefinedMethodInspection */
 Route::get('/',
     [
         'as' => 'home',
@@ -51,6 +52,7 @@ Route::get('/',
         },
     ]);
 
+/** @noinspection PhpUndefinedMethodInspection */
 Route::post('/',
     function (Request $request){
         $_data = $request->input();
@@ -61,6 +63,10 @@ Route::post('/',
 
         if (!empty($_data)) {
             foreach ($_data as $_key => $_value) {
+                if ($_key == 'storage-path') {
+                    $_value = trim($_value, DIRECTORY_SEPARATOR);
+                }
+
                 if (!empty($_value)) {
                     $_env[] = 'export FACTER_' . trim(str_replace('-', '_', strtoupper($_key))) . '=' . $_value;
                 }

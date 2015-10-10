@@ -33,6 +33,13 @@ user_ssh_pubkey { "${user}/ssh-rsa@console.${vendor_id}.${domain}":
   type   => 'rsa',
   user   => $user
 }->
+file { "/home/$run_user/.ssh/authorized_keys":
+  ensure => present,
+  source => "/home/$run_user/.ssh/authorized_keys",
+  owner  => $user,
+  group  => $group,
+  mode   => 0400,
+}->
 exec { 'add-public-key-to-authorized-keys':
   command  => "cat /home/$user/.ssh/id_rsa.pub >> /home/$user/.ssh/authorized_keys",
   provider => 'shell',
@@ -44,7 +51,7 @@ file_line { 'sudo_rule':
 }->
 host { "localhost":
   ensure       => present,
-  ip           => "127.0.0.1",
+  ip           => "127.0.1.1",
   host_aliases => $_hostAliases
 }
 
@@ -57,8 +64,8 @@ file { "/home/$user/.gitconfig":
   mode   => 0664,
   source => "$pwd/resources/assets/git/gitconfig",
 }->
-file { "/home/$user/.ssh/authorized_keys":
-  ensure => file,
+file { "/home/$user/.ssh/known_hosts":
+  ensure => present,
   owner  => $user,
   group  => $group,
   mode   => 0600,

@@ -15,6 +15,7 @@ $_basePackages = [
   'php5-mongo',
   'php5-ldap',
   'php5-memcached',
+  'php5-sqlite',
   'php5-dev',
   'php5-mcrypt',
   'php5-curl',
@@ -23,9 +24,10 @@ $_basePackages = [
   'zip',
   'memcached',
   'redis-server',
-  'git-core',
+  'git',
   'openssl',
   'curl',
+  'sqlite3',
 ]
 
 $_removePackages = [
@@ -69,7 +71,7 @@ group { $group:
 
 ## Install Composer
 
-exec { 'Install Composer':
+exec { 'install-composer':
   command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
   creates => $composer_bin,
   require => Package['curl']

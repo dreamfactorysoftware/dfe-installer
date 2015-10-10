@@ -6,7 +6,7 @@
 ################################################################################
 
 $_env = { 'path' => "$console_root/.env", }
-$_appUrl = "http://console.${vendor_id}.${domain}"
+$_appUrl = "$default_protocol://console.${vendor_id}.${domain}"
 $_settings = {
   '' => {
     'APP_DEBUG'                => $app_debug,
@@ -30,7 +30,7 @@ $_settings = {
     'MAIL_USERNAME'            => $mail_username,
     'MAIL_PASSWORD'            => $mail_password,
     'DFE_HOSTED_BASE_PATH'     => $storage_path,
-    'DFE_CONSOLE_API_URL'      => "http://console.${vendor_id}.${domain}/api/v1/ops",
+    'DFE_CONSOLE_API_URL'      => "$default_protocol://console.${vendor_id}.${domain}/api/v1/ops",
   }
 }
 
@@ -38,6 +38,10 @@ class iniSettings {
   ## Create .env file
   create_ini_settings($_settings, $_env)
 }
+
+##------------------------------------------------------------------------------
+## Check out the repo, update composer, change file permissions...
+##------------------------------------------------------------------------------
 
 vcsrepo { "$console_release/$console_branch":
   ensure   => present,
@@ -54,6 +58,9 @@ file { $console_root:
 }->
 file { "$console_root/.env":
   ensure => present,
+  owner  => $user,
+  group  => $www_group,
+  mode   => 0750,
   source => "$console_root/.env-dist",
 }->
 class { 'iniSettings':

@@ -80,6 +80,9 @@ export FACTER_FSTAB=/etc/fstab
 export FACTER_USER_PWD=`openssl rand -base64 32`
 export FACTER_PERCONA_VERSION=5.6
 export FACTER_NGINX_PATH=/etc/nginx
+export FACTER_DEFAULT_PROTOCOL=http
+export FACTER_RUN_USER=$USER
+export FACTER_LOG_USER=$LOGNAME
 
 ## Paths
 export FACTER_DOC_ROOT_BASE_PATH=/var/www

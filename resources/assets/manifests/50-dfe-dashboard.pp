@@ -6,7 +6,7 @@
 ################################################################################
 
 $_env = { 'path' => "$dashboard_root/.env", }
-$_appUrl = "http://dashboard.${vendor_id}.${domain}"
+$_appUrl = "$default_protocol://dashboard.${vendor_id}.${domain}"
 $_settings = {
   '' =>
   {
@@ -23,7 +23,7 @@ $_settings = {
     'DFE_DEFAULT_DNS_ZONE'     => $vendor_id,
     'DFE_DEFAULT_DNS_DOMAIN'   => $domain,
     'DFE_DEFAULT_DOMAIN'       => "${vendor_id}.${domain}",
-    'SMTP_DRIVER'              => 'smtp',
+    'SMTP_DRIVER'              => "smtp",
     'SMTP_HOST'                => $smtp_host,
     'SMTP_PORT'                => $smtp_port,
     'MAIL_FROM_ADDRESS'        => $mail_from_address,
@@ -31,7 +31,7 @@ $_settings = {
     'MAIL_USERNAME'            => $mail_username,
     'MAIL_PASSWORD'            => $mail_password,
     'DFE_HOSTED_BASE_PATH'     => $storage_path,
-    'DFE_CONSOLE_API_URL'      => "http://console.${vendor_id}.${domain}/api/v1/ops",
+    'DFE_CONSOLE_API_URL'      => "$default_protocol://console.${vendor_id}.${domain}/api/v1/ops",
   }
 }
 
@@ -39,6 +39,10 @@ class iniSettings {
   ## Create .env file
   create_ini_settings($_settings, $_env)
 }
+
+##------------------------------------------------------------------------------
+## Check out the repo, update composer, change file permissions...
+##------------------------------------------------------------------------------
 
 vcsrepo { "$dashboard_release/$dashboard_branch":
   ensure   => present,
@@ -55,6 +59,9 @@ file { $dashboard_root:
 }->
 file { "$dashboard_root/.env":
   ensure => present,
+  owner  => $user,
+  group  => $www_group,
+  mode   => 0750,
   source => "$dashboard_root/.env-dist",
 }->
 class { 'iniSettings':
