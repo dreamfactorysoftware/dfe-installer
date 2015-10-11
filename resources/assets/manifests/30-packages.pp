@@ -67,6 +67,16 @@ group { "mongodb":
 group { $group:
   ensure  => present,
   members => [$user, $www_user],
+}->
+file_line { 'update-exim-config-type':
+  path   => '/etc/exim4/update-exim4.conf.conf',
+  line   => "dc_eximconfig_configtype='internet'",
+  match  => ".*dc_eximconfig_configtype.*",
+}->
+file_line { 'update-exim-other-host':
+  path   => '/etc/exim4/update-exim4.conf.conf',
+  line   => "dc_other_hostname='${vendor_id}.${domain}'",
+  match  => ".*dc_other_hostname.*",
 }
 
 ## Install Composer
