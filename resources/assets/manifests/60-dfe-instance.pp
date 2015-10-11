@@ -8,12 +8,9 @@
 $_env = { 'path' => "$instance_root/.env", }
 $_settings = {
   '' => {
-    'MAIL_DRIVER'          => 'smtp',
-    'MAIL_HOST'            => $smtp_host,
-    'MAIL_PORT'            => $smtp_port,
-    'MAIL_USERNAME'        => $mail_username,
-    'MAIL_PASSWORD'        => $mail_password,
-    'DF_STANDALONE'        => false,
+    'DF_INSTANCE_NAME'     => 'dfe-instance',
+    'DF_STANDALONE'        => 'false',
+    'APP_LOG'              => 'single',
   }
 }
 

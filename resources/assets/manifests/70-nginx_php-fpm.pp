@@ -206,12 +206,13 @@ file { "/etc/php5/mods-available/dreamfactory.ini":
   ensure  => link,
   target  => "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini"
 }->
-file_line { "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini":
-  path   => "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini",
-  line   => "display_errors = 0",
-  match  => ".*display_errors.*",
-  notify => Service["php5-fpm"]
-}->
+  ## This should only be done if $app_debug == false
+  #file_line { 'update-dreamfactory-ini':
+  #  path   => "/etc/php5/mods-available/dreamfactory.ini",
+  #  line   => "display_errors = 0",
+  #  match  => ".*display_errors.*",
+  #  notify => Service["php5-fpm"]
+  #}->
 exec { "enable-dreamfactory-module":
   command  => "$php_enmod_bin dreamfactory",
   provider => posix,
