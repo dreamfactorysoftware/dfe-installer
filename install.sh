@@ -82,7 +82,7 @@ export FACTER_PERCONA_VERSION=5.6
 export FACTER_NGINX_PATH=/etc/nginx
 export FACTER_DEFAULT_PROTOCOL=http
 export FACTER_RUN_USER=$USER
-export FACTER_LOG_USER=$LOGNAME
+export FACTER_LOG_USER=ubuntu
 
 ## Paths
 export FACTER_DOC_ROOT_BASE_PATH=/var/www
