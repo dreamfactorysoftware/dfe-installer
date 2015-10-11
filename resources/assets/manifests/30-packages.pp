@@ -77,6 +77,11 @@ file_line { 'update-exim-other-host':
   path   => '/etc/exim4/update-exim4.conf.conf',
   line   => "dc_other_hostname='${vendor_id}.${domain}'",
   match  => ".*dc_other_hostname.*",
+}->
+exec { 'update-exim-config':
+  command  => 'update-exim4.conf',
+  provider => posix,
+  notify   => Service["exim4"],
 }
 
 ## Install Composer
