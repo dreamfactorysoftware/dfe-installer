@@ -79,7 +79,7 @@ file_line { 'update-exim-other-host':
   match  => ".*dc_other_hostname.*",
 }->
 exec { 'update-exim-config':
-  command  => 'update-exim4.conf',
+  command  => '/usr/sbin/update-exim4.conf',
   provider => posix,
   notify   => Service["exim4"],
 }
