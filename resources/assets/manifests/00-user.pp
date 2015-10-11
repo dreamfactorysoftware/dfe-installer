@@ -33,9 +33,9 @@ user_ssh_pubkey { "${user}/ssh-rsa@console.${vendor_id}.${domain}":
   type   => 'rsa',
   user   => $user
 }->
-file { "/home/$run_user/.ssh/authorized_keys":
+file { "/home/$log_user/.ssh/authorized_keys":
   ensure => present,
-  source => "/home/$run_user/.ssh/authorized_keys",
+  source => "/home/$log_user/.ssh/authorized_keys",
   owner  => $user,
   group  => $group,
   mode   => 0400,
