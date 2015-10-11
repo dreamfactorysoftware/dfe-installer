@@ -45,9 +45,17 @@ exec { 'add-public-key-to-authorized-keys':
   provider => 'shell',
   user     => $user
 }->
-file_line { 'sudo_rule':
+file_line { 'sudo-rule':
   path => '/etc/sudoers',
   line => "$user  ALL=(ALL) NOPASSWD:ALL",
+}->
+file_line { 'bashrc-aliases':
+  path => "/home/$user/.bashrc",
+  line => "
+alias dir='ls -ahl'
+alias lvcc='sudo rm -rf /tmp/.df-* /var/www/console/storage/bootstrap/cache/* /var/www/dashboard/bootstrap/cache/* /var/www/launchpad/bootstrap/cache/*'
+alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service php5-fpm start ; sudo service nginx start'
+"
 }->
 host { "localhost":
   ensure       => present,
