@@ -18,12 +18,12 @@ $dashboard_hostname = "dashboard.${vendor_id}.${domain}"
 
 ## Set up SSL template parts
 $ssl_include = $enable_ssl ? {
-  true => "include conf.d/ssl/dfe-instance.conf",
+  true => "include conf.d/ssl/dfe-instance.conf;",
   default => "",
 }
 
 $ssl_listen = $enable_ssl ? {
-  true => "listen 443 ssl",
+  true => "listen 443 ssl;",
   default => "",
 }
 
@@ -106,7 +106,7 @@ $console_content = "${content_header}
 
 server {
   listen 80;
-  $ssl_listen;
+  $ssl_listen
 
   server_name $console_hostname console.local;
 
@@ -115,7 +115,7 @@ server {
   error_log $log_path/console/error.log;
   access_log $log_path/console/access.log combined;
 
-  $ssl_include;
+  $ssl_include
 
   include dfe-locations.conf;
 }"
@@ -129,7 +129,7 @@ $dashboard_content = "${content_header}
 
 server {
   listen 80;
-  $ssl_listen;
+  $ssl_listen
 
   server_name $dashboard_hostname dashboard.local;
 
@@ -138,7 +138,7 @@ server {
   error_log $log_path/dashboard/error.log;
   access_log $log_path/dashboard/access.log combined;
 
-  $ssl_include;
+  $ssl_include
 
   include dfe-locations.conf;
 }"
