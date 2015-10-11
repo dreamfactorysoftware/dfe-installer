@@ -68,10 +68,6 @@ group { $group:
   ensure  => present,
   members => [$user, $www_user],
 }->
-service { "exim4":
-  ensure => started,
-  enable => true,
-}->
 file_line { 'update-exim-config-type':
   path   => '/etc/exim4/update-exim4.conf.conf',
   line   => "dc_eximconfig_configtype='internet'",
@@ -85,7 +81,6 @@ file_line { 'update-exim-other-host':
 exec { 'update-exim-config':
   command  => '/usr/sbin/update-exim4.conf',
   provider => posix,
-  notify   => Service["exim4"],
 }
 
 ## Install Composer
