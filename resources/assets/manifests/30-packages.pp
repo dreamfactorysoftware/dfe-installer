@@ -68,6 +68,10 @@ group { $group:
   ensure  => present,
   members => [$user, $www_user],
 }->
+service { "exim4":
+  ensure => started,
+  enable => true,
+}->
 file_line { 'update-exim-config-type':
   path   => '/etc/exim4/update-exim4.conf.conf',
   line   => "dc_eximconfig_configtype='internet'",
