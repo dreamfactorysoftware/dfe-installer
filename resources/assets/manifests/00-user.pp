@@ -41,26 +41,26 @@ file { "/home/$user/.ssh":
   group  => $group,
   mode   => 0400,
 }->
-file { "/home/$user/.ssh/authorized_keys":
-  ensure => present,
-  owner  => $user,
-  group  => $group,
-  mode   => 0400,
-  noop   => true,
-}->
 exec { 'add-public-key-to-authorized-keys':
   command  => "cat /home/$user/.ssh/id_rsa.pub >> /home/$user/.ssh/authorized_keys",
   provider => shell,
-  user     => $user
 }->
 exec { 'add-ubuntu-key-to-authorized-keys':
   command  => "cat /home/$log_user/.ssh/authorized_keys >> /home/$user/.ssh/authorized_keys",
   provider => shell,
 }->
+file { "/home/$user/.ssh/authorized_keys":
+  ensure => present,
+  owner  => $user,
+  group  => $group,
+  mode   => 0400,
+}
+
 file_line { 'sudo-rule':
   path => '/etc/sudoers',
   line => "$user  ALL=(ALL) NOPASSWD:ALL",
-}->
+}
+
 file_line { 'bashrc-aliases':
   path => "/home/$user/.bashrc",
   line => "
@@ -68,7 +68,8 @@ alias dir='ls -ahl'
 alias lvcc='sudo rm -rf /tmp/.df-* /var/www/console/storage/bootstrap/cache/* /var/www/dashboard/bootstrap/cache/* /var/www/launchpad/bootstrap/cache/*'
 alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service php5-fpm start ; sudo service nginx start'
 "
-}->
+}
+
 host { "localhost":
   ensure       => present,
   ip           => "127.0.0.1",
