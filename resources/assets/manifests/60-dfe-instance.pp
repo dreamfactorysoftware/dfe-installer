@@ -36,6 +36,12 @@ file { $instance_root:
   ensure => link,
   target => "$instance_release/$instance_branch",
 }->
+file { "/tmp/.df-log":
+  ensure => present,
+  owner  => $www_user,
+  group  => $group,
+  mode   => 2775,
+}->
 file { "$instance_root/.env":
   ensure => present,
   owner  => $user,
@@ -91,4 +97,11 @@ file { "$instance_root/storage/logs/laravel.log":
   owner  => $www_user,
   group  => $group,
   mode   => 0664
+}->
+file { "/tmp/.df-log/dreamfactory*.log":
+  ensure => present,
+  owner  => $www_user,
+  group  => $group,
+  mode   => 2775,
 }
+
