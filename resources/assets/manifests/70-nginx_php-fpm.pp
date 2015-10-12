@@ -169,16 +169,10 @@ service { "apache2":
 
 file { "$nginx_path/dfe-locations.conf":
   ensure => present,
-  owner  => $www_user,
-  group  => $group,
-  mode   => 0770,
   source => "$pwd/resources/assets/etc/nginx/dfe-locations.conf",
 }->
 file { "$nginx_path/conf.d/dfe.conf":
   ensure => present,
-  owner  => $www_user,
-  group  => $group,
-  mode   => 0770,
   source => "$pwd/resources/assets/etc/nginx/conf.d/dfe.conf"
 }->
 file { "$nginx_path/conf.d/ssl":
@@ -186,7 +180,7 @@ file { "$nginx_path/conf.d/ssl":
 }->
 file { "$nginx_path/conf.d/ssl/dfe-instance.conf":
   ensure => present,
-  owner  => $www_user,
+  owner  => $user,
   group  => $group,
   mode   => 0770,
   source => "$pwd/resources/assets/etc/nginx/conf.d/ssl/dfe-instance.conf"
@@ -223,6 +217,9 @@ exec { "enable-dreamfactory-module":
   ##------------------------------------------------------------------------------
 file { "$nginx_path/sites-available/10-dfe-console.conf":
   ensure  => present,
+  owner   => $user,
+  group   => $group,
+  mode    => 0770,
   notify  => Service['nginx'],
   content => $console_content,
 }->
@@ -233,6 +230,9 @@ file { "$nginx_path/sites-enabled/10-dfe-console.conf":
   ## Dashboard
 file { "$nginx_path/sites-available/20-dfe-dashboard.conf":
   ensure  => present,
+  owner   => $user,
+  group   => $group,
+  mode    => 0770,
   notify  => Service['nginx'],
   content => $dashboard_content,
 }->
@@ -243,6 +243,9 @@ file { "$nginx_path/sites-enabled/20-dfe-dashboard.conf":
   ## Instances
 file { "$nginx_path/sites-available/00-dfe-instance.conf":
   ensure  => present,
+  owner   => $user,
+  group   => $group,
+  mode    => 0770,
   notify  => Service['nginx'],
   content => $instance_content,
 }->
