@@ -35,17 +35,26 @@ user_ssh_pubkey { "${user}/ssh-rsa@console.${vendor_id}.${domain}":
   type   => 'rsa',
   user   => $user
 }->
+file { "/home/$user/.ssh":
+  ensure => directory,
+  owner  => $user,
+  group  => $group,
+  mode   => 0400,
+}->
 file { "/home/$user/.ssh/authorized_keys":
   ensure => present,
   owner  => $user,
   group  => $group,
   mode   => 0400,
-  source => "/home/$log_user/.ssh/authorized_keys",
 }->
 exec { 'add-public-key-to-authorized-keys':
   command  => "cat /home/$user/.ssh/id_rsa.pub >> /home/$user/.ssh/authorized_keys",
   provider => shell,
   user     => $user
+}->
+exec { 'add-ubuntu-key-to-authorized-keys':
+  command  => "cat /home/$log_user/.ssh/authorized_keys >> /home/$user/.ssh/authorized_keys",
+  provider => shell,
 }->
 file_line { 'sudo-rule':
   path => '/etc/sudoers',
