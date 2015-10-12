@@ -5,8 +5,8 @@
 # Install dreamfactory/dfe-console
 ################################################################################
 
-include laravelDirectories
-include consoleEnvironmentSettings
+include dfe::laravelDirectories
+include dfe::consoleEnvironmentSettings
 
 ############
 ## Logic
@@ -36,14 +36,14 @@ file { "$console_root/.env":
   mode   => 0750,
   source => "$console_root/.env-dist",
 }->
-class { consoleEnvironmentSettings:
+class { dfe::consoleEnvironmentSettings:
 ## Applies INI settings in $_settings to .env
   root     => $console_root,
   zone     => $vendor_id,
   domain   => $domain,
   protocol => $default_protocol,
 }->
-class { laravelDirectories:
+class { dfe::laravelDirectories:
   root  => $console_root,
   owner => $www_user,
   group => $group,

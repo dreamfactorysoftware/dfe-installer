@@ -5,8 +5,8 @@
 # Install dreamfactory/dfe-dashboard
 ################################################################################
 
-include laravelDirectories
-include dashboardEnvironmentSettings
+include dfe::laravelDirectories
+include dfe::dashboardEnvironmentSettings
 
 ##------------------------------------------------------------------------------
 ## Check out the repo, update composer, change file permissions...
@@ -32,14 +32,14 @@ file { "$dashboard_root/.env":
   mode   => 0750,
   source => "$dashboard_root/.env-dist",
 }->
-class { consoleEnvironmentSettings:
+class { dfe::dashboardEnvironmentSettings:
 ## Applies INI settings in $_settings to .env
   root     => $dashboard_root,
   zone     => $vendor_id,
   domain   => $domain,
   protocol => $default_protocol,
 }->
-class { laravelDirectories:
+class { dfe::laravelDirectories:
   root  => $dashboard_root,
   owner => $www_user,
   group => $group,
