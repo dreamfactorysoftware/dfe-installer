@@ -22,15 +22,15 @@
   "repositories":      [
     {
       "type": "vcs",
-      "url":  "git@github.com:dreamfactorysoftware/dfe-common.git"
+      "url":  "https://github.com/dreamfactorysoftware/dfe-common.git"
     },
     {
       "type": "vcs",
-      "url":  "git@github.com:dreamfactorysoftware/dfe-database.git"
+      "url":  "https://github.com/dreamfactorysoftware/dfe-database.git"
     },
     {
       "type": "vcs",
-      "url":  "git@github.com:dreamfactorysoftware/dfe-storage.git"
+      "url":  "https://github.com/dreamfactorysoftware/dfe-storage.git"
     }
   ],
   "minimum-stability": "dev",

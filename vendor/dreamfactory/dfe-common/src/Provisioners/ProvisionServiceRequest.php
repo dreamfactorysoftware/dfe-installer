@@ -3,8 +3,10 @@
 use DreamFactory\Enterprise\Common\Contracts\PrivatePathAware;
 use DreamFactory\Enterprise\Common\Contracts\ResourceProvisioner;
 use DreamFactory\Enterprise\Database\Models\Instance;
+use DreamFactory\Enterprise\Database\Models\User;
 use DreamFactory\Enterprise\Services\Facades\Provision;
 use DreamFactory\Enterprise\Storage\Facades\InstanceStorage;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use League\Flysystem\Filesystem;
 
 class ProvisionServiceRequest extends BaseRequest
@@ -28,7 +30,8 @@ class ProvisionServiceRequest extends BaseRequest
             'storage'     => $storage,
             'deprovision' => !!$deprovision,
             'force'       => !!$force,
-        ], $options);
+        ],
+            $options);
 
         parent::__construct($_contents);
     }
@@ -73,10 +76,20 @@ class ProvisionServiceRequest extends BaseRequest
         //  Use requested file system if one...
         if (null === ($_storage = $this->get('storage')) && $createIfNull) {
             $_instance = $this->getInstance();
-            InstanceStorage::buildStorageMap($_instance->user->storage_id_text);
+            $_user = $_instance->user;
 
+            if (empty($_user)) {
+                try {
+                    $_user = User::findOrFail($_instance->user_id);
+                } catch (ModelNotFoundException $_ex) {
+                    \Log::error('Attempt to create an instance for a non-existant user_id: ' . $_instance->user_id);
+
+                    throw new \RuntimeException('Invalid user assigned to instance.');
+                }
+            }
+
+            InstanceStorage::buildStorageMap($_user->storage_id_text);
             $_storage = $_instance->getStorageRootMount();
-
             $this->setStorage($_storage);
         }
 

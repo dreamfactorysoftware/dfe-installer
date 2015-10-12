@@ -50,6 +50,7 @@ class CommonPasswordController extends BaseController
     {
         $user->password_text = bcrypt($password);
         $user->save();
+
         \Auth::login($user);
     }
 

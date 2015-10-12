@@ -80,6 +80,10 @@ export FACTER_FSTAB=/etc/fstab
 export FACTER_USER_PWD=`openssl rand -base64 32`
 export FACTER_PERCONA_VERSION=5.6
 export FACTER_NGINX_PATH=/etc/nginx
+export FACTER_DEFAULT_PROTOCOL=http
+export FACTER_RUN_USER=$USER
+export FACTER_LOG_USER=ubuntu
+export FACTER_STATIC_ZONE_NAME=local
 
 ## Paths
 export FACTER_DOC_ROOT_BASE_PATH=/var/www
@@ -148,8 +152,8 @@ export FACTER_SMTP_HOST=localhost
 export FACTER_SMTP_PORT=25
 export FACTER_MAIL_FROM_ADDRESS="no.reply@${FACTER_DOMAIN}"
 export FACTER_MAIL_FROM_NAME=${FACTER_DOMAIN}
-export FACTER_MAIL_USERNAME=
-export FACTER_MAIL_PASSWORD=
+export FACTER_MAIL_USERNAME=""
+export FACTER_MAIL_PASSWORD=""
 
 _info "Installing now..."
 

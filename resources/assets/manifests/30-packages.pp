@@ -15,6 +15,7 @@ $_basePackages = [
   'php5-mongo',
   'php5-ldap',
   'php5-memcached',
+  'php5-sqlite',
   'php5-dev',
   'php5-mcrypt',
   'php5-curl',
@@ -23,9 +24,10 @@ $_basePackages = [
   'zip',
   'memcached',
   'redis-server',
-  'git-core',
+  'git',
   'openssl',
   'curl',
+  'sqlite3',
 ]
 
 $_removePackages = [
@@ -65,11 +67,25 @@ group { "mongodb":
 group { $group:
   ensure  => present,
   members => [$user, $www_user],
+}->
+file_line { 'update-exim-config-type':
+  path   => '/etc/exim4/update-exim4.conf.conf',
+  line   => "dc_eximconfig_configtype='internet'",
+  match  => ".*dc_eximconfig_configtype.*",
+}->
+file_line { 'update-exim-other-host':
+  path   => '/etc/exim4/update-exim4.conf.conf',
+  line   => "dc_other_hostname='${vendor_id}.${domain}'",
+  match  => ".*dc_other_hostname.*",
+}->
+exec { 'update-exim-config':
+  command  => '/usr/sbin/update-exim4.conf',
+  provider => posix,
 }
 
 ## Install Composer
 
-exec { 'Install Composer':
+exec { 'install-composer':
   command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
   creates => $composer_bin,
   require => Package['curl']

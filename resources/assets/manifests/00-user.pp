@@ -6,10 +6,12 @@
 ################################################################################
 
 $_hostAliases = [
+  "console",
   "console.local",
   "dashboard.local",
   "console.${vendor_id}.${domain}",
   "dashboard.${vendor_id}.${domain}",
+  "${vendor_id}.${domain}",
 ]
 
 ## Create $user and $group. Create private key for user
@@ -33,15 +35,42 @@ user_ssh_pubkey { "${user}/ssh-rsa@console.${vendor_id}.${domain}":
   type   => 'rsa',
   user   => $user
 }->
+file { "/home/$user/.ssh":
+  ensure => directory,
+  owner  => $user,
+  group  => $group,
+  mode   => 0600,
+}->
 exec { 'add-public-key-to-authorized-keys':
   command  => "cat /home/$user/.ssh/id_rsa.pub >> /home/$user/.ssh/authorized_keys",
-  provider => 'shell',
-  user     => $user
+  user     => $user,
+  provider => shell,
 }->
-file_line { 'sudo_rule':
+exec { 'add-ubuntu-key-to-authorized-keys':
+  command  => "cat /home/$log_user/.ssh/authorized_keys >> /home/$user/.ssh/authorized_keys",
+  provider => shell,
+}->
+file { "/home/$user/.ssh/authorized_keys":
+  ensure => present,
+  owner  => $user,
+  group  => $group,
+  mode   => 0400,
+}
+
+file_line { 'sudo-rule':
   path => '/etc/sudoers',
   line => "$user  ALL=(ALL) NOPASSWD:ALL",
-}->
+}
+
+file_line { 'bashrc-aliases':
+  path => "/home/$user/.bashrc",
+  line => "
+alias dir='ls -ahl'
+alias lvcc='sudo rm -rf /tmp/.df-* /var/www/console/storage/bootstrap/cache/* /var/www/dashboard/bootstrap/cache/* /var/www/launchpad/bootstrap/cache/*'
+alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service php5-fpm start ; sudo service nginx start'
+"
+}
+
 host { "localhost":
   ensure       => present,
   ip           => "127.0.0.1",
@@ -56,18 +85,21 @@ file { "/home/$user/.gitconfig":
   group  => $group,
   mode   => 0664,
   source => "$pwd/resources/assets/git/gitconfig",
-}->
-file { "/home/$user/.ssh/authorized_keys":
-  ensure => file,
-  owner  => $user,
-  group  => $group,
-  mode   => 0600,
-}->
-exec { 'add-github-to-known-hosts':
-  command  => "/usr/bin/ssh-keyscan -H github.com >> /home/$user/.ssh/known_hosts",
-  provider => 'shell',
-  user     => $user,
 }
+
+## This isn't really necessary
+#->
+#file { "/home/$user/.ssh/known_hosts":
+#  ensure => present,
+#  owner  => $user,
+#  group  => $group,
+#  mode   => 0600,
+#}->
+#exec { 'add-github-to-known-hosts':
+#  command  => "/usr/bin/ssh-keyscan -H github.com >> /home/$user/.ssh/known_hosts",
+#  provider => shell,
+#  user     => $user,
+#}
 
 file { "/home/$user/.composer":
   ensure => directory,

@@ -13,26 +13,16 @@ namespace Symfony\Component\HttpFoundation\Tests;
 
 use Symfony\Component\HttpFoundation\Cookie;
 
-require_once __DIR__.'/ClockMock.php';
-
 /**
  * CookieTest.
  *
  * @author John Kary <john@johnkary.net>
  * @author Hugo Hamon <hugo.hamon@sensio.com>
+ *
+ * @group time-sensitive
  */
 class CookieTest extends \PHPUnit_Framework_TestCase
 {
-    protected function setUp()
-    {
-        with_clock_mock(true);
-    }
-
-    protected function tearDown()
-    {
-        with_clock_mock(false);
-    }
-
     public function invalidNames()
     {
         return array(
