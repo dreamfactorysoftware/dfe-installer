@@ -56,28 +56,28 @@ file { [
   "$instance_release/$instance_branch/storage/framework/sessions",
   "$instance_release/$instance_branch/storage/framework/views"]:
   ensure => directory,
-  owner  => $user,
-  group  => $www_group,
+  owner  => $www_group,
+  group  => $user,
   mode   => 2775,
 }->
 exec { 'instance-composer-update':
   command     => "$composer_bin update",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $instance_root,
   environment => [ "HOME=/home/$user", ]
 }->
 exec { 'generate-app-key':
   command     => "$artisan key:generate",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $instance_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { 'clear-cache-and-optimize':
   command     => "$artisan clear-compiled ; $artisan cache:clear ; $artisan config:clear ; $artisan route:clear ; $artisan optimize",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $instance_root,
   environment => ["HOME=/home/$user"]
 }->

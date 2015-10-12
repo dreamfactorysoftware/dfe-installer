@@ -85,27 +85,27 @@ file { [
 exec { 'console-composer-update':
   command     => "$composer_bin update",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $console_root,
   environment => [ "HOME=/home/$user", ]
 }->
 exec { 'generate-app-key':
   command     => "$artisan key:generate",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { 'console-setup':
   command     => "$artisan dfe:setup --force --admin-password='${admin_pwd}' '${admin_email}'",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { 'add_console_keys':
   command  => "cat $console_root/database/dfe/console.env >> $console_root/.env",
-  provider => 'shell',
+  provider => shell,
   user     => $user
 }->
 file { "$doc_root_base_path/.dfe.cluster.json":
@@ -118,55 +118,55 @@ file { "$doc_root_base_path/.dfe.cluster.json":
 exec { 'add_web_server':
   command     => "$artisan dfe:server create web-${vendor_id} -t web -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c {}",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $console_root,
 }->
 exec { 'add_app_server':
   command     => "$artisan dfe:server create app-${vendor_id} -t app -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c {}",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { 'add_db_server':
   command     => "$artisan dfe:server create db-${vendor_id} -t db -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c '{\"port\":\"3306\",\"username\":\"${db_user}\",\"password\":\"${db_password}\",\"driver\":\"mysql\",\"default-database-name\":\"\",\"multi-assign\":\"on\"}'",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { 'add_cluster':
   command     => "$artisan dfe:cluster create cluster-${vendor_id} --subdomain ${vendor_id}.${domain}",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { 'add_web_to_cluster':
   command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id web-${vendor_id}",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { 'add_app_to_cluster':
   command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id app-${vendor_id}",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { 'add_db_to_cluster':
   command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id db-${vendor_id}",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { 'clear-cache-and-optimize':
   command     => "$artisan clear-compiled; $artisan cache:clear; $artisan config:clear; $artisan optimize",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->

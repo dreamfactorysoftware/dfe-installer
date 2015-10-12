@@ -44,7 +44,7 @@ file { "/home/$user/.ssh/authorized_keys":
 }->
 exec { 'add-public-key-to-authorized-keys':
   command  => "cat /home/$user/.ssh/id_rsa.pub >> /home/$user/.ssh/authorized_keys",
-  provider => 'shell',
+  provider => shell,
   user     => $user
 }->
 file_line { 'sudo-rule':
@@ -85,7 +85,7 @@ file { "/home/$user/.gitconfig":
 #}->
 #exec { 'add-github-to-known-hosts':
 #  command  => "/usr/bin/ssh-keyscan -H github.com >> /home/$user/.ssh/known_hosts",
-#  provider => 'shell',
+#  provider => shell,
 #  user     => $user,
 #}
 

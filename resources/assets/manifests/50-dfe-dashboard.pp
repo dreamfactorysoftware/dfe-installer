@@ -71,7 +71,7 @@ class { 'iniSettings':
 }->
 exec { 'add_dashboard_keys':
   command  => "cat $console_root/database/dfe/dashboard.env >> $dashboard_root/.env",
-  provider => 'shell',
+  provider => shell,
   user     => $user
 }->
 file { [
@@ -91,21 +91,21 @@ file { [
 exec { 'dashboard-composer-update':
   command     => "$composer_bin update",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $dashboard_root,
   environment => [ "HOME=/home/$user", ]
 }->
 exec { 'generate-app-key':
   command     => "$artisan key:generate",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { 'clear-cache-and-optimize':
   command     => "$artisan clear-compiled ; $artisan cache:clear ; $artisan config:clear ; $artisan route:clear ; $artisan optimize",
   user        => $user,
-  provider    => 'shell',
+  provider    => shell,
   cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
 }->
