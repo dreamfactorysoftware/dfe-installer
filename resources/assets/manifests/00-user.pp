@@ -39,10 +39,11 @@ file { "/home/$user/.ssh":
   ensure => directory,
   owner  => $user,
   group  => $group,
-  mode   => 0400,
+  mode   => 0600,
 }->
 exec { 'add-public-key-to-authorized-keys':
   command  => "cat /home/$user/.ssh/id_rsa.pub >> /home/$user/.ssh/authorized_keys",
+  user     => $user,
   provider => shell,
 }->
 exec { 'add-ubuntu-key-to-authorized-keys':
