@@ -6,10 +6,12 @@
 ################################################################################
 
 $_hostAliases = [
+  "console",
   "console.local",
   "dashboard.local",
   "console.${vendor_id}.${domain}",
   "dashboard.${vendor_id}.${domain}",
+  "${vendor_id}.${domain}",
 ]
 
 ## Create $user and $group. Create private key for user
@@ -33,12 +35,12 @@ user_ssh_pubkey { "${user}/ssh-rsa@console.${vendor_id}.${domain}":
   type   => 'rsa',
   user   => $user
 }->
-file { "/home/$log_user/.ssh/authorized_keys":
+file { "/home/$user/.ssh/authorized_keys":
   ensure => present,
-  source => "/home/$log_user/.ssh/authorized_keys",
   owner  => $user,
   group  => $group,
   mode   => 0400,
+  source => "/home/$log_user/.ssh/authorized_keys",
 }->
 exec { 'add-public-key-to-authorized-keys':
   command  => "cat /home/$user/.ssh/id_rsa.pub >> /home/$user/.ssh/authorized_keys",
@@ -59,7 +61,7 @@ alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service 
 }->
 host { "localhost":
   ensure       => present,
-  ip           => "127.0.1.1",
+  ip           => "127.0.0.1",
   host_aliases => $_hostAliases
 }
 
