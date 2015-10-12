@@ -46,6 +46,7 @@ file { "/home/$user/.ssh/authorized_keys":
   owner  => $user,
   group  => $group,
   mode   => 0400,
+  noop   => true,
 }->
 exec { 'add-public-key-to-authorized-keys':
   command  => "cat /home/$user/.ssh/id_rsa.pub >> /home/$user/.ssh/authorized_keys",
