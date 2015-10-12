@@ -50,14 +50,19 @@ class { 'iniSettings':
 file { [
   "$instance_release/$instance_branch/bootstrap/cache",
   "$instance_release/$instance_branch/storage",
+  "$instance_release/$instance_branch/storage/app",
+  "$instance_release/$instance_branch/storage/databases",
   "$instance_release/$instance_branch/storage/logs",
   "$instance_release/$instance_branch/storage/framework",
+  "$instance_release/$instance_branch/storage/framework/cache",
   "$instance_release/$instance_branch/storage/framework/db",
   "$instance_release/$instance_branch/storage/framework/sessions",
-  "$instance_release/$instance_branch/storage/framework/views"]:
+  "$instance_release/$instance_branch/storage/framework/views",
+  "$instance_release/$instance_branch/storage/scripting",
+]:
   ensure => directory,
   owner  => $www_group,
-  group  => $user,
+  group  => $group,
   mode   => 2775,
 }->
 exec { 'instance-composer-update':
