@@ -17,6 +17,7 @@ MANIFEST_PATH=./resources/manifests/
 ENV_FILE=./.env-install
 PHP_BIN=`which php`
 PHP_ENMOD_BIN=`which php5enmod`
+LOG_FILE=/tmp/dfe-installer.log
 
 ## Who am I?
 if [ $UID -ne 0 ]; then
@@ -121,6 +122,9 @@ export FACTER_INSTANCE_BRANCH=develop
 export FACTER_ADMIN_EMAIL FACTER_ADMIN_PWD
 export FACTER_MOUNT_POINT FACTER_DOMAIN FACTER_GH_USER FACTER_GH_PWD
 
+## Rotate log
+[ -f "${LOG_FILE}" ] && mv "${LOG_FILE}" "${LOG_FILE}.1"
+
 ## Header
 sectionHeader " ${B1}DreamFactory Enterprise(tm)${B2} ${SYSTEM_TYPE} Installer v${VERSION}"
 
@@ -160,7 +164,7 @@ _info "Installing now..."
 for manifest in $(ls ./resources/assets/manifests/*.pp)
 do
 	_info "Applying ${manifest}..."
-	puppet apply -l /tmp/dfe-installer.log "${manifest}"
+	puppet apply -l "${LOG_FILE}" "${manifest}"
 
     if [ $? -ne 0 ]; then
         _error "An unexpected result code of $? was returned. Halting."
