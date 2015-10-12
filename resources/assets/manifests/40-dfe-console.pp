@@ -5,6 +5,9 @@
 # Install dreamfactory/dfe-console
 ################################################################################
 
+include laravelDirectories
+include consoleEnvironmentSettings
+
 ############
 ## Logic
 ############
@@ -132,10 +135,4 @@ exec { 'clear-cache-and-optimize':
   provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
-}->
-file { "$console_root/storage/logs/laravel.log":
-  ensure => present,
-  owner  => $www_user,
-  group  => $group,
-  mode   => 0664
 }
