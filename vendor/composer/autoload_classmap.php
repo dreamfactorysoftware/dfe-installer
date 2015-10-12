@@ -3095,7 +3095,6 @@ return array(
     'Symfony\\Component\\HttpFoundation\\Tests\\AcceptHeaderTest' => $vendorDir . '/symfony/http-foundation/Tests/AcceptHeaderTest.php',
     'Symfony\\Component\\HttpFoundation\\Tests\\ApacheRequestTest' => $vendorDir . '/symfony/http-foundation/Tests/ApacheRequestTest.php',
     'Symfony\\Component\\HttpFoundation\\Tests\\BinaryFileResponseTest' => $vendorDir . '/symfony/http-foundation/Tests/BinaryFileResponseTest.php',
-    'Symfony\\Component\\HttpFoundation\\Tests\\ClockMockTestCase' => $vendorDir . '/symfony/http-foundation/Tests/ClockMockTestCase.php',
     'Symfony\\Component\\HttpFoundation\\Tests\\CookieTest' => $vendorDir . '/symfony/http-foundation/Tests/CookieTest.php',
     'Symfony\\Component\\HttpFoundation\\Tests\\ExpressionRequestMatcherTest' => $vendorDir . '/symfony/http-foundation/Tests/ExpressionRequestMatcherTest.php',
     'Symfony\\Component\\HttpFoundation\\Tests\\FileBagTest' => $vendorDir . '/symfony/http-foundation/Tests/FileBagTest.php',
