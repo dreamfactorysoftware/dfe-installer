@@ -84,7 +84,6 @@ exec { 'update-exim-config':
 }
 
 ## Install Composer
-
 exec { 'install-composer':
   command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
   creates => $composer_bin,

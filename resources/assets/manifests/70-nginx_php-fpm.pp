@@ -147,6 +147,7 @@ server {
 
 ## A class to create all of the nginx config files and links
 class createServerConfigs {
+
   file { "$nginx_path/dfe-locations.conf":
     ensure => present,
     source => "$pwd/resources/assets/etc/nginx/dfe-locations.conf",
@@ -168,7 +169,7 @@ class createServerConfigs {
   }->
   file { [
     "$nginx_path/sites-enabled/default",
-    "$nginx_path/sites-available/default"
+    "$nginx_path/sites-available/default",
   ]:
     ensure => absent
   }->
@@ -176,13 +177,6 @@ class createServerConfigs {
     ensure  => link,
     target  => "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini"
   }->
-  ## This should only be done if $app_debug == false
-  #file_line { 'update-dreamfactory-ini':
-  #  path   => "/etc/php5/mods-available/dreamfactory.ini",
-  #  line   => "display_errors = 0",
-  #  match  => ".*display_errors.*",
-  #  notify => Service["php5-fpm"]
-  #}->
   ## Enable our tweaks
   exec { "enable-dreamfactory-module":
     command  => "$php_enmod_bin dreamfactory",
@@ -220,30 +214,36 @@ class createServerConfigs {
   ## Tell php5-fpm to restart now
     notify   => Service["php5-fpm"]
   }
+
+  if ( !$app_debug) {
+    file_line { 'update-dreamfactory-ini':
+      path   => "/etc/php5/mods-available/dreamfactory.ini",
+      line   => "display_errors = 0",
+      match  => ".*display_errors.*",
+      notify => Service["php5-fpm"]
+    }
+  }
 }
 
 ##------------------------------------------------------------------------------
 ## We're using nginx/php5-fpm and not apache
 ##------------------------------------------------------------------------------
 
-service { "nginx":
-  ensure  => 'running',
-  enable  => true
-}->
-service { "php5-fpm":
-  ensure  => 'running',
-  enable  => true
-}
-
 service { "apache2":
   ensure => stopped,
   enable => false
 }
 
-##------------------------------------------------------------------------------
-## Make the config files referenced above
-##------------------------------------------------------------------------------
+service { "nginx":
+  ensure  => running,
+  enable  => true,
+}->
+service { "php5-fpm":
+  ensure  => running,
+  enable  => true
+}
 
-class { "createServerConfigs":
-  notify  => Service['nginx'],
+class { createServerConfigs:
+## Make sure our configs are written before we restart nginx
+  notify => Service['nginx'],
 }

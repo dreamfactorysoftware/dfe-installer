@@ -85,6 +85,7 @@ export FACTER_DEFAULT_PROTOCOL=http
 export FACTER_RUN_USER=$USER
 export FACTER_LOG_USER=ubuntu
 export FACTER_STATIC_ZONE_NAME=local
+export FACTER_STORAGE_MOUNT_POINT=
 
 ## Paths
 export FACTER_DOC_ROOT_BASE_PATH=/var/www
@@ -143,6 +144,7 @@ _checkPuppetModules
 ## Composite/aggregate values
 export FACTER_STORAGE_USER=${FACTER_USER}
 export FACTER_STORAGE_PATH=${FACTER_MOUNT_POINT}/${FACTER_STORAGE_PATH}
+export FACTER_STORAGE_MOUNT_POINT=${FACTER_STORAGE_MOUNT_POINT}
 export FACTER_SSL_CERT_STUB=$(echo ${FACTER_DOMAIN} | tr '.' '-')
 
 ## Repositories from which to pull
@@ -164,7 +166,7 @@ _info "Installing now..."
 for manifest in $(ls ./resources/assets/manifests/*.pp)
 do
 	_info "Applying ${manifest}..."
-	puppet apply -l "${LOG_FILE}" "${manifest}"
+	puppet apply --modulepath=/etc/puppet/modules:/usr/share/puppet/modules:${PWD}/resources/assets/modules -l "${LOG_FILE}" "${manifest}"
 
     if [ $? -ne 0 ]; then
         _error "An unexpected result code of $? was returned. Halting."

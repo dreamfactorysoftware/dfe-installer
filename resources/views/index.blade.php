@@ -43,6 +43,7 @@
         <h2>Installation Settings</h2>
 
         <form method="POST" action="/">
+            {{ csrf_field() }}
 
             <div class="row">
                 <div class="col-md-6">
@@ -62,7 +63,7 @@
                             <label for="storage-group">Storage Group</label>
                             <input required type="text" class="form-control" id="storage-group" name="storage-group"
                                    value="{{ $storage_group }}"
-                                   placeholder="dfe">
+                                   placeholder="dfadmin">
                         </div>
                     </fieldset>
                 </div>
@@ -104,7 +105,7 @@
                     <fieldset>
                         <legend>GitHub Credentials</legend>
                         <div class="form-group">
-                            <label for="gh-user">User</label>
+                            <label for="gh-user">User Name (not email)</label>
                             <input required type="text" class="form-control" id="gh-user" name="gh-user"
                                    placeholder="username">
                         </div>
@@ -182,11 +183,10 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-md btn-success"><i class="fa fa-arrow-circle-right"></i> Save Configuration
+                <button type="submit" class="btn btn-md btn-success">
+                    <i class="fa fa-arrow-circle-right"></i> Save Configuration
                 </button>
             </div>
-
-            <input name="_token" type="hidden" value="{{ csrf_token() }}">
         </form>
     </section>
 @stop
