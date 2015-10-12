@@ -229,6 +229,11 @@ class createServerConfigs {
 ## We're using nginx/php5-fpm and not apache
 ##------------------------------------------------------------------------------
 
+service { "apache2":
+  ensure => stopped,
+  enable => false
+}
+
 service { "nginx":
   ensure  => running,
   enable  => true,
@@ -236,11 +241,6 @@ service { "nginx":
 service { "php5-fpm":
   ensure  => running,
   enable  => true
-}
-
-service { "apache2":
-  ensure => stopped,
-  enable => false
 }
 
 class { createServerConfigs:
