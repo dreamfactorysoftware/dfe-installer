@@ -3,6 +3,7 @@ use DreamFactory\Enterprise\Common\Providers\InspectionServiceProvider;
 use DreamFactory\Library\Utility\Disk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Psy\Util\Json;
 
 /** @noinspection PhpUndefinedMethodInspection */
 Route::get('/', [
@@ -64,6 +65,7 @@ Route::post('/', function (Request $request){
 
     $_env[] = '#!/bin/sh' . PHP_EOL;
     $_env[] = 'INSTALLER_FACTS=1';
+    $_data = [];
     $_mountPoint = $storagePath = null;
 
     if (!empty($_data)) {
@@ -82,13 +84,17 @@ Route::post('/', function (Request $request){
             if (!empty($_value)) {
                 $_env[] = 'export FACTER_' . trim(str_replace('-', '_', strtoupper($_key))) . '=' . $_value;
             }
+
+            $_data[$_key] = $_value;
         }
 
         if (!empty($_storagePath) && !empty($_mountPoint)) {
             $_env[] = 'export FACTER_STORAGE_MOUNT_POINT=' . Disk::path([$_mountPoint, $_storagePath], true);
         }
 
+        //  Write out the .env-install and the .env-install.json version
         file_put_contents(base_path(config('dfe.output-file')), implode(PHP_EOL, $_env) . PHP_EOL);
+        file_put_contents(base_path(config('dfe.output-file') . '.json'), Json::encode($_data, JSON_PRETTY_PRINT));
     }
 
     return view('continue', $_data);
