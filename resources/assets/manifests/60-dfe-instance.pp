@@ -37,7 +37,7 @@ file { $instance_root:
   target => "$instance_release/$instance_branch",
 }->
 file { "/tmp/.df-log":
-  ensure => present,
+  ensure => directory,
   owner  => $www_user,
   group  => $group,
   mode   => 2775,
