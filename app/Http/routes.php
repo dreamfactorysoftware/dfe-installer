@@ -1,5 +1,6 @@
 <?php
 use DreamFactory\Enterprise\Common\Providers\InspectionServiceProvider;
+use DreamFactory\Library\Utility\Disk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -63,16 +64,28 @@ Route::post('/', function (Request $request){
 
     $_env[] = '#!/bin/sh' . PHP_EOL;
     $_env[] = 'INSTALLER_FACTS=1';
+    $_mountPoint = $storagePath = null;
 
     if (!empty($_data)) {
         foreach ($_data as $_key => $_value) {
+            switch ($_key) {
+                case 'storage-path':
+                case 'mount-point':
+                    $_mountPoint = rtrim($_value, DIRECTORY_SEPARATOR);
+                    break;
+            }
+
             if ($_key == 'storage-path') {
-                $_value = trim($_value, DIRECTORY_SEPARATOR);
+                $_storagePath = $_value = trim($_value, DIRECTORY_SEPARATOR);
             }
 
             if (!empty($_value)) {
                 $_env[] = 'export FACTER_' . trim(str_replace('-', '_', strtoupper($_key))) . '=' . $_value;
             }
+        }
+
+        if (!empty($_storagePath) && !empty($_mountPoint)) {
+            $_env[] = 'export FACTER_STORAGE_MOUNT_POINT=' . Disk::path([$_mountPoint, $_storagePath], true);
         }
 
         file_put_contents(base_path(config('dfe.output-file')), implode(PHP_EOL, $_env) . PHP_EOL);
