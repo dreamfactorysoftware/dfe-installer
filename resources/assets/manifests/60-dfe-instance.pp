@@ -15,7 +15,7 @@ $_settings = {
 }
 
 class iniSettings {
-  ## Create .env file
+## Create .env file
   create_ini_settings($_settings, $_env)
 }
 
@@ -50,9 +50,9 @@ file { "$instance_root/.env":
   source => "$instance_root/.env-dist"
 }->
 class { 'iniSettings':
-  ## Applies INI settings in $_settings to .env
+## Applies INI settings in $_settings to .env
 }->
-  ## Make sure the directories are created with the right perms
+## Make sure the directories are created with the right perms
 file { [
   "$instance_release/$instance_branch/bootstrap/cache",
   "$instance_release/$instance_branch/storage",
@@ -98,10 +98,17 @@ file { "$instance_root/storage/logs/laravel.log":
   group  => $group,
   mode   => 0664
 }->
-file { "/tmp/.df-log/dreamfactory*.log":
-  ensure => present,
-  owner  => $www_user,
-  group  => $group,
-  mode   => 2775,
+exec { 'chown-instance-log-files':
+  command     => "chown ${www_user}:${group} ${instance_root}/storage/logs/laravel.log /tmp/.df-log/*",
+  user        => $user,
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"]
+}->
+exec { 'chmod-instance-log-files':
+  command     => "chmod 0664 ${instance_root}/storage/logs/laravel.log /tmp/.df-log/*",
+  user        => $user,
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"]
 }
-
