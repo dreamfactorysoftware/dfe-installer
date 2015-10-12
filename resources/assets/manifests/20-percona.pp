@@ -47,7 +47,7 @@ apt::source { "percona.trusty":
     "server" => "keys.gnupg.net"
   },
   include  => {
-    "src" => true,
+    "src" => false,
     "deb" => true
   },
   notify   => Exec["apt-update"]
@@ -62,6 +62,7 @@ mysql::db { $db_name:
   password => $db_pwd,
   sql      => "$pwd/resources/assets/sql/dfe_local.schema.sql"
 }
+
 ## Grant access to the DFE app user
 mysql_grant { "${db_user}@${db_host}/*.*":
   ensure     => present,
@@ -72,7 +73,7 @@ mysql_grant { "${db_user}@${db_host}/*.*":
   require    => Mysql::Db[$db_name]
 }
 
-## Add dfadmin to the mysql group
+## Ensure dfadmin is in the mysql group
 group { "mysql":
   ensure  => present,
   members => [$user]
