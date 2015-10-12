@@ -115,14 +115,14 @@ file { "$console_root/.env":
   mode   => 0750,
   source => "$console_root/.env-dist",
 }->
-class { dfe::consoleEnvironmentSettings:
+class { consoleEnvironmentSettings:
 ## Applies INI settings in $_settings to .env
   root     => $console_root,
   zone     => $vendor_id,
   domain   => $domain,
   protocol => $default_protocol,
 }->
-class { dfe::laravelDirectories:
+class { laravelDirectories:
   root  => $console_root,
   owner => $www_user,
   group => $group,
