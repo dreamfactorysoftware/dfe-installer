@@ -229,18 +229,21 @@ class createServerConfigs {
 ## We're using nginx/php5-fpm and not apache
 ##------------------------------------------------------------------------------
 
+service { "nginx":
+  ensure  => running,
+  enable  => true,
+}->
+service { "php5-fpm":
+  ensure  => running,
+  enable  => true
+}
+
 service { "apache2":
   ensure => stopped,
   enable => false
 }
 
-service { "nginx":
-  ensure  => running,
-  enable  => true,
-##  Make sure our configs are created first
-  require => Class['createServerConfigs'],
-}->
-service { "php5-fpm":
-  ensure  => running,
-  enable  => true
+class { createServerConfigs:
+## Make sure our configs are written before we restart nginx
+  notify => Service['nginx'],
 }
