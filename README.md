@@ -1,1 +1,1 @@
-## DreamFactory Enterprise(tm) Installer v1.0.1
+## DreamFactory Enterprise(tm) Installer v1.0.2
