@@ -19,6 +19,47 @@ class iniSettings {
   create_ini_settings($_settings, $_env)
 }
 
+class createDirectoryStructure {
+  file { [
+    "/tmp/.df-log",
+    "$instance_release/$instance_branch/bootstrap/cache",
+    "$instance_release/$instance_branch/storage",
+    "$instance_release/$instance_branch/storage/app",
+    "$instance_release/$instance_branch/storage/databases",
+    "$instance_release/$instance_branch/storage/logs",
+    "$instance_release/$instance_branch/storage/framework",
+    "$instance_release/$instance_branch/storage/framework/cache",
+    "$instance_release/$instance_branch/storage/framework/db",
+    "$instance_release/$instance_branch/storage/framework/sessions",
+    "$instance_release/$instance_branch/storage/framework/views",
+    "$instance_release/$instance_branch/storage/scripting",
+  ]:
+    ensure => directory,
+    owner  => $www_user,
+    group  => $group,
+    mode   => 2775,
+  }
+}
+
+class correctFilePermissions {
+  exec { 'instance-storage-path':
+    command     => "find $pwd/storage -type d -exec chmod 2775 {} \; ; find $pwd/storage -type f -exec chmod 0664 {} \;",
+    provider    => shell,
+    cwd         => $instance_root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { 'instance-log-files':
+    command     => "chown -R ${www_user}:${group} ${instance_root}/storage/logs /tmp/.df-log",
+    provider    => shell,
+    cwd         => "/tmp",
+  }->
+  exec { 'chmod-instance-log-files':
+    command     => "chmod 0664 ${instance_root}/storage/logs/* /tmp/.df-log/*",
+    provider    => shell,
+    cwd         => $instance_root,
+  }
+}
+
 ##------------------------------------------------------------------------------
 ## Check out the repo, update composer, change file permissions...
 ##------------------------------------------------------------------------------
@@ -36,12 +77,6 @@ file { $instance_root:
   ensure => link,
   target => "$instance_release/$instance_branch",
 }->
-file { "/tmp/.df-log":
-  ensure => directory,
-  owner  => $www_user,
-  group  => $group,
-  mode   => 2775,
-}->
 file { "$instance_root/.env":
   ensure => present,
   owner  => $user,
@@ -52,24 +87,8 @@ file { "$instance_root/.env":
 class { 'iniSettings':
 ## Applies INI settings in $_settings to .env
 }->
+class { 'createDirectoryStructure':
 ## Make sure the directories are created with the right perms
-file { [
-  "$instance_release/$instance_branch/bootstrap/cache",
-  "$instance_release/$instance_branch/storage",
-  "$instance_release/$instance_branch/storage/app",
-  "$instance_release/$instance_branch/storage/databases",
-  "$instance_release/$instance_branch/storage/logs",
-  "$instance_release/$instance_branch/storage/framework",
-  "$instance_release/$instance_branch/storage/framework/cache",
-  "$instance_release/$instance_branch/storage/framework/db",
-  "$instance_release/$instance_branch/storage/framework/sessions",
-  "$instance_release/$instance_branch/storage/framework/views",
-  "$instance_release/$instance_branch/storage/scripting",
-]:
-  ensure => directory,
-  owner  => $www_group,
-  group  => $group,
-  mode   => 2775,
 }->
 exec { 'instance-composer-update':
   command     => "$composer_bin update",
@@ -98,17 +117,20 @@ file { "$instance_root/storage/logs/laravel.log":
   group  => $group,
   mode   => 0664
 }->
-exec { 'chown-instance-log-files':
-  command     => "chown ${www_user}:${group} ${instance_root}/storage/logs/laravel.log /tmp/.df-log/*",
-  user        => $user,
-  provider    => shell,
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"]
-}->
-exec { 'chmod-instance-log-files':
-  command     => "chmod 0664 ${instance_root}/storage/logs/laravel.log /tmp/.df-log/*",
-  user        => $user,
-  provider    => shell,
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"]
+class { 'correctFilePermissions':
+## Ensure all files are writable by the web server
 }
+#exec { 'chown-instance-log-files':
+#  command     => "chown ${www_user}:${group} ${instance_root}/storage/logs/laravel.log /tmp/.df-log/*",
+#  user        => $user,
+#  provider    => shell,
+#  cwd         => $instance_root,
+#  environment => ["HOME=/home/$user"]
+#}->
+#exec { 'chmod-instance-log-files':
+#  command     => "chmod 0664 ${instance_root}/storage/logs/laravel.log /tmp/.df-log/*",
+#  user        => $user,
+#  provider    => shell,
+#  cwd         => $instance_root,
+#  environment => ["HOME=/home/$user"]
+#}
