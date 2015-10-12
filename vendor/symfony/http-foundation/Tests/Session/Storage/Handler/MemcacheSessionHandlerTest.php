@@ -12,8 +12,12 @@
 namespace Symfony\Component\HttpFoundation\Tests\Session\Storage\Handler;
 
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\MemcacheSessionHandler;
+use Symfony\Component\HttpFoundation\Tests\ClockMockTestCase;
 
-class MemcacheSessionHandlerTest extends \PHPUnit_Framework_TestCase
+/**
+ * @requires extension memcache
+ */
+class MemcacheSessionHandlerTest extends ClockMockTestCase
 {
     const PREFIX = 'prefix_';
     const TTL = 1000;
@@ -26,10 +30,7 @@ class MemcacheSessionHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        if (!class_exists('Memcache')) {
-            $this->markTestSkipped('Skipped tests Memcache class is not present');
-        }
-
+        parent::setUp();
         $this->memcache = $this->getMock('Memcache');
         $this->storage = new MemcacheSessionHandler(
             $this->memcache,
@@ -41,6 +42,7 @@ class MemcacheSessionHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->memcache = null;
         $this->storage = null;
+        parent::tearDown();
     }
 
     public function testOpenSession()

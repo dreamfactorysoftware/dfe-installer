@@ -12,11 +12,13 @@
 namespace Symfony\Component\HttpFoundation\Tests\Session\Storage\Handler;
 
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\MongoDbSessionHandler;
+use Symfony\Component\HttpFoundation\Tests\ClockMockTestCase;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
+ * @requires extension mongo
  */
-class MongoDbSessionHandlerTest extends \PHPUnit_Framework_TestCase
+class MongoDbSessionHandlerTest extends ClockMockTestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -27,9 +29,7 @@ class MongoDbSessionHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        if (!extension_loaded('mongo')) {
-            $this->markTestSkipped('MongoDbSessionHandler requires the PHP "mongo" extension.');
-        }
+        parent::setUp();
 
         $mongoClass = version_compare(phpversion('mongo'), '1.3.0', '<') ? 'Mongo' : 'MongoClient';
 

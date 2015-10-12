@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.1.19 (LTS) on 2015-10-07.
+ * Generated for Laravel 5.1.19 (LTS) on 2015-10-12.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -4105,6 +4105,7 @@ namespace {
          *
          * @param array $columns
          * @return array|static[] 
+         * @deprecated since version 5.1. Use get instead.
          * @static 
          */
         public static function getFresh($columns = array()){
@@ -4944,6 +4945,17 @@ namespace {
          */
         public static function before($callback){
             return \Illuminate\Auth\Access\Gate::before($callback);
+        }
+        
+        /**
+         * Register a callback to run after all Gate checks.
+         *
+         * @param callable $callback
+         * @return $this 
+         * @static 
+         */
+        public static function after($callback){
+            return \Illuminate\Auth\Access\Gate::after($callback);
         }
         
         /**
