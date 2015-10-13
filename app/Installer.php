@@ -3,6 +3,7 @@
 use DreamFactory\Enterprise\Common\Providers\InspectionServiceProvider;
 use DreamFactory\Library\Utility\Disk;
 use DreamFactory\Library\Utility\Exceptions\FileSystemException;
+use DreamFactory\Library\Utility\Json;
 use DreamFactory\Library\Utility\JsonFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
@@ -89,7 +90,7 @@ class Installer
 
         //  If an existing run's data is available, pre-fill form with it
         if (file_exists($this->jsonFile)) {
-            logger('Found existing values file "' . $this->jsonFile . '"');
+            logger('Found existing file "' . $this->jsonFile . '"');
 
             try {
                 $this->defaults = array_merge($this->defaults, JsonFile::decodeFile($this->jsonFile, true));
@@ -175,28 +176,27 @@ class Installer
 
     /**
      * Creates an array of data suitable for writing to a shell script for sourcing
-     *
-     * @param string $outputFile The output file name. Defaults to "root/.env-install"
      */
-    public function writeInstallerFiles($outputFile = self::OUTPUT_FILE_NAME)
+    public function writeInstallerFiles()
     {
         if (empty($this->formData)) {
             throw new \RuntimeException('No form data has been specified. Cannot write blanks.');
         }
 
-        $_sourceFile = $outputFile ?: $this->outputFile;
-        $_jsonFile = $outputFile ? $outputFile . '.json' : $this->jsonFile;
+        //  Fix up fact data
+        $_facts = [];
+        foreach ($this->facterData as $_key => $_value) {
+            $_facts[] = $_key . '=' . $_value;
+        }
 
-        //  Write out the source file
-        if (false === file_put_contents($_sourceFile, '#!/bin/sh' . PHP_EOL . implode(PHP_EOL, $this->facterData))) {
-            throw new FileSystemException('Unable to write output file "' . $_sourceFile . '"');
+        //  Write out source file
+        if (false === file_put_contents($this->outputFile, '#!/bin/sh' . PHP_EOL . implode(PHP_EOL, $_facts))) {
+            throw new FileSystemException('Unable to write output file "' . $this->outputFile . '"');
         }
 
         //  Write out the JSON file
-        try {
-            JsonFile::encodeFile($_jsonFile, $this->cleanData);
-        } catch (\Exception $_ex) {
-            throw new FileSystemException('Unable to write JSON output file "' . $_jsonFile . '"');
+        if (false === file_put_contents($this->jsonFile, Json::encode($this->cleanData, JSON_PRETTY_PRINT))) {
+            throw new FileSystemException('Unable to write JSON output file "' . $this->jsonFile . '"');
         }
     }
 
