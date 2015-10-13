@@ -13,13 +13,13 @@ Route::get('/',
             $_defaults = [
                 'user'           => 'dfadmin',
                 'group'          => 'dfadmin',
-                'storage_group'  => 'dfe',
+                'storage_group'  => 'dfadmin',
                 'www_user'       => 'www-data',
                 'www_group'      => 'www-data',
                 'admin_email'    => null,
                 'admin_pwd'      => null,
                 'mysql_root_pwd' => null,
-                'vendor_id'      => null,
+                'vendor_id'      => 'dfe',
                 'domain'         => null,
                 'mount_point'    => '/data',
                 'storage_path'   => '/storage',
@@ -57,21 +57,25 @@ Route::get('/',
 /** @noinspection PhpUndefinedMethodInspection */
 Route::post('/',
     function (Request $request){
+        $_rawData = [];
         $_mountPoint = $storagePath = null;
-        $_data = $request->input();
 
-        if (empty($_data) || count($_data) < 5) {
+        $_formData = $request->input();
+
+        if (empty($_formData) || count($_formData) < 5) {
+            \Log::error('Invalid number of post entries: ' . print_r($_formData, true));
             Redirect::home();
         }
 
-        array_forget($_data, '_token');
+        array_forget($_formData, '_token');
 
-        $_env[] = '#!/bin/sh' . PHP_EOL;
-        $_env[] = 'INSTALLER_FACTS=1';
-        $_json = [];
+        $_env = ['#!/bin/sh' . PHP_EOL, 'INSTALLER_FACTS=1'];
 
-        if (!empty($_data)) {
-            foreach ($_data as $_key => $_value) {
+        if (!empty($_formData)) {
+            foreach ($_formData as $_key => $_value) {
+                $_value = trim($_value);
+
+                //  Clean up slashes on values
                 switch ($_key) {
                     case 'storage-path':
                         $_storagePath = $_value = rtrim($_value, DIRECTORY_SEPARATOR);
@@ -82,21 +86,27 @@ Route::post('/',
                         break;
                 }
 
+                //  Keep a pristine copy
+                $_rawData[$_key] = $_value;
+
+                //  Dump non-empties into the source file
                 if (!empty($_value)) {
                     $_env[] = 'export FACTER_' . trim(str_replace('-', '_', strtoupper($_key))) . '=' . $_value;
                 }
-
-                $_json[$_key] = $_value;
             }
 
+            //  If set have a storage and mount, construct a storage path
             if (!empty($_storagePath) && !empty($_mountPoint)) {
                 $_env[] = 'export FACTER_STORAGE_MOUNT_POINT=' . Disk::path([$_mountPoint, $_storagePath]);
             }
 
-            //  Write out the .env-install and the .env-install.json version
+            //  Write out the .env-install
             file_put_contents(base_path(config('dfe.output-file')), implode(PHP_EOL, $_env) . PHP_EOL);
-            file_put_contents(base_path(config('dfe.output-file') . '.json'), Json::encode($_json, JSON_PRETTY_PRINT));
+
+            //  Write out a JSON version of the .env-install
+            file_put_contents(base_path(config('dfe.output-file')) . '.json',
+                Json::encode($_rawData, JSON_PRETTY_PRINT));
         }
 
-        return view('continue', $_data);
+        return view('continue', $_formData);
     });
