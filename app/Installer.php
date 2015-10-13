@@ -125,36 +125,40 @@ class Installer
 
         foreach ($formData as $_key => $_value) {
             $_value = trim($_value);
+            $_cleanKey = trim(str_replace('-', '_', $_key));
 
             //  Clean up any diabolical leading slashes on values
-            switch ($_key) {
-                case 'storage-path':
+            switch ($_cleanKey) {
+                case 'storage_path':
                     $_storagePath = $_value = trim($_value, DIRECTORY_SEPARATOR);
                     break;
 
-                case 'mount-point':
+                case 'mount_point':
                     $_mountPoint = $_value = rtrim($_value, DIRECTORY_SEPARATOR);
                     break;
             }
 
             //  Dump non-empties into the source file
             if (!empty($_value)) {
-                $_facterData['FACTER_' . trim(str_replace('-', '_', strtoupper($_key)))] = $_value;
+                $_facterData['FACTER_' . strtoupper($_cleanKey)] = $_value;
             }
 
             //  Keep a pristine copy
-            $_cleanData[$_key] = $_value;
+            $_cleanData[$_cleanKey] = $_value;
+
+            //  Save cleaned value, if any
+            $formData[$_key] = $_value;
         }
 
         //  If set have a storage and mount, construct a storage path
         if (!empty($_storagePath) && !empty($_mountPoint)) {
-            $_cleanData['storage-mount-point'] =
+            $_cleanData['storage_mount_point'] =
             $_facterData['FACTER_STORAGE_MOUNT_POINT'] = Disk::path([$_mountPoint, $_storagePath]);
         }
 
         $this->formData = $formData;
-        $this->facterData = $_facterData;
         $this->cleanData = $_cleanData;
+        $this->facterData = $_facterData;
 
         return $this;
     }
@@ -191,6 +195,7 @@ class Installer
      */
     public function getRequiredPackages()
     {
+        $_requirements = [];
         $_required = config('dfe.required-packages', []);
         $_service = \App::make(InspectionServiceProvider::IOC_NAME);
 
@@ -207,12 +212,14 @@ class Installer
                 }
             }
 
-            $this->defaults['requirements'][$_name] = [
+            $_requirements[$_name] = [
                 'name'        => $_name,
                 'has-package' => $_hasPackage,
                 'status'      => $_hasPackage ? 'text-success' : 'text-danger',
             ];
         }
+
+        return $this->defaults['requirements'] = $_requirements;
     }
 
     /**

@@ -96,8 +96,7 @@
                         <div class="form-group">
                             <label for="admin-pwd">Password</label>
                             <input required type="password" class="form-control" id="admin-pwd" name="admin-pwd"
-                                   placeholder="secret"
-                                   value="{{ $admin_pwd }}">
+                                   placeholder="secret" value="{{ $admin_pwd }}">
                         </div>
                     </fieldset>
                 </div>
@@ -137,8 +136,8 @@
                     <fieldset>
                         <legend>DNS</legend>
                         <div class="form-group">
-                            <label for="vendor_id">Sub-domain/Zone</label>
-                            <input required type="text" class="form-control" id="vendor_id" name="vendor_id"
+                            <label for="vendor-id">Sub-domain/Zone</label>
+                            <input required type="text" class="form-control" id="vendor-id" name="vendor-id"
                                    placeholder="zone"
                                    value="{{ $vendor_id }}">
                         </div>
