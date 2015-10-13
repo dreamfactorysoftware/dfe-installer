@@ -107,7 +107,7 @@ class Installer
      */
     public function setFormData(array $formData = [])
     {
-        $_facterData = ['#!/bin/sh' . PHP_EOL, 'INSTALLER_FACTS=1'];
+        $_facterData = ['INSTALLER_FACTS' => 1];
         $_cleanData = [];
 
         if (empty($formData) || count($formData) < 5) {
@@ -182,7 +182,7 @@ class Installer
         $_jsonFile = $outputFile ? $outputFile . '.json' : $this->jsonFile;
 
         //  Write out the source file
-        if (false === file_put_contents($_sourceFile, implode(PHP_EOL, $this->facterData))) {
+        if (false === file_put_contents($_sourceFile, '#!/bin/sh' . PHP_EOL . implode(PHP_EOL, $this->facterData))) {
             throw new FileSystemException('Unable to write output file "' . $_sourceFile . '"');
         }
 
