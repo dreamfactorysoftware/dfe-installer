@@ -11,7 +11,7 @@ Route::get('/',
         'as' => 'home',
         function (){
             $_outputFile = config('dfe.output-file', '.env-install');
-            $_jsonFile = base_path($_outputFile) . '.json';
+            $_jsonFile = base_path($_outputFile . 'json');
 
             $_defaults = [
                 'user'           => 'dfadmin',
@@ -34,6 +34,7 @@ Route::get('/',
                 try {
                     $_json = \DreamFactory\Library\Utility\JsonFile::decodeFile($_jsonFile);
                     $_defaults = array_merge($_defaults, $_json);
+                    \Log::debug('Prior values read from "' . $_jsonFile . '": ' . print_r($_json, true));
                 } catch (\Exception $_ex) {
                     //  Bogus JSON, just ignore
                 }
