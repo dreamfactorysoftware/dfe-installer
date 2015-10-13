@@ -74,13 +74,12 @@ Route::post('/',
             foreach ($_data as $_key => $_value) {
                 switch ($_key) {
                     case 'storage-path':
-                    case 'mount-point':
-                        $_mountPoint = rtrim($_value, DIRECTORY_SEPARATOR);
+                        $_storagePath = $_value = rtrim($_value, DIRECTORY_SEPARATOR);
                         break;
-                }
 
-                if ($_key == 'storage-path') {
-                    $_storagePath = $_value = trim($_value, DIRECTORY_SEPARATOR);
+                    case 'mount-point':
+                        $_mountPoint = $_value = rtrim($_value, DIRECTORY_SEPARATOR);
+                        break;
                 }
 
                 if (!empty($_value)) {
@@ -96,7 +95,6 @@ Route::post('/',
 
             //  Write out the .env-install and the .env-install.json version
             file_put_contents(base_path(config('dfe.output-file')), implode(PHP_EOL, $_env) . PHP_EOL);
-            
             file_put_contents(base_path(config('dfe.output-file') . '.json'), Json::encode($_json, JSON_PRETTY_PRINT));
         }
 
