@@ -184,18 +184,20 @@ class Installer
         }
 
         //  Fix up fact data
-        $_facts = [];
+        $_facts = ['#!/bin/sh', PHP_EOL];
         foreach ($this->facterData as $_key => $_value) {
             $_facts[] = $_key . '=' . $_value;
         }
 
         //  Write out source file
-        if (false === file_put_contents($this->outputFile, '#!/bin/sh' . PHP_EOL . implode(PHP_EOL, $_facts))) {
+        if (false === file_put_contents($this->outputFile, implode(PHP_EOL, $_facts))) {
             throw new FileSystemException('Unable to write output file "' . $this->outputFile . '"');
         }
 
         //  Write out the JSON file
-        if (false === file_put_contents($this->jsonFile, Json::encode($this->cleanData, JSON_PRETTY_PRINT))) {
+        if (false === file_put_contents($this->jsonFile,
+                Json::encode($this->cleanData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES))
+        ) {
             throw new FileSystemException('Unable to write JSON output file "' . $this->jsonFile . '"');
         }
     }
