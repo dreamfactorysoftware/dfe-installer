@@ -86,6 +86,7 @@ export FACTER_RUN_USER=$USER
 export FACTER_LOG_USER=ubuntu
 export FACTER_STATIC_ZONE_NAME=local
 export FACTER_STORAGE_MOUNT_POINT=
+export FACTER_INSTALL_HOSTNAME=`/bin/hostname`
 
 ## Paths
 export FACTER_DOC_ROOT_BASE_PATH=/var/www

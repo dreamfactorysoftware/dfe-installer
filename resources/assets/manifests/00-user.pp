@@ -12,15 +12,19 @@
 ## A class to update the hosts file
 class createHostAliases {
   $_hostAliases = [
+    $install_hostname,
+    "console",
+    "console.local",
+    "dashboard",
+    "dashboard.local",
     "console.${vendor_id}.${domain}",
     "dashboard.${vendor_id}.${domain}",
-    "dashboard",
     "${vendor_id}.${domain}",
   ]
 
-  host { "console":
+  host { "localhost":
     ensure       => present,
-    ip           => "127.0.1.1",
+    ip           => "127.0.0.1",
     host_aliases => $_hostAliases
   }
 }
@@ -30,9 +34,9 @@ class createHostAliases {
 ############
 
 class { createHostAliases:
-## Update the /etc/hosts file accordingly
+  ## Update the /etc/hosts file accordingly
 }->
-## Create $user and $group. Create private key for user
+  ## Create $user and $group. Create private key for user
 group { [
   $group,
   'sudo',
