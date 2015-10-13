@@ -78,8 +78,12 @@ class Installer
     {
         $this->formData = $this->cleanData = [];
 
-        $this->outputFile = base_path() . DIRECTORY_SEPARATOR . self::OUTPUT_FILE_NAME;
-        $this->jsonFile = base_path() . DIRECTORY_SEPARATOR . self::JSON_FILE_NAME;
+        $this->outputFile = base_path(self::OUTPUT_FILE_NAME);
+        $this->jsonFile = base_path(self::JSON_FILE_NAME);
+
+        logger('Output files set to:');
+        logger(' > shell source file ' . $this->outputFile);
+        logger(' > json source file ' . $this->outputFile);
 
         logger('Checking for last values in "' . $this->jsonFile . '"');
 

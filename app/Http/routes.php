@@ -18,7 +18,7 @@ Route::get('/',
 Route::post('/',
     function (Request $request) {
         $installer = new Installer();
-        
+
         $installer->setFormData($request->input())->writeInstallerFiles();
 
         return view('continue', $installer->getCleanData());
