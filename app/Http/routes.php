@@ -90,7 +90,7 @@ Route::post('/',
             }
 
             if (!empty($_storagePath) && !empty($_mountPoint)) {
-                $_env[] = 'export FACTER_STORAGE_MOUNT_POINT=' . Disk::path([$_mountPoint, $_storagePath], true);
+                $_env[] = 'export FACTER_STORAGE_MOUNT_POINT=' . Disk::path([$_mountPoint, $_storagePath]);
             }
 
             //  Write out the .env-install and the .env-install.json version
