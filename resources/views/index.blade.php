@@ -112,7 +112,7 @@
                         <div class="form-group">
                             <label for="gh-pwd">Password</label>
                             <input required type="password" class="form-control" id="gh-pwd" name="gh-pwd"
-                                   placeholder="secret" value="{{ $gw_pwd }}">
+                                   placeholder="secret" value="{{ $gh_pwd }}">
                         </div>
                     </fieldset>
                 </div>
