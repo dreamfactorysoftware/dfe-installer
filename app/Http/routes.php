@@ -24,6 +24,8 @@ Route::get('/',
                 'mysql_root_pwd' => null,
                 'vendor_id'      => 'dfe',
                 'domain'         => null,
+                'gh_user'        => null,
+                'gh_pwd'         => null,
                 'mount_point'    => '/data',
                 'storage_path'   => '/storage',
                 'log_path'       => '/data/logs',
@@ -32,7 +34,7 @@ Route::get('/',
 
             if (file_exists($_jsonFile)) {
                 logger('Found existing values file "' . $_jsonFile . '"');
-                
+
                 try {
                     $_json = \DreamFactory\Library\Utility\JsonFile::decodeFile($_jsonFile);
                     $_defaults = array_merge($_defaults, $_json);
