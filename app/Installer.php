@@ -160,6 +160,10 @@ class Installer
         $this->cleanData = $_cleanData;
         $this->facterData = $_facterData;
 
+        logger('Form data set: ' . print_r($this->formData, true));
+        logger('Clean data set: ' . print_r($this->cleanData, true));
+        logger('Facter data set: ' . print_r($this->facterData, true));
+
         return $this;
     }
 
