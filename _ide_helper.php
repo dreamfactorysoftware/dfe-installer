@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.1.19 (LTS) on 2015-10-12.
+ * Generated for Laravel 5.1.19 (LTS) on 2015-10-13.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -4992,6 +4992,19 @@ namespace {
          */
         public static function check($ability, $arguments = array()){
             return \Illuminate\Auth\Access\Gate::check($ability, $arguments);
+        }
+        
+        /**
+         * Determine if the given ability should be granted for the current user.
+         *
+         * @param string $ability
+         * @param array|mixed $arguments
+         * @return \Illuminate\Auth\Access\Response 
+         * @throws \Illuminate\Auth\Access\UnauthorizedException
+         * @static 
+         */
+        public static function authorize($ability, $arguments = array()){
+            return \Illuminate\Auth\Access\Gate::authorize($ability, $arguments);
         }
         
         /**
@@ -10915,6 +10928,19 @@ namespace {
          */
         public static function asset($path, $secure = null){
             return \Illuminate\Routing\UrlGenerator::asset($path, $secure);
+        }
+        
+        /**
+         * Generate a URL to an asset from a custom root domain such as CDN, etc.
+         *
+         * @param string $root
+         * @param string $path
+         * @param bool|null $secure
+         * @return string 
+         * @static 
+         */
+        public static function assetFrom($root, $path, $secure = null){
+            return \Illuminate\Routing\UrlGenerator::assetFrom($root, $path, $secure);
         }
         
         /**

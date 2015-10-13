@@ -492,12 +492,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "2b4b3e3084d3c467f8dfaf7ce5a6dc466068b47d"
+                "reference": "ca2d794d2800e53391c51d117a133f2c2e6dd146"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/2b4b3e3084d3c467f8dfaf7ce5a6dc466068b47d",
-                "reference": "2b4b3e3084d3c467f8dfaf7ce5a6dc466068b47d",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/ca2d794d2800e53391c51d117a133f2c2e6dd146",
+                "reference": "ca2d794d2800e53391c51d117a133f2c2e6dd146",
                 "shasum": ""
             },
             "require": {
@@ -511,6 +511,7 @@
                 "monolog/monolog": "~1.11",
                 "mtdowling/cron-expression": "~1.0",
                 "nesbot/carbon": "~1.19",
+                "paragonie/random_compat": "^1.0.4",
                 "php": ">=5.5.9",
                 "psy/psysh": "~0.5.1",
                 "swiftmailer/swiftmailer": "~5.1",
@@ -612,7 +613,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2015-10-12 15:12:48"
+            "time": "2015-10-13 17:52:33"
         },
         {
             "name": "league/flysystem",
@@ -1002,6 +1003,48 @@
                 "php"
             ],
             "time": "2015-09-19 14:15:08"
+        },
+        {
+            "name": "paragonie/random_compat",
+            "version": "1.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paragonie/random_compat.git",
+                "reference": "f667aa2000a192adfa53332335a2ae0c1cb9ea6e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/f667aa2000a192adfa53332335a2ae0c1cb9ea6e",
+                "reference": "f667aa2000a192adfa53332335a2ae0c1cb9ea6e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/random.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paragon Initiative Enterprises",
+                    "email": "security@paragonie.com",
+                    "homepage": "https://paragonie.com"
+                }
+            ],
+            "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
+            "keywords": [
+                "csprng",
+                "pseudorandom",
+                "random"
+            ],
+            "time": "2015-10-08 12:57:25"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -1649,12 +1692,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "d2819537b826be4f400616c2655ff0cdc62a7091"
+                "reference": "b5aabdcc2d256168aa8226e84610602f031e65af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/d2819537b826be4f400616c2655ff0cdc62a7091",
-                "reference": "d2819537b826be4f400616c2655ff0cdc62a7091",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/b5aabdcc2d256168aa8226e84610602f031e65af",
+                "reference": "b5aabdcc2d256168aa8226e84610602f031e65af",
                 "shasum": ""
             },
             "require": {
@@ -1693,7 +1736,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2015-10-12 12:42:24"
+            "time": "2015-10-13 16:05:47"
         },
         {
             "name": "symfony/http-kernel",
@@ -1701,12 +1744,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-kernel.git",
-                "reference": "2edd0cd55d601b966c217e692cf111795e1e8b2b"
+                "reference": "b56f9fad3f1259c1d5cc0a1e5a96c341e9633d5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/2edd0cd55d601b966c217e692cf111795e1e8b2b",
-                "reference": "2edd0cd55d601b966c217e692cf111795e1e8b2b",
+                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/b56f9fad3f1259c1d5cc0a1e5a96c341e9633d5e",
+                "reference": "b56f9fad3f1259c1d5cc0a1e5a96c341e9633d5e",
                 "shasum": ""
             },
             "require": {
@@ -1772,7 +1815,7 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "https://symfony.com",
-            "time": "2015-10-12 09:20:33"
+            "time": "2015-10-13 16:05:47"
         },
         {
             "name": "symfony/process",
@@ -2620,12 +2663,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fzaninotto/Faker.git",
-                "reference": "6249392c13eb3f7363c3809c7a9a3017cc302a68"
+                "reference": "9198c2f7668b9ee494959f8ff7f5f6e6f65379ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/6249392c13eb3f7363c3809c7a9a3017cc302a68",
-                "reference": "6249392c13eb3f7363c3809c7a9a3017cc302a68",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/9198c2f7668b9ee494959f8ff7f5f6e6f65379ca",
+                "reference": "9198c2f7668b9ee494959f8ff7f5f6e6f65379ca",
                 "shasum": ""
             },
             "require": {
@@ -2662,7 +2705,7 @@
                 "faker",
                 "fixtures"
             ],
-            "time": "2015-10-12 15:42:23"
+            "time": "2015-10-12 15:48:46"
         },
         {
             "name": "hamcrest/hamcrest-php",
