@@ -10,6 +10,9 @@ Route::get('/',
     [
         'as' => 'home',
         function (){
+            $_outputFile = config('dfe.output-file', '.env-install');
+            $_jsonFile = base_path($_outputFile) . '.json';
+
             $_defaults = [
                 'user'           => 'dfadmin',
                 'group'          => 'dfadmin',
@@ -26,6 +29,15 @@ Route::get('/',
                 'log_path'       => '/data/logs',
                 'requirements'   => [],
             ];
+
+            if (file_exists($_jsonFile)) {
+                try {
+                    $_json = \DreamFactory\Library\Utility\JsonFile::decodeFile($_jsonFile);
+                    $_defaults = array_merge($_defaults, $_json);
+                } catch (\Exception $_ex) {
+                    //  Bogus JSON, just ignore
+                }
+            }
 
             $_required = config('dfe.required-packages', []);
             $_service = \App::make(InspectionServiceProvider::IOC_NAME);
