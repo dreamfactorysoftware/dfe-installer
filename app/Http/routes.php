@@ -31,6 +31,8 @@ Route::get('/',
             ];
 
             if (file_exists($_jsonFile)) {
+                logger('Found existing values file "' . $_jsonFile . '"');
+                
                 try {
                     $_json = \DreamFactory\Library\Utility\JsonFile::decodeFile($_jsonFile);
                     $_defaults = array_merge($_defaults, $_json);
