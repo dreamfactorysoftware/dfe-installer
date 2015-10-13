@@ -81,6 +81,8 @@ class Installer
         $this->outputFile = base_path() . DIRECTORY_SEPARATOR . self::OUTPUT_FILE_NAME;
         $this->jsonFile = base_path() . DIRECTORY_SEPARATOR . self::JSON_FILE_NAME;
 
+        logger('Checking for last values in "' . $this->jsonFile . '"');
+
         //  If an existing run's data is available, pre-fill form with it
         if (file_exists($this->jsonFile)) {
             logger('Found existing values file "' . $this->jsonFile . '"');
