@@ -552,6 +552,7 @@ return array(
     'DreamFactory\\Enterprise\\Installer\\Http\\Middleware\\RedirectIfAuthenticated' => $baseDir . '/app/Http/Middleware/RedirectIfAuthenticated.php',
     'DreamFactory\\Enterprise\\Installer\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'DreamFactory\\Enterprise\\Installer\\Http\\Requests\\Request' => $baseDir . '/app/Http/Requests/Request.php',
+    'DreamFactory\\Enterprise\\Installer\\Installer' => $baseDir . '/app/Installer.php',
     'DreamFactory\\Enterprise\\Installer\\Jobs\\Job' => $baseDir . '/app/Jobs/Job.php',
     'DreamFactory\\Enterprise\\Installer\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'DreamFactory\\Enterprise\\Installer\\Providers\\AuthServiceProvider' => $baseDir . '/app/Providers/AuthServiceProvider.php',

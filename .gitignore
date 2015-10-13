@@ -3,5 +3,6 @@
 /tests/storage/*
 /.idea/workspace.xml
 /.idea/composerJson.xml
-/.env-install
+/storage/.env-install
+/storage/.env-install.json
 /vendor/dreamfactory/*.setdev-on
