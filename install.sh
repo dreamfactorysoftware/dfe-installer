@@ -14,7 +14,7 @@
 VERSION=1.1.0
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/manifests/
-ENV_FILE=./.env-install
+ENV_FILE=./storage/.env-install
 PHP_BIN=`which php`
 PHP_ENMOD_BIN=`which php5enmod`
 LOG_FILE=/tmp/dfe-installer.log
