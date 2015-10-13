@@ -73,12 +73,12 @@
                         <div class="form-group">
                             <label for="www-user">Web Server User</label>
                             <input required type="text" class="form-control" id="www-user" name="www-user"
-                                   value="{{$www_user}}" placeholder="www-data">
+                                   value="{{ $www_user }}" placeholder="www-data">
                         </div>
                         <div class="form-group">
                             <label for="www-group">Web Server Group</label>
                             <input required type="text" class="form-control" id="www-group" name="www-group"
-                                   value="{{$www_group}}" placeholder="www-data">
+                                   value="{{ $www_group }}" placeholder="www-data">
                         </div>
                     </fieldset>
                 </div>
@@ -91,13 +91,13 @@
                         <div class="form-group">
                             <label for="admin-email">Email Address</label>
                             <input required type="email" class="form-control" id="admin-email" name="admin-email"
-                                   value="{{$admin_email}}" placeholder="you@yourdomain.com">
+                                   value="{{ $admin_email }}" placeholder="you@yourdomain.com">
                         </div>
                         <div class="form-group">
                             <label for="admin-pwd">Password</label>
                             <input required type="password" class="form-control" id="admin-pwd" name="admin-pwd"
                                    placeholder="secret"
-                                   value="{{$admin_pwd}}">
+                                   value="{{ $admin_pwd }}">
                         </div>
                     </fieldset>
                 </div>
@@ -107,12 +107,12 @@
                         <div class="form-group">
                             <label for="gh-user">User Name (not email)</label>
                             <input required type="text" class="form-control" id="gh-user" name="gh-user"
-                                   placeholder="username">
+                                   placeholder="username" value="{{ $gh_user }}">
                         </div>
                         <div class="form-group">
                             <label for="gh-pwd">Password</label>
                             <input required type="password" class="form-control" id="gh-pwd" name="gh-pwd"
-                                   placeholder="secret">
+                                   placeholder="secret" value="{{ $gw_pwd }}">
                         </div>
                     </fieldset>
                 </div>
@@ -140,13 +140,13 @@
                             <label for="vendor_id">Sub-domain/Zone</label>
                             <input required type="text" class="form-control" id="vendor_id" name="vendor_id"
                                    placeholder="zone"
-                                   value="{{$vendor_id}}">
+                                   value="{{ $vendor_id }}">
                         </div>
                         <div class="form-group">
                             <label for="domain">Top-level Domain</label>
                             <input required type="text" class="form-control" id="domain" name="domain"
                                    placeholder="domain.com"
-                                   value="{{$domain}}">
+                                   value="{{ $domain }}">
                         </div>
                     </fieldset>
                 </div>
@@ -158,7 +158,7 @@
                             <label for="mount-point">Storage Mount Point</label>
                             <input required type="text" class="form-control" id="mount-point" name="mount-point"
                                    placeholder="/data"
-                                   value="{{$mount_point}}">
+                                   value="{{ $mount_point }}">
 
                             <p class="help-block">Absolute path where instance data is to be stored</p>
                         </div>
@@ -166,7 +166,7 @@
                             <label for="storage-path">Storage Path</label>
                             <input required type="text" class="form-control" id="storage-path" name="storage-path"
                                    placeholder="/storage"
-                                   value="{{$storage_path}}">
+                                   value="{{ $storage_path }}">
 
                             <p class="help-block">Relative to [<strong>Storage Mount Point</strong>]</p>
                         </div>
@@ -174,7 +174,7 @@
                             <label for="log-path">Base Log Path</label>
                             <input required type="text" class="form-control" id="log-path" name="log-path"
                                    placeholder="/data/logs"
-                                   value="{{$log_path}}">
+                                   value="{{ $log_path }}">
 
                             <p class="help-block">Absolute path where system logs are to be stored</p>
                         </div>
