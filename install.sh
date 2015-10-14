@@ -88,6 +88,10 @@ export FACTER_STATIC_ZONE_NAME=local
 export FACTER_STORAGE_MOUNT_POINT=
 export FACTER_INSTALL_HOSTNAME=`/bin/hostname`
 
+## Needs to match DB name in dfe_local.schema.sql
+export FACTER_DB_NAME=dfe_local
+export FACTER_DB_DRIVER=mysql
+
 ## Paths
 export FACTER_DOC_ROOT_BASE_PATH=/var/www
 export FACTER_SERVER_CONFIG_PATH="${FACTER_DOC_ROOT_BASE_PATH}/launchpad/server/config"

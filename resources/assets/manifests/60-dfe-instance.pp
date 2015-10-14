@@ -15,7 +15,7 @@ $_settings = {
 }
 
 class iniSettings {
-## Create .env file
+  ## Create .env file
   create_ini_settings($_settings, $_env)
 }
 
@@ -42,8 +42,14 @@ class createDirectoryStructure {
 }
 
 class correctFilePermissions {
-  exec { 'instance-storage-path':
-    command     => "find $pwd/storage -type d -exec chmod 2775 {} \; ; find $pwd/storage -type f -exec chmod 0664 {} \;",
+  exec { 'instance-storage-directories':
+    command     => "find $pwd/storage -type d -exec chmod 2775 {} \\;",
+    provider    => shell,
+    cwd         => $instance_root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { 'instance-storage-files':
+    command     => "find $pwd/storage -type f -exec chmod 0664 {} \\;",
     provider    => shell,
     cwd         => $instance_root,
     environment => ["HOME=/home/$user"]
@@ -58,6 +64,19 @@ class correctFilePermissions {
     provider    => shell,
     cwd         => $instance_root,
   }
+}
+
+class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
+
+  file { [
+    "$root/storage/logs/laravel.log",
+  ]:
+    ensure => present,
+    owner  => $www_user,
+    group  => $group,
+    mode   => $mode,
+  }
+
 }
 
 ##------------------------------------------------------------------------------
@@ -85,10 +104,10 @@ file { "$instance_root/.env":
   source => "$instance_root/.env-dist"
 }->
 class { 'iniSettings':
-## Applies INI settings in $_settings to .env
+  ## Applies INI settings in $_settings to .env
 }->
 class { 'createDirectoryStructure':
-## Make sure the directories are created with the right perms
+  ## Make sure the directories are created with the right perms
 }->
 exec { 'instance-composer-update':
   command     => "$composer_bin update",
@@ -111,26 +130,12 @@ exec { 'clear-cache-and-optimize':
   cwd         => $instance_root,
   environment => ["HOME=/home/$user"]
 }->
-file { "$instance_root/storage/logs/laravel.log":
-  ensure => present,
-  owner  => $www_user,
-  group  => $group,
-  mode   => 0664
-}->
 class { 'correctFilePermissions':
-## Ensure all files are writable by the web server
+  ## Ensure all files are writable by the web server
+}->
+  ## Fix up the permissions on the log file
+class { fixLogPermissions:
+  root  => $instance_root,
+  owner => $www_user,
+  group => $group,
 }
-#exec { 'chown-instance-log-files':
-#  command     => "chown ${www_user}:${group} ${instance_root}/storage/logs/laravel.log /tmp/.df-log/*",
-#  user        => $user,
-#  provider    => shell,
-#  cwd         => $instance_root,
-#  environment => ["HOME=/home/$user"]
-#}->
-#exec { 'chmod-instance-log-files':
-#  command     => "chmod 0664 ${instance_root}/storage/logs/laravel.log /tmp/.df-log/*",
-#  user        => $user,
-#  provider    => shell,
-#  cwd         => $instance_root,
-#  environment => ["HOME=/home/$user"]
-#}
