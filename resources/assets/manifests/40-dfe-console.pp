@@ -93,20 +93,6 @@ class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
 
 }
 
-## Our mount config
-$_dbConfig = "
-{
-  \"port\":                   3306,
-  \"username\":               \"${db_user}\",
-  \"password\":               \"${db_password}\",
-  \"database\":               \"${db_name}\",
-  \"driver\":                 \"${db_driver}\",
-  \"default-database-name\":  null,
-  \"charset\":                'utf8',
-  \"collation\":              'utf8_unicode_ci',
-  \"prefix\":                 null
-}"
-
 ############
 ## Logic
 ############
@@ -194,7 +180,7 @@ exec { "create-app-server":
   environment => ["HOME=/home/$user"]
 }->
 exec { "create-db-server":
-  command     => "$artisan dfe:server create db-${vendor_id} -t db -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c \"${dbConfig}\"",
+  command     => "$artisan dfe:server create db-${vendor_id} -t db -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c \"{\"port\":3306, \"username\": \"${db_user}\", \"password\": \"${db_password}\", \"database\": \"${db_name}\", \"driver\": \"${db_driver}\", \"default-database-name\": \"\", \"charset\": 'utf8', \"collation\": 'utf8_unicode_ci', \"prefix\": \"\"}",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
