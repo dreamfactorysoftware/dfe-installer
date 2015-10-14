@@ -119,7 +119,7 @@ class { laravelDirectories:
   owner => $www_user,
   group => $group,
 }->
-exec { "add_dashboard_keys":
+exec { "append-dashboard-api-keys":
   command  => "cat $console_root/database/dfe/dashboard.env >> $dashboard_root/.env",
   provider => shell,
   user     => $user
@@ -131,15 +131,15 @@ exec { "dashboard-composer-update":
   cwd         => $dashboard_root,
   environment => [ "HOME=/home/$user", ]
 }->
-exec { "generate-app-key":
-  command     => "$artisan key: generate",
+exec { "generate-dashboard-app-key":
+  command     => "$artisan key:generate",
   user        => $user,
   provider    => shell,
   cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
 }->
-exec { "clear-cache-and-optimize":
-  command     => "$artisan clear-compiled ; $artisan cache: clear ; $artisan config: clear ; $artisan route: clear ; $artisan optimize",
+exec { "clear-caches-and-optimize":
+  command     => "$artisan clear-compiled ; $artisan cache:clear ; $artisan config:clear ; $artisan route:clear ; $artisan optimize",
   user        => $user,
   provider    => shell,
   cwd         => $dashboard_root,
