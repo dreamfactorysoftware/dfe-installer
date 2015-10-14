@@ -46,8 +46,8 @@ CREATE TABLE `app_key_t` (
                    COLLATE utf8_unicode_ci NOT NULL,
   `key_class_text` VARCHAR(64)
                    COLLATE utf8_unicode_ci NOT NULL,
-  `created_at`     TIMESTAMP               NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `updated_at`     TIMESTAMP               NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_at`     TIMESTAMP               NOT NULL,
+  `updated_at`     TIMESTAMP               NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ux_app_key_client_id` (`client_id`))
   ENGINE = InnoDB
