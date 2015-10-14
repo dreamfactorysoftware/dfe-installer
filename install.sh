@@ -131,8 +131,8 @@ export FACTER_MOUNT_POINT FACTER_DOMAIN FACTER_GH_USER FACTER_GH_PWD
 sectionHeader " ${B1}DreamFactory Enterprise(tm)${B2} ${SYSTEM_TYPE} Installer v${VERSION}"
 
 ## Find settings file...
-if [ -f ${ENV_FILE} ]; then
-    . ${ENV_FILE}
+if [ -f "${ENV_FILE}" ]; then
+    . "${ENV_FILE}"
 else
     _error "No installation configuration file found. Please fill out the web form."
     exit 2
