@@ -223,12 +223,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:dreamfactorysoftware/dfe-common.git",
-                "reference": "e6616f82efb8bfe9e1abdd0f2130963fc5a1e2fc"
+                "reference": "3e4ab7da606861303b7fb417fa86f78980ba1cf1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dreamfactorysoftware/dfe-common/zipball/e6616f82efb8bfe9e1abdd0f2130963fc5a1e2fc",
-                "reference": "e6616f82efb8bfe9e1abdd0f2130963fc5a1e2fc",
+                "url": "https://api.github.com/repos/dreamfactorysoftware/dfe-common/zipball/3e4ab7da606861303b7fb417fa86f78980ba1cf1",
+                "reference": "3e4ab7da606861303b7fb417fa86f78980ba1cf1",
                 "shasum": ""
             },
             "require": {
@@ -285,7 +285,7 @@
                 "source": "https://github.com/dreamfactorysoftware/dfe-common/tree/develop",
                 "issues": "https://github.com/dreamfactorysoftware/dfe-common/issues"
             },
-            "time": "2015-10-08 20:15:28"
+            "time": "2015-10-14 03:32:58"
         },
         {
             "name": "dreamfactory/php-utils",
