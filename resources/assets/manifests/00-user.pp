@@ -35,8 +35,9 @@ class createHostAliases {
 
 class { createHostAliases:
   ## Update the /etc/hosts file accordingly
-}->
-  ## Create $user and $group. Create private key for user
+}
+
+## Create $user and $group. Create private key for user
 group { [
   $group,
   'sudo',
