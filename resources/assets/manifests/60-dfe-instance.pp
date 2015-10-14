@@ -130,12 +130,6 @@ exec { 'clear-cache-and-optimize':
   cwd         => $instance_root,
   environment => ["HOME=/home/$user"]
 }->
-file { "$instance_root/storage/logs/laravel.log":
-  ensure => present,
-  owner  => $www_user,
-  group  => $group,
-  mode   => 0664
-}->
 class { 'correctFilePermissions':
   ## Ensure all files are writable by the web server
 }->
