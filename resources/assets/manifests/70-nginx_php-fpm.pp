@@ -5,8 +5,6 @@
 # Installs and configures nginx
 ################################################################################
 
-include stdlib
-
 ## SSL cert file and names
 $cert_file = "star-${vendor_id}-${ssl_cert_stub}.pem"
 $key_file = "star-${vendor_id}-${ssl_cert_stub}.key"
@@ -144,89 +142,11 @@ server {
   include dfe-locations.conf;
 }"
 
-## A class to create all of the nginx config files and links
-class createServerConfigs {
-
-  file { "$nginx_path/dfe-locations.conf":
-    ensure => present,
-    source => "$pwd/resources/assets/etc/nginx/dfe-locations.conf",
-  }->
-  file { "$nginx_path/conf.d/dfe.conf":
-    ensure => present,
-    source => "$pwd/resources/assets/etc/nginx/conf.d/dfe.conf"
-  }->
-  file { "$nginx_path/conf.d/ssl":
-    ensure => directory,
-  }->
-  file { "$nginx_path/conf.d/ssl/dfe-instance.conf":
-    ensure => present,
-    source => "$pwd/resources/assets/etc/nginx/conf.d/ssl/dfe-instance.conf"
-  }->
-  file { "$nginx_path/nginx.conf":
-    ensure => link,
-    target => "$pwd/resources/assets/etc/nginx/nginx.conf",
-  }->
-  file { [
-    "$nginx_path/sites-enabled/default",
-    "$nginx_path/sites-available/default",
-  ]:
-    ensure => absent
-  }->
-  file { "/etc/php5/mods-available/dreamfactory.ini":
-    ensure  => link,
-    target  => "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini"
-  }->
-    ## Enable our tweaks
-  exec { "enable-dreamfactory-module":
-    command  => "$php_enmod_bin dreamfactory",
-    provider => posix,
-  }->
-    ## Instance
-  file { "$nginx_path/sites-available/00-dfe-instance.conf":
-    ensure  => present,
-    content => $instance_content,
-  }->
-    ## Instance link
-  file { "$nginx_path/sites-enabled/00-dfe-instance.conf":
-    ensure  => link,
-    target  => "$nginx_path/sites-available/00-dfe-instance.conf",
-  }->
-    ## Console
-  file { "$nginx_path/sites-available/10-dfe-console.conf":
-    ensure  => present,
-    content => $console_content,
-  }->
-    ## Console link
-  file { "$nginx_path/sites-enabled/10-dfe-console.conf":
-    ensure => link,
-    target => "$nginx_path/sites-available/10-dfe-console.conf"
-  }->
-    ## Dashboard
-  file { "$nginx_path/sites-available/20-dfe-dashboard.conf":
-    ensure  => present,
-    content => $dashboard_content,
-  }->
-    ## Dashboard link
-  file { "$nginx_path/sites-enabled/20-dfe-dashboard.conf":
-    ensure   => link,
-    target   => "$nginx_path/sites-available/20-dfe-dashboard.conf",
-    ## Tell php5-fpm to restart now
-    notify   => Service["php5-fpm"]
-  }
-
-  if ( !$app_debug) {
-    file_line { 'update-dreamfactory-ini':
-      path   => "/etc/php5/mods-available/dreamfactory.ini",
-      line   => "display_errors = 0",
-      match  => ".*display_errors.*",
-      notify => Service["php5-fpm"]
-    }
-  }
-}
-
 ##------------------------------------------------------------------------------
 ## We're using nginx/php5-fpm and not apache
 ##------------------------------------------------------------------------------
+
+include stdlib
 
 service { "nginx":
   ensure  => running,
@@ -242,7 +162,79 @@ service { "apache2":
   enable => false
 }
 
-class { createServerConfigs:
-  ## Make sure our configs are written before we restart nginx
-  notify => Service['nginx'],
+file { "$nginx_path/dfe-locations.conf":
+  ensure => present,
+  source => "$pwd/resources/assets/etc/nginx/dfe-locations.conf",
+}->
+file { "$nginx_path/conf.d/dfe.conf":
+  ensure => present,
+  source => "$pwd/resources/assets/etc/nginx/conf.d/dfe.conf"
+}->
+file { "$nginx_path/conf.d/ssl":
+  ensure => directory,
+}->
+file { "$nginx_path/conf.d/ssl/dfe-instance.conf":
+  ensure => present,
+  source => "$pwd/resources/assets/etc/nginx/conf.d/ssl/dfe-instance.conf"
+}->
+file { "$nginx_path/nginx.conf":
+  ensure => link,
+  target => "$pwd/resources/assets/etc/nginx/nginx.conf",
+}->
+file { [
+  "$nginx_path/sites-enabled/default",
+  "$nginx_path/sites-available/default",
+]:
+  ensure => absent
+}->
+file { "/etc/php5/mods-available/dreamfactory.ini":
+  ensure  => link,
+  target  => "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini"
+}->
+  ## Enable our tweaks
+exec { "enable-dreamfactory-module":
+  command  => "$php_enmod_bin dreamfactory",
+  provider => posix,
+}->
+  ## Instance
+file { "$nginx_path/sites-available/00-dfe-instance.conf":
+  ensure  => present,
+  content => $instance_content,
+}->
+  ## Instance link
+file { "$nginx_path/sites-enabled/00-dfe-instance.conf":
+  ensure  => link,
+  target  => "$nginx_path/sites-available/00-dfe-instance.conf",
+}->
+  ## Console
+file { "$nginx_path/sites-available/10-dfe-console.conf":
+  ensure  => present,
+  content => $console_content,
+}->
+  ## Console link
+file { "$nginx_path/sites-enabled/10-dfe-console.conf":
+  ensure => link,
+  target => "$nginx_path/sites-available/10-dfe-console.conf"
+}->
+  ## Dashboard
+file { "$nginx_path/sites-available/20-dfe-dashboard.conf":
+  ensure  => present,
+  content => $dashboard_content,
+}->
+  ## Dashboard link
+file { "$nginx_path/sites-enabled/20-dfe-dashboard.conf":
+  ensure   => link,
+  target   => "$nginx_path/sites-available/20-dfe-dashboard.conf",
+  ## Tell php5-fpm to restart now
+  notify   => Service["php5-fpm"]
 }
+
+if ( !$app_debug) {
+  file_line { 'update-dreamfactory-ini':
+    path   => "/etc/php5/mods-available/dreamfactory.ini",
+    line   => "display_errors = 0",
+    match  => ".*display_errors.*",
+    notify => Service["php5-fpm"]
+  }
+}
+
