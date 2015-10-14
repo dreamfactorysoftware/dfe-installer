@@ -160,7 +160,7 @@ class Installer
         //  If set have a storage and mount, construct a storage path
         if (!empty($_storagePath) && !empty($_mountPoint)) {
             $_cleanData['storage_mount_point'] =
-            $_facterData['FACTER_STORAGE_MOUNT_POINT'] = Disk::path([$_mountPoint, $_storagePath]);
+            $_facterData['export FACTER_STORAGE_MOUNT_POINT'] = Disk::path([$_mountPoint, $_storagePath]);
         }
 
         $this->formData = $formData;
