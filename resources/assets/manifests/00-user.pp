@@ -5,29 +5,18 @@
 # users, groups, sudo
 ################################################################################
 
-############
-## Classes
-############
+## The host aliases we want
+$_hostAliases = [
+  $install_hostname,
+  "console",
+  "console.local",
+  "dashboard",
+  "dashboard.local",
+  "console.${vendor_id}.${domain}",
+  "dashboard.${vendor_id}.${domain}",
+  "${vendor_id}.${domain}",
+]
 
-## A class to update the hosts file
-class createHostAliases {
-  $_hostAliases = [
-    $install_hostname,
-    "console",
-    "console.local",
-    "dashboard",
-    "dashboard.local",
-    "console.${vendor_id}.${domain}",
-    "dashboard.${vendor_id}.${domain}",
-    "${vendor_id}.${domain}",
-  ]
-
-  host { "localhost":
-    ensure       => present,
-    ip           => "127.0.0.1",
-    host_aliases => $_hostAliases
-  }
-}
 
 ############
 ## Classes
@@ -89,8 +78,10 @@ alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service 
 "
 }
 
-class { ensureHostAliases:
-  ## Create our host names
+host { "localhost":
+  ensure       => present,
+  ip           => "127.0.0.1",
+  host_aliases => $_hostAliases
 }
 
 ## Create and seed /home/$user
