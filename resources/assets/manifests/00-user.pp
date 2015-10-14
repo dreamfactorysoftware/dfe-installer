@@ -7,7 +7,7 @@
 
 ## The host aliases we want
 $_hostAliases = [
-  $install_hostname,
+  "$install_hostname",
   "console",
   "console.local",
   "dashboard",
@@ -33,7 +33,7 @@ user { $user:
   groups     => [$group, $www_group],
   managehome => true,
   password   => pw_hash($user_pwd, 'sha-512', 'HVQeSnVR'),
-  shell      => '/bin/bash',
+  shell      => "/bin/bash",
   gid        => $group,
 }->
 user_ssh_pubkey { "${user}/ssh-rsa@console.${vendor_id}.${domain}":
@@ -62,13 +62,11 @@ file { "/home/$user/.ssh/authorized_keys":
   owner  => $user,
   group  => $group,
   mode   => 0400,
-}
-
+}->
 file_line { 'sudo-rule':
   path => '/etc/sudoers',
   line => "$user  ALL=(ALL) NOPASSWD:ALL",
-}
-
+}->
 file_line { 'bashrc-aliases':
   path => "/home/$user/.bashrc",
   line => "
@@ -93,7 +91,6 @@ file { "/home/$user/.gitconfig":
   mode   => 0664,
   source => "$pwd/resources/assets/git/gitconfig",
 }
-
 ## This isn't really necessary
 #->
 #file { "/home/$user/.ssh/known_hosts":

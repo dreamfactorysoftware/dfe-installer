@@ -143,7 +143,7 @@ server {
 }"
 
 ##------------------------------------------------------------------------------
-## We're using nginx/php5-fpm and not apache
+## Logic
 ##------------------------------------------------------------------------------
 
 include stdlib
@@ -225,11 +225,11 @@ file { "$nginx_path/sites-available/20-dfe-dashboard.conf":
 file { "$nginx_path/sites-enabled/20-dfe-dashboard.conf":
   ensure   => link,
   target   => "$nginx_path/sites-available/20-dfe-dashboard.conf",
-  ## Tell php5-fpm to restart now
-  notify   => Service["php5-fpm"]
+  ## Tell nginx to restart now
+  notify   => Service["nginx"]
 }
 
-if ( !$app_debug) {
+if ( !$app_debug ) {
   file_line { 'update-dreamfactory-ini':
     path   => "/etc/php5/mods-available/dreamfactory.ini",
     line   => "display_errors = 0",
