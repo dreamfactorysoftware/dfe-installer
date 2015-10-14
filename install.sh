@@ -167,7 +167,7 @@ _info "Installing now..."
 for manifest in $(ls ./resources/assets/manifests/*.pp)
 do
 	_info "Applying ${manifest}..."
-	puppet apply --modulepath=/etc/puppet/modules:/usr/share/puppet/modules:${PWD}/resources/assets/modules -l "${LOG_FILE}" "${manifest}"
+	puppet apply -l "${LOG_FILE}" "${manifest}"
 
     if [ $? -ne 0 ]; then
         _error "An unexpected result code of $? was returned. Halting."
