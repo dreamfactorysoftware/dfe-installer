@@ -3322,78 +3322,6 @@
         "homepage": "https://symfony.com"
     },
     {
-        "name": "dreamfactory/dfe-common",
-        "version": "dev-develop",
-        "version_normalized": "dev-develop",
-        "source": {
-            "type": "git",
-            "url": "git@github.com:dreamfactorysoftware/dfe-common.git",
-            "reference": "e6616f82efb8bfe9e1abdd0f2130963fc5a1e2fc"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/dreamfactorysoftware/dfe-common/zipball/e6616f82efb8bfe9e1abdd0f2130963fc5a1e2fc",
-            "reference": "e6616f82efb8bfe9e1abdd0f2130963fc5a1e2fc",
-            "shasum": ""
-        },
-        "require": {
-            "dreamfactory/php-utils": "1.1.*",
-            "league/flysystem-sftp": "*",
-            "league/flysystem-ziparchive": "*",
-            "wpb/string-blade-compiler": "2.*@dev"
-        },
-        "require-dev": {
-            "barryvdh/laravel-ide-helper": "~2.0",
-            "doctrine/dbal": "~2.3",
-            "dreamfactory/dfe-database": "dev-develop as dev-master",
-            "laravel/framework": "5.1.*",
-            "phpspec/phpspec": "~2.1",
-            "phpunit/phpunit": "~4.0",
-            "way/generators": "~3.0"
-        },
-        "time": "2015-10-08 20:15:28",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-develop": "0.1.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "DreamFactory\\Enterprise\\Common\\": "src/"
-            }
-        },
-        "autoload-dev": {
-            "classmap": [
-                "tests/TestCase.php",
-                "tests/CommandTestCase.php"
-            ]
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Jerry Ablan",
-                "email": "jerryablan@dreamfactory.com"
-            }
-        ],
-        "description": "DreamFactory Enterprise(tm) Common Components",
-        "homepage": "https://www.dreamfactory.com/",
-        "keywords": [
-            "common",
-            "dreamfactory",
-            "fabric",
-            "queue",
-            "utility"
-        ],
-        "support": {
-            "source": "https://github.com/dreamfactorysoftware/dfe-common/tree/develop",
-            "issues": "https://github.com/dreamfactorysoftware/dfe-common/issues"
-        }
-    },
-    {
         "name": "sebastian/global-state",
         "version": "1.1.1",
         "version_normalized": "1.1.1.0",
@@ -4045,5 +3973,77 @@
             "framework",
             "laravel"
         ]
+    },
+    {
+        "name": "dreamfactory/dfe-common",
+        "version": "dev-develop",
+        "version_normalized": "dev-develop",
+        "source": {
+            "type": "git",
+            "url": "git@github.com:dreamfactorysoftware/dfe-common.git",
+            "reference": "3e4ab7da606861303b7fb417fa86f78980ba1cf1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/dreamfactorysoftware/dfe-common/zipball/3e4ab7da606861303b7fb417fa86f78980ba1cf1",
+            "reference": "3e4ab7da606861303b7fb417fa86f78980ba1cf1",
+            "shasum": ""
+        },
+        "require": {
+            "dreamfactory/php-utils": "1.1.*",
+            "league/flysystem-sftp": "*",
+            "league/flysystem-ziparchive": "*",
+            "wpb/string-blade-compiler": "2.*@dev"
+        },
+        "require-dev": {
+            "barryvdh/laravel-ide-helper": "~2.0",
+            "doctrine/dbal": "~2.3",
+            "dreamfactory/dfe-database": "dev-develop as dev-master",
+            "laravel/framework": "5.1.*",
+            "phpspec/phpspec": "~2.1",
+            "phpunit/phpunit": "~4.0",
+            "way/generators": "~3.0"
+        },
+        "time": "2015-10-14 03:32:58",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-develop": "0.1.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "DreamFactory\\Enterprise\\Common\\": "src/"
+            }
+        },
+        "autoload-dev": {
+            "classmap": [
+                "tests/TestCase.php",
+                "tests/CommandTestCase.php"
+            ]
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Jerry Ablan",
+                "email": "jerryablan@dreamfactory.com"
+            }
+        ],
+        "description": "DreamFactory Enterprise(tm) Common Components",
+        "homepage": "https://www.dreamfactory.com/",
+        "keywords": [
+            "common",
+            "dreamfactory",
+            "fabric",
+            "queue",
+            "utility"
+        ],
+        "support": {
+            "source": "https://github.com/dreamfactorysoftware/dfe-common/tree/develop",
+            "issues": "https://github.com/dreamfactorysoftware/dfe-common/issues"
+        }
     }
 ]

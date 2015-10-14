@@ -2,6 +2,7 @@
 
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * A trait for working with Guzzle
@@ -26,6 +27,10 @@ trait Guzzler
      * @type array The Guzzle configuration
      */
     protected $guzzleConfig;
+    /**
+     * @type Response The last response received
+     */
+    protected $lastResponse;
 
     //******************************************************************************
     //* Methods
@@ -159,8 +164,10 @@ trait Guzzler
                 $options = array_merge($options, is_scalar($payload) ? ['body' => $payload,] : ['json' => $payload]);
             }
 
+            logger('guzzler ' . $method . ' ' . $url, is_array($payload) ? $payload : ['payload' => $payload]);
+
             /** @type \Response $_response */
-            $_response = $this->getGuzzleClient()->{$method}($url, $options);
+            $this->lastResponse = $_response = $this->getGuzzleClient()->{$method}($url, $options);
 
             return $_response->json(['object' => $object]);
         } catch (\Exception $_ex) {
