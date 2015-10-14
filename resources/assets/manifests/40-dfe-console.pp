@@ -11,11 +11,9 @@
 
 ## Defines the console .env settings. Relies on FACTER_* data
 class consoleEnvironmentSettings( $root, $zone, $domain, $protocol = 'https') {
-## Define our stuff
+  ## Define our stuff
   $_env = { 'path' => "$root/.env", }
-
   $_appUrl = "$protocol://console.${zone}.${domain}"
-
   $_settings = {
     '' => {
       'APP_DEBUG'                                  => $app_debug,
@@ -45,7 +43,7 @@ class consoleEnvironmentSettings( $root, $zone, $domain, $protocol = 'https') {
     }
   }
 
-## Update the .env file
+  ## Update the .env file
   create_ini_settings($_settings, $_env)
 }
 
@@ -116,7 +114,7 @@ file { "$console_root/.env":
   source => "$console_root/.env-dist",
 }->
 class { consoleEnvironmentSettings:
-## Applies INI settings in $_settings to .env
+  ## Applies INI settings in $_settings to .env
   root     => $console_root,
   zone     => $vendor_id,
   domain   => $domain,

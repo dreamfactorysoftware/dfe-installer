@@ -172,6 +172,12 @@ class createWebConfigs {
     ensure  => link,
     target  => "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini"
   }->
+    # Needs to be based on $app_debug
+    #  file_line { 'update-dreamfactory-ini':
+    #    path   => "/etc/php5/mods-available/dreamfactory.ini",
+    #    line   => "display_errors = 0",
+    #    match  => ".*display_errors.*",
+    #  }->
     ## Enable our tweaks
   exec { "enable-dreamfactory-module":
     command  => "$php_enmod_bin dreamfactory",
@@ -206,17 +212,7 @@ class createWebConfigs {
   file { "$nginx_path/sites-enabled/20-dfe-dashboard.conf":
     ensure   => link,
     target   => "$nginx_path/sites-available/20-dfe-dashboard.conf",
-    ## Tell nginx to restart now
-    notify   => Service["nginx"]
-  }
-
-  if ( !$app_debug ) {
-    file_line { 'update-dreamfactory-ini':
-      path   => "/etc/php5/mods-available/dreamfactory.ini",
-      line   => "display_errors = 0",
-      match  => ".*display_errors.*",
-      notify => Service["php5-fpm"]
-    }
+    notify   => Serice['php5-fpm'],
   }
 }
 
@@ -230,13 +226,13 @@ service { "nginx":
   ensure  => running,
   enable  => true,
 }->
-class { createWebConfigs:
-  ## Create the configuration files
-  notify => Service['nginx'],
-}->
 service { "php5-fpm":
   ensure  => running,
   enable  => true
+}->
+class { createWebConfigs:
+  ## Create the configuration files
+  notify => Service['nginx'],
 }
 
 service { "apache2":
