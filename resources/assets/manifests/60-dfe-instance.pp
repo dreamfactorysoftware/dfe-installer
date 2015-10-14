@@ -139,6 +139,9 @@ file { "$instance_root/storage/logs/laravel.log":
 class { 'correctFilePermissions':
   ## Ensure all files are writable by the web server
 }->
+  ## Fix up the permissions on the log file
 class { fixLogPermissions:
-  ## Fix up the log permissions
+  root  => $instance_root,
+  owner => $www_user,
+  group => $group,
 }

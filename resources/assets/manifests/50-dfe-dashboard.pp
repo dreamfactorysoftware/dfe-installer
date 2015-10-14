@@ -152,7 +152,9 @@ exec { "clear-caches-and-optimize":
   cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
 }->
-class { fixLogPermissions:
   ## Fix up the permissions on the log file
+class { fixLogPermissions:
+  root  => $dashboard_root,
+  owner => $www_user,
+  group => $group,
 }
-

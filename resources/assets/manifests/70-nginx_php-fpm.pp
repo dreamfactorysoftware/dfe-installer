@@ -253,4 +253,3 @@ exec { "restart-nginx":
   command  => "service nginx restart",
   provider => shell,
 }
-
