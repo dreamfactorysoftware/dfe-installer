@@ -66,6 +66,19 @@ class correctFilePermissions {
   }
 }
 
+class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
+
+  file { [
+    "$root/storage/logs/laravel.log",
+  ]:
+    ensure => present,
+    owner  => $www_user,
+    group  => $group,
+    mode   => $mode,
+  }
+
+}
+
 ##------------------------------------------------------------------------------
 ## Check out the repo, update composer, change file permissions...
 ##------------------------------------------------------------------------------
@@ -125,4 +138,7 @@ file { "$instance_root/storage/logs/laravel.log":
 }->
 class { 'correctFilePermissions':
   ## Ensure all files are writable by the web server
+}->
+class { fixLogPermissions:
+  ## Fix up the log permissions
 }

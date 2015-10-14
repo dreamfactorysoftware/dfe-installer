@@ -77,13 +77,20 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
     owner  => $www_user,
     group  => $group,
     mode   => $mode,
-  }->
-  file { "$root/storage/logs/laravel.log":
+  }
+}
+
+class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
+
+  file { [
+    "$root/storage/logs/laravel.log",
+  ]:
     ensure => present,
     owner  => $www_user,
     group  => $group,
-    mode   => 0664
+    mode   => $mode,
   }
+
 }
 
 ## Our mount config
@@ -227,4 +234,7 @@ exec { "clear-caches-and-optimize":
   provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
+}->
+class { fixLogPermissions:
+  ## Fix up the permissions on the log file
 }
