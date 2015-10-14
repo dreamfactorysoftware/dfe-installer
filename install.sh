@@ -131,6 +131,12 @@ export FACTER_MOUNT_POINT FACTER_DOMAIN FACTER_GH_USER FACTER_GH_PWD
 ## Rotate log
 [ -f "${LOG_FILE}" ] && mv "${LOG_FILE}" "${LOG_FILE}.1"
 
+## Install requirements and update
+apt-get -q update && apt-get -y upgrade && apt-get install -y -q php5 puppet git
+
+## Run the installer page if no env file is present
+[ ! -f "${ENV_FILE}" ] && php -S 0.0.0.0:8000 -s public/
+
 ## Header
 sectionHeader " ${B1}DreamFactory Enterprise(tm)${B2} ${SYSTEM_TYPE} Installer v${VERSION}"
 
