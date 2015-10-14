@@ -240,10 +240,17 @@ file { "$nginx_path/sites-available/20-dfe-dashboard.conf":
 file { "$nginx_path/sites-enabled/20-dfe-dashboard.conf":
   ensure   => link,
   target   => "$nginx_path/sites-available/20-dfe-dashboard.conf",
-  notify   => Serice["nginx"],
 }->
 exec { "enable-dreamfactory-module":
   command  => "$php_enmod_bin dreamfactory",
   provider => posix,
-  notify   => Serice["php5-fpm"],
+}->
+exec { "restart-php5-fpm":
+  command  => "service php5-fpm restart",
+  provider => shell,
+}->
+exec { "restart-nginx":
+  command  => "service nginx restart",
+  provider => shell,
 }
+
