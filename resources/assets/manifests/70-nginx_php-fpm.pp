@@ -5,6 +5,28 @@
 # Installs and configures nginx
 ################################################################################
 
+##------------------------------------------------------------------------------
+## Services
+##------------------------------------------------------------------------------
+
+service { "nginx":
+  ensure  => running,
+  enable  => true,
+}->
+service { "php5-fpm":
+  ensure  => running,
+  enable  => true
+}
+
+service { "apache2":
+  ensure => stopped,
+  enable => false
+}
+
+##------------------------------------------------------------------------------
+## Variables
+##------------------------------------------------------------------------------
+
 ## SSL cert file and names
 $cert_file = "star-${vendor_id}-${ssl_cert_stub}.pem"
 $key_file = "star-${vendor_id}-${ssl_cert_stub}.key"
@@ -142,6 +164,10 @@ server {
   include dfe-locations.conf;
 }"
 
+##------------------------------------------------------------------------------
+## Classes
+##------------------------------------------------------------------------------
+
 class createWebConfigs {
   file { "$nginx_path/dfe-locations.conf":
     ensure => present,
@@ -222,20 +248,7 @@ class createWebConfigs {
 
 include stdlib
 
-service { "nginx":
-  ensure  => running,
-  enable  => true,
-}->
-service { "php5-fpm":
-  ensure  => running,
-  enable  => true
-}->
 class { createWebConfigs:
   ## Create the configuration files
   notify => Service['nginx'],
-}
-
-service { "apache2":
-  ensure => stopped,
-  enable => false
 }
