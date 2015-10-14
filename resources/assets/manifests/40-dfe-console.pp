@@ -194,35 +194,35 @@ exec { "add_db_server":
   environment => ["HOME=/home/$user"]
 }->
 exec { "add_cluster":
-  command     => "$artisan dfe: cluster create cluster-${vendor_id} --subdomain ${vendor_id}.${domain}",
+  command     => "$artisan dfe:cluster create cluster-${vendor_id} --subdomain ${vendor_id}.${domain}",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { "add_web_to_cluster":
-  command     => "$artisan dfe: cluster add cluster-${vendor_id} --server-id web-${vendor_id}",
+  command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id web-${vendor_id}",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { "add_app_to_cluster":
-  command     => "$artisan dfe: cluster add cluster-${vendor_id} --server-id app-${vendor_id}",
+  command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id app-${vendor_id}",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { "add_db_to_cluster":
-  command     => "$artisan dfe: cluster add cluster-${vendor_id} --server-id db-${vendor_id}",
+  command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id db-${vendor_id}",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { "clear-cache-and-optimize":
-  command     => "$artisan clear-compiled; $artisan cache: clear; $artisan config: clear; $artisan optimize",
+  command     => "$artisan clear-compiled; $artisan cache:clear; $artisan config:clear; $artisan optimize",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
