@@ -45,8 +45,7 @@ $content_header = "##***********************************************************
 ##	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ##	See the License for the specific language governing permissions and
 ##	limitations under the License.
-##**************************************************************************
-"
+##**************************************************************************"
 
 ## Template for instance
 $instance_content = "${content_header}
@@ -177,41 +176,41 @@ class createServerConfigs {
     ensure  => link,
     target  => "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini"
   }->
-  ## Enable our tweaks
+    ## Enable our tweaks
   exec { "enable-dreamfactory-module":
     command  => "$php_enmod_bin dreamfactory",
     provider => posix,
   }->
-  ## Instance
+    ## Instance
   file { "$nginx_path/sites-available/00-dfe-instance.conf":
     ensure  => present,
     content => $instance_content,
   }->
-  ## Instance link
+    ## Instance link
   file { "$nginx_path/sites-enabled/00-dfe-instance.conf":
     ensure  => link,
     target  => "$nginx_path/sites-available/00-dfe-instance.conf",
   }->
-  ## Console
+    ## Console
   file { "$nginx_path/sites-available/10-dfe-console.conf":
     ensure  => present,
     content => $console_content,
   }->
-  ## Console link
+    ## Console link
   file { "$nginx_path/sites-enabled/10-dfe-console.conf":
     ensure => link,
     target => "$nginx_path/sites-available/10-dfe-console.conf"
   }->
-  ## Dashboard
+    ## Dashboard
   file { "$nginx_path/sites-available/20-dfe-dashboard.conf":
     ensure  => present,
     content => $dashboard_content,
   }->
-  ## Dashboard link
+    ## Dashboard link
   file { "$nginx_path/sites-enabled/20-dfe-dashboard.conf":
     ensure   => link,
     target   => "$nginx_path/sites-available/20-dfe-dashboard.conf",
-  ## Tell php5-fpm to restart now
+    ## Tell php5-fpm to restart now
     notify   => Service["php5-fpm"]
   }
 
@@ -229,11 +228,6 @@ class createServerConfigs {
 ## We're using nginx/php5-fpm and not apache
 ##------------------------------------------------------------------------------
 
-service { "apache2":
-  ensure => stopped,
-  enable => false
-}
-
 service { "nginx":
   ensure  => running,
   enable  => true,
@@ -243,7 +237,12 @@ service { "php5-fpm":
   enable  => true
 }
 
+service { "apache2":
+  ensure => stopped,
+  enable => false
+}
+
 class { createServerConfigs:
-## Make sure our configs are written before we restart nginx
+  ## Make sure our configs are written before we restart nginx
   notify => Service['nginx'],
 }
