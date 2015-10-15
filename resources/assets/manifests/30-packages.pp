@@ -44,7 +44,9 @@ if ($smtp_host == "localhost") or ($smtp_host == "127.0.0.1") or ($smtp_host == 
   $_requiredPackages = $_basePackages
 }
 
-## Install/remove required packages
+##------------------------------------------------------------------------------
+## Logic
+##------------------------------------------------------------------------------
 
 package { $_requiredPackages:
   ensure  => latest

@@ -14,15 +14,35 @@ $_settings = {
   }
 }
 
+##------------------------------------------------------------------------------
+## Classes
+##------------------------------------------------------------------------------
+
 class iniSettings {
   ## Create .env file
   create_ini_settings($_settings, $_env)
 }
 
 class createDirectoryStructure {
+
+  file { [
+    "$instance_release/bootstrap",
+  ]:
+    ensure => directory,
+    owner  => $user,
+    group  => $www_group,
+    mode   => 2775,
+  }->
+  file { [
+    "$instance_release/bootstrap/cache",
+  ]:
+    ensure => directory,
+    owner  => $www_user,
+    group  => $group,
+    mode   => 2775,
+  }->
   file { [
     "/tmp/.df-log",
-    "$instance_release/$instance_branch/bootstrap/cache",
     "$instance_release/$instance_branch/storage",
     "$instance_release/$instance_branch/storage/app",
     "$instance_release/$instance_branch/storage/databases",
@@ -39,31 +59,36 @@ class createDirectoryStructure {
     group  => $group,
     mode   => 2775,
   }
+
 }
 
 class correctFilePermissions {
-  exec { 'instance-storage-directories':
-    command     => "find $pwd/storage -type d -exec chmod 2775 {} \\;",
-    provider    => shell,
-    cwd         => $instance_root,
-    environment => ["HOME=/home/$user"]
-  }->
-  exec { 'instance-storage-files':
-    command     => "find $pwd/storage -type f -exec chmod 0664 {} \\;",
-    provider    => shell,
-    cwd         => $instance_root,
-    environment => ["HOME=/home/$user"]
-  }->
-  exec { 'instance-log-files':
-    command     => "chown -R ${www_user}:${group} ${instance_root}/storage/logs /tmp/.df-log",
-    provider    => shell,
-    cwd         => "/tmp",
-  }->
+
+  ##  These may not exist
   exec { 'chmod-instance-log-files':
     command     => "chmod 0664 ${instance_root}/storage/logs/* /tmp/.df-log/*",
     provider    => shell,
     cwd         => $instance_root,
   }
+
+  exec { 'chown-instance-log-files':
+    command     => "chown -R ${www_user}:${group} ${instance_root}/storage/logs /tmp/.df-log",
+    provider    => shell,
+    cwd         => "/tmp",
+  }->
+  exec { 'chmod-instance-storage':
+    command     => "find $pwd/storage -type d -exec chmod 2775 {} \\;",
+    provider    => shell,
+    cwd         => $instance_root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { 'chmod-instance-storage-files':
+    command     => "find $pwd/storage -type f -exec chmod 0664 {} \\;",
+    provider    => shell,
+    cwd         => $instance_root,
+    environment => ["HOME=/home/$user"]
+  }
+
 }
 
 class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
@@ -80,7 +105,7 @@ class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
 }
 
 ##------------------------------------------------------------------------------
-## Check out the repo, update composer, change file permissions...
+## Logic
 ##------------------------------------------------------------------------------
 
 vcsrepo { "$instance_release/$instance_branch":
@@ -116,21 +141,21 @@ exec { 'instance-composer-update':
   cwd         => $instance_root,
   environment => [ "HOME=/home/$user", ]
 }->
-exec { 'generate-app-key':
+exec { 'generate-instance-app-key':
   command     => "$artisan key:generate",
   user        => $user,
   provider    => shell,
   cwd         => $instance_root,
   environment => ["HOME=/home/$user"]
 }->
-exec { 'clear-cache-and-optimize':
+exec { 'clear-instance-cache-and-optimize':
   command     => "$artisan clear-compiled ; $artisan cache:clear ; $artisan config:clear ; $artisan route:clear ; $artisan optimize",
   user        => $user,
   provider    => shell,
   cwd         => $instance_root,
   environment => ["HOME=/home/$user"]
 }->
-class { 'correctFilePermissions':
+class { correctFilePermissions:
   ## Ensure all files are writable by the web server
 }->
   ## Fix up the permissions on the log file
