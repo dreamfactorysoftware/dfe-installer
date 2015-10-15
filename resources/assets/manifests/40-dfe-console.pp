@@ -55,7 +55,7 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
   ]:
     ensure => directory,
     owner  => $user,
-    group  => $group,
+    group  => $www_group,
     mode   => $mode,
   }->
   file { [

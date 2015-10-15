@@ -56,16 +56,13 @@
     ]
   },
   "scripts":           {
-    "post-install-cmd": [
-      "php artisan clear-compiled",
-      "php artisan ide-helper:generate",
-      "php artisan vendor:publish",
-      "php artisan optimize"
-    ],
     "post-update-cmd":  [
       "php artisan clear-compiled",
       "php artisan ide-helper:generate",
       "php artisan vendor:publish --tag=public --force",
+      "php artisan config:clear",
+      "php artisan cache:clear",
+      "php artisan route:clear",
       "php artisan optimize"
     ]
   },

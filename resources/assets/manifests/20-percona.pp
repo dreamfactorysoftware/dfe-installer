@@ -35,7 +35,9 @@ exec { "apt-update":
   command => "/usr/bin/apt-get update"
 }
 
-## Install the database
+##------------------------------------------------------------------------------
+## Logic
+##------------------------------------------------------------------------------
 
 apt::source { "percona.trusty":
   comment  => "Repo for percona db server",
