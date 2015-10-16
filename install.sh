@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.0 2015-10-05 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.1 2015-10-16 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.0
+VERSION=1.1.1
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/manifests/
 ENV_FILE=./storage/.env-install
