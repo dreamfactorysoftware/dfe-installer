@@ -84,6 +84,7 @@ class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
 
   file { [
     "$root/storage/logs/laravel.log",
+    "$root/bootstrap/cache/services.json",
   ]:
     ensure => present,
     owner  => $www_user,

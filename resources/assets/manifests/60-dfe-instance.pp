@@ -66,7 +66,7 @@ class correctFilePermissions {
 
   ##  These may not exist
   exec { 'chmod-instance-log-files':
-    command     => "chmod 0664 ${instance_root}/storage/logs/* /tmp/.df-log/*",
+    command     => "chmod 0664 ${instance_root}/storage/logs/* /tmp/.df-log/* ${instance_root}/bootstrap/cache/*",
     provider    => shell,
     cwd         => $instance_root,
   }
@@ -93,9 +93,10 @@ class correctFilePermissions {
 
 class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
 
-  file { [
+  file {  [
     "$root/storage/logs/laravel.log",
-  ]:
+    "$root/bootstrap/cache/services.json",
+  ] :
     ensure => present,
     owner  => $www_user,
     group  => $group,
