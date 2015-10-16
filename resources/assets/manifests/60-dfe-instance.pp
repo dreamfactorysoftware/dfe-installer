@@ -5,20 +5,21 @@
 # Installs the DreamFactory v2.x instance code base
 ################################################################################
 
-$_env = { 'path' => "$instance_root/.env", }
-$_settings = {
-  '' => {
-    'DF_INSTANCE_NAME'     => 'dfe-instance',
-    'DF_STANDALONE'        => 'false',
-    'APP_LOG'              => 'single',
-  }
-}
-
 ##------------------------------------------------------------------------------
 ## Classes
 ##------------------------------------------------------------------------------
 
 class iniSettings {
+
+  $_env = { 'path' => "$instance_root/.env", }
+  $_settings = {
+    '' => {
+      'DF_INSTANCE_NAME'     => 'dfe-instance',
+      'DF_STANDALONE'        => 'false',
+      'APP_LOG'              => 'single',
+    }
+  }
+
   ## Create .env file
   create_ini_settings($_settings, $_env)
 }
@@ -26,7 +27,7 @@ class iniSettings {
 class createDirectoryStructure {
 
   file { [
-    "$instance_release/bootstrap",
+    "$instance_release/$instance_branch/bootstrap",
   ]:
     ensure => directory,
     owner  => $user,
@@ -34,15 +35,8 @@ class createDirectoryStructure {
     mode   => 2775,
   }->
   file { [
-    "$instance_release/bootstrap/cache",
-  ]:
-    ensure => directory,
-    owner  => $www_user,
-    group  => $group,
-    mode   => 2775,
-  }->
-  file { [
     "/tmp/.df-log",
+    "$instance_release/$instance_branch/bootstrap/cache",
     "$instance_release/$instance_branch/storage",
     "$instance_release/$instance_branch/storage/app",
     "$instance_release/$instance_branch/storage/databases",
@@ -64,18 +58,6 @@ class createDirectoryStructure {
 
 class correctFilePermissions {
 
-  ##  These may not exist
-  exec { 'chmod-instance-log-files':
-    command     => "chmod 0664 ${instance_root}/storage/logs/* /tmp/.df-log/* ${instance_root}/bootstrap/cache/*",
-    provider    => shell,
-    cwd         => $instance_root,
-  }
-
-  exec { 'chown-instance-log-files':
-    command     => "chown -R ${www_user}:${group} ${instance_root}/storage/logs /tmp/.df-log",
-    provider    => shell,
-    cwd         => "/tmp",
-  }->
   exec { 'chmod-instance-storage':
     command     => "find $pwd/storage -type d -exec chmod 2775 {} \\;",
     provider    => shell,
@@ -89,11 +71,24 @@ class correctFilePermissions {
     environment => ["HOME=/home/$user"]
   }
 
+  exec { 'chmod-instance-temp':
+    command     => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
+    provider    => shell,
+    cwd         => $instance_root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { 'chmod-instance-temp-files':
+    command     => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
+    provider    => shell,
+    cwd         => $instance_root,
+    environment => ["HOME=/home/$user"]
+  }
+
 }
 
-class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
+class fixLogPermissions( $root, $owner, $group, $mode = 0664) {
 
-  file {  [
+  file { [
     "$root/storage/logs/laravel.log",
     "$root/bootstrap/cache/services.json",
   ] :
@@ -101,8 +96,19 @@ class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
     owner  => $www_user,
     group  => $group,
     mode   => $mode,
+  }->
+  exec { 'chmod-instance-bootstrap-cache':
+    command     => "find $pwd/bootstrap/cache -type f -exec chmod 0664 {} \\;",
+    provider    => shell,
+    cwd         => $instance_root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { 'chmod-instance-storage-files-again':
+    command     => "find $pwd/storage -type f -exec chmod 0664 {} \\;",
+    provider    => shell,
+    cwd         => $instance_root,
+    environment => ["HOME=/home/$user"]
   }
-
 }
 
 ##------------------------------------------------------------------------------

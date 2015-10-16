@@ -60,13 +60,6 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
   }->
   file { [
     "$root/bootstrap/cache",
-  ]:
-    ensure => directory,
-    owner  => $www_user,
-    group  => $group,
-    mode   => $mode,
-  }->
-  file { [
     "$root/storage",
     "$root/storage/framework",
     "$root/storage/framework/sessions",
@@ -80,7 +73,7 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
   }
 }
 
-class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
+class fixLogPermissions( $root, $owner, $group, $mode = 0664) {
 
   file { [
     "$root/storage/logs/laravel.log",
