@@ -75,14 +75,20 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
 
 class fixLogPermissions( $root, $owner, $group, $mode = 0664) {
 
-  file { [
-    "$root/storage/logs/laravel.log",
-    "$root/bootstrap/cache/services.json",
-  ]:
+  file { "$root/bootstrap/cache/services.json":
     ensure => present,
     owner  => $www_user,
     group  => $group,
     mode   => $mode,
+    onlyif => "test ! -f $root/bootstrap/cache/services.json"
+  }
+
+  file { "$root/storage/logs/laravel.log":
+    ensure => present,
+    owner  => $www_user,
+    group  => $group,
+    mode   => $mode,
+    onlyif => "test ! -f $root/storage/logs/laravel.log"
   }
 
 }

@@ -492,12 +492,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "435af155ed15a6b1d03a0d0a46ae4c347d96b0d7"
+                "reference": "0422b201c40a0fd72d8acfdeb5a220f7a416d34a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/435af155ed15a6b1d03a0d0a46ae4c347d96b0d7",
-                "reference": "435af155ed15a6b1d03a0d0a46ae4c347d96b0d7",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/0422b201c40a0fd72d8acfdeb5a220f7a416d34a",
+                "reference": "0422b201c40a0fd72d8acfdeb5a220f7a416d34a",
                 "shasum": ""
             },
             "require": {
@@ -511,7 +511,7 @@
                 "monolog/monolog": "~1.11",
                 "mtdowling/cron-expression": "~1.0",
                 "nesbot/carbon": "~1.19",
-                "paragonie/random_compat": "^1.0.4",
+                "paragonie/random_compat": "^1.0.6",
                 "php": ">=5.5.9",
                 "psy/psysh": "~0.5.1",
                 "swiftmailer/swiftmailer": "~5.1",
@@ -613,7 +613,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2015-10-14 15:49:40"
+            "time": "2015-10-16 21:48:41"
         },
         {
             "name": "league/flysystem",
@@ -621,12 +621,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "7e7a4c01b0196cd4696cfeba5c0d0e265b663622"
+                "reference": "f46f18a62f50d85750798d1d2f57fb04e1cdc707"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/7e7a4c01b0196cd4696cfeba5c0d0e265b663622",
-                "reference": "7e7a4c01b0196cd4696cfeba5c0d0e265b663622",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/f46f18a62f50d85750798d1d2f57fb04e1cdc707",
+                "reference": "f46f18a62f50d85750798d1d2f57fb04e1cdc707",
                 "shasum": ""
             },
             "require": {
@@ -697,7 +697,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2015-10-08 14:55:23"
+            "time": "2015-10-15 15:44:38"
         },
         {
             "name": "league/flysystem-sftp",
@@ -1007,20 +1007,23 @@
         },
         {
             "name": "paragonie/random_compat",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "f667aa2000a192adfa53332335a2ae0c1cb9ea6e"
+                "reference": "9a0ce69360aa22413a96f2bf93f61235e2c18486"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/f667aa2000a192adfa53332335a2ae0c1cb9ea6e",
-                "reference": "f667aa2000a192adfa53332335a2ae0c1cb9ea6e",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/9a0ce69360aa22413a96f2bf93f61235e2c18486",
+                "reference": "9a0ce69360aa22413a96f2bf93f61235e2c18486",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.0"
+            },
+            "suggest": {
+                "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
             },
             "type": "library",
             "autoload": {
@@ -1045,7 +1048,7 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2015-10-08 12:57:25"
+            "time": "2015-10-16 03:43:13"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -1482,12 +1485,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dependency-injection.git",
-                "reference": "9227e20089095b11db389a8845d15d8f275dd455"
+                "reference": "a7d471872f42bab4dabb357f981f01b79c6cf52c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/9227e20089095b11db389a8845d15d8f275dd455",
-                "reference": "9227e20089095b11db389a8845d15d8f275dd455",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/a7d471872f42bab4dabb357f981f01b79c6cf52c",
+                "reference": "a7d471872f42bab4dabb357f981f01b79c6cf52c",
                 "shasum": ""
             },
             "require": {
@@ -1530,7 +1533,7 @@
             ],
             "description": "Symfony DependencyInjection Component",
             "homepage": "https://symfony.com",
-            "time": "2015-10-11 09:14:55"
+            "time": "2015-10-16 11:55:41"
         },
         {
             "name": "symfony/dom-crawler",
@@ -2485,12 +2488,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "532641f0a083b174cdfe837ee55d91eb3e249935"
+                "reference": "2c789aa829ea4e5c2d3df5beba8592869ef21395"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/532641f0a083b174cdfe837ee55d91eb3e249935",
-                "reference": "532641f0a083b174cdfe837ee55d91eb3e249935",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/2c789aa829ea4e5c2d3df5beba8592869ef21395",
+                "reference": "2c789aa829ea4e5c2d3df5beba8592869ef21395",
                 "shasum": ""
             },
             "require": {
@@ -2548,7 +2551,7 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2015-10-12 14:54:45"
+            "time": "2015-10-16 09:23:25"
         },
         {
             "name": "doctrine/instantiator",

@@ -88,27 +88,22 @@ class correctFilePermissions {
 
 class fixLogPermissions( $root, $owner, $group, $mode = 0664) {
 
-  file { [
-    "$root/storage/logs/laravel.log",
-    "$root/bootstrap/cache/services.json",
-  ] :
+  file { "$root/bootstrap/cache/services.json":
     ensure => present,
     owner  => $www_user,
     group  => $group,
     mode   => $mode,
-  }->
-  exec { 'chmod-instance-bootstrap-cache':
-    command     => "find $pwd/bootstrap/cache -type f -exec chmod 0664 {} \\;",
-    provider    => shell,
-    cwd         => $instance_root,
-    environment => ["HOME=/home/$user"]
-  }->
-  exec { 'chmod-instance-storage-files-again':
-    command     => "find $pwd/storage -type f -exec chmod 0664 {} \\;",
-    provider    => shell,
-    cwd         => $instance_root,
-    environment => ["HOME=/home/$user"]
+    onlyif => "test ! -f $root/bootstrap/cache/services.json"
   }
+
+  file { "$root/storage/logs/laravel.log":
+    ensure => present,
+    owner  => $www_user,
+    group  => $group,
+    mode   => $mode,
+    onlyif => "test ! -f $root/storage/logs/laravel.log"
+  }
+
 }
 
 ##------------------------------------------------------------------------------
