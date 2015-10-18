@@ -59,28 +59,19 @@ class resetFilePermissions( $root ) {
   }
 
   exec { "check-cached-services":
-    command => "/bin/true",
-    onlyif  => "/usr/bin/test -e $root/bootstrap/cache/services.json",
+    command         => "chmod 0664 $root/bootstrap/cache/services.json",
+    user            => root,
+    onlyif          => "test -f $root/bootstrap/cache/services.json",
+    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+    notify          => Notify["$root/bootstrap/cache/services.json *found*"],
   }
 
   exec { "check-storage-log-file":
-    command => "/bin/true",
-    onlyif  => "/usr/bin/test -e $root/storage/logs/laravel.log",
-  }
-
-  file { "$root/bootstrap/cache/services.json":
-    ensure  => present,
-    owner   => $www_user,
-    group   => $group,
-    mode    => 0664,
-    require => Exec["check-cached-services"],
-  }->
-  file { "$root/storage/logs/laravel.log":
-    ensure  => present,
-    owner   => $www_user,
-    group   => $group,
-    mode    => 0664,
-    require => Exec["check-storage-log-file"],
+    command         => "chmod 0664 $root/storage/logs/laravel.log",
+    user            => root,
+    onlyif          => "test -f $root/storage/logs/laravel.log",
+    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+    notify          => Notify["$root/storage/logs/laravel.log *found*"],
   }
 
 }
