@@ -19,26 +19,26 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
     ensure => directory,
     owner  => $user,
     group  => $www_group,
-    mode   => $mode,
+    mode   => 2775,
   }->
   file { [
     "/tmp/.df-log",
-    "$instance_release/$instance_branch/bootstrap/cache",
-    "$instance_release/$instance_branch/storage",
-    "$instance_release/$instance_branch/storage/app",
-    "$instance_release/$instance_branch/storage/databases",
-    "$instance_release/$instance_branch/storage/logs",
-    "$instance_release/$instance_branch/storage/framework",
-    "$instance_release/$instance_branch/storage/framework/cache",
-    "$instance_release/$instance_branch/storage/framework/db",
-    "$instance_release/$instance_branch/storage/framework/sessions",
-    "$instance_release/$instance_branch/storage/framework/views",
-    "$instance_release/$instance_branch/storage/scripting",
+    "$root/bootstrap/cache",
+    "$root/storage",
+    "$root/storage/app",
+    "$root/storage/databases",
+    "$root/storage/logs",
+    "$root/storage/framework",
+    "$root/storage/framework/cache",
+    "$root/storage/framework/db",
+    "$root/storage/framework/sessions",
+    "$root/storage/framework/views",
+    "$root/storage/scripting",
   ]:
     ensure => directory,
     owner  => $www_user,
     group  => $group,
-    mode   => $mode,
+    mode   => 2775,
   }
 }
 
@@ -87,7 +87,9 @@ class { iniSettings:
 }->
   ## Make sure the directories are created with the right perms
 class { laravelDirectories:
-  root => $instance_root,
+  root  => $dashboard_root,
+  owner => $www_user,
+  group => $group,
 }->
 exec { "remove-services-json":
   command         => "rm -f $instance_root/bootstrap/cache/services.json",

@@ -11,7 +11,7 @@
 
 ## A class that creates the directories required for a Laravel 5+ application.
 ## Permissions are set accordingly.
-class laravelDirectories( $root, $owner, $group, $mode = 2775) {
+class laravelDirectories( $root, $owner, $group, $mode = 2775 ) {
 
   file { [
     "$root/bootstrap",
