@@ -73,26 +73,6 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
   }
 }
 
-class fixLogPermissions( $root, $owner, $group, $mode = 0664) {
-
-  file { "$root/bootstrap/cache/services.json":
-    ensure => present,
-    owner  => $www_user,
-    group  => $group,
-    mode   => $mode,
-    onlyif => "test ! -f $root/bootstrap/cache/services.json"
-  }
-
-  file { "$root/storage/logs/laravel.log":
-    ensure => present,
-    owner  => $www_user,
-    group  => $group,
-    mode   => $mode,
-    onlyif => "test ! -f $root/storage/logs/laravel.log"
-  }
-
-}
-
 ############
 ## Logic
 ############
@@ -222,8 +202,9 @@ exec { "clear-caches-and-optimize":
   environment => ["HOME=/home/$user"]
 }->
   ## Fix up the permissions on the log file
-class { fixLogPermissions:
-  root  => $console_root,
-  owner => $www_user,
-  group => $group,
+class { $dreamfactory::laravel::resetPermissions:
+  root     => $console_root,
+  user     => $user,
+  www_user => $www_user,
+  group    => $group,
 }

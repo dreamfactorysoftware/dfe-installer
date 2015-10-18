@@ -166,9 +166,12 @@ export FACTER_MAIL_FROM_NAME=${FACTER_DOMAIN}
 export FACTER_MAIL_USERNAME=""
 export FACTER_MAIL_PASSWORD=""
 
+## Module path
+MODULE_PATH="$PWD/resources/assets/puppet/modules:`puppet config print modulepath`"
+
 _info "Installing now..."
 
-for manifest in $(ls ./resources/assets/manifests/*.pp)
+for manifest in $(ls ./resources/assets/puppet/manifests/*.pp)
 do
 	_info "Applying ${manifest}..."
 	puppet apply -l "${LOG_FILE}" "${manifest}"

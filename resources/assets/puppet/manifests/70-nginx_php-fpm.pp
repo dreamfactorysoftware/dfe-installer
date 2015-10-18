@@ -154,11 +154,13 @@ server {
 
 service { "nginx":
   ensure  => running,
-  enable  => true
+  enable  => true,
+  require => Package["nginx-extras"],
 }->
 service { "php5-fpm":
   ensure  => running,
-  enable  => true
+  enable  => true,
+  require => Package["php5-fpm"],
 }
 
 service { "apache2":
@@ -244,12 +246,5 @@ file { "$nginx_path/sites-enabled/20-dfe-dashboard.conf":
 exec { "enable-dreamfactory-module":
   command  => "$php_enmod_bin dreamfactory",
   provider => posix,
-}->
-exec { "restart-php5-fpm":
-  command  => "service php5-fpm restart",
-  provider => shell,
-}->
-exec { "restart-nginx":
-  command  => "service nginx restart",
-  provider => shell,
+  notify   => Service["php5-fpm", "nginx"],
 }

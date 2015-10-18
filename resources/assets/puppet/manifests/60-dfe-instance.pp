@@ -9,6 +9,61 @@
 ## Classes
 ##------------------------------------------------------------------------------
 
+class resetLaravelPermissions( $root ) {
+
+  exec { 'chmod-instance-storage':
+    command     => "find $pwd/storage -type d -exec chmod 2775 {} \\;",
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { 'chmod-instance-storage-files':
+    command     => "find $pwd/storage -type f -exec chmod 0664 {} \\;",
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }
+
+  exec { 'chmod-instance-temp':
+    command     => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { 'chmod-instance-temp-files':
+    command     => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }
+
+  exec { "check-cached-services":
+    command => "/bin/true",
+    onlyif  => "/usr/bin/test -e $root/bootstrap/cache/services.json",
+  }
+
+  exec { "check-storage-log-file":
+    command => "/bin/true",
+    onlyif  => "/usr/bin/test -e $root/storage/logs/laravel.log",
+  }
+
+  file { "$root/bootstrap/cache/services.json":
+    ensure  => present,
+    owner   => $www_user,
+    group   => $group,
+    mode    => 0664,
+    require => Exec["check-cached-services"],
+  }->
+  file { "$root/storage/logs/laravel.log":
+    ensure  => present,
+    owner   => $www_user,
+    group   => $group,
+    mode    => 0664,
+    require => Exec["check-storage-log-file"],
+  }
+
+}
+
 class iniSettings {
 
   $_env = { 'path' => "$instance_root/.env", }
@@ -52,56 +107,6 @@ class createDirectoryStructure {
     owner  => $www_user,
     group  => $group,
     mode   => 2775,
-  }
-
-}
-
-class correctFilePermissions {
-
-  exec { 'chmod-instance-storage':
-    command     => "find $pwd/storage -type d -exec chmod 2775 {} \\;",
-    provider    => shell,
-    cwd         => $instance_root,
-    environment => ["HOME=/home/$user"]
-  }->
-  exec { 'chmod-instance-storage-files':
-    command     => "find $pwd/storage -type f -exec chmod 0664 {} \\;",
-    provider    => shell,
-    cwd         => $instance_root,
-    environment => ["HOME=/home/$user"]
-  }
-
-  exec { 'chmod-instance-temp':
-    command     => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
-    provider    => shell,
-    cwd         => $instance_root,
-    environment => ["HOME=/home/$user"]
-  }->
-  exec { 'chmod-instance-temp-files':
-    command     => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
-    provider    => shell,
-    cwd         => $instance_root,
-    environment => ["HOME=/home/$user"]
-  }
-
-}
-
-class fixLogPermissions( $root, $owner, $group, $mode = 0664) {
-
-  file { "$root/bootstrap/cache/services.json":
-    ensure => present,
-    owner  => $www_user,
-    group  => $group,
-    mode   => $mode,
-    onlyif => "test ! -f $root/bootstrap/cache/services.json"
-  }
-
-  file { "$root/storage/logs/laravel.log":
-    ensure => present,
-    owner  => $www_user,
-    group  => $group,
-    mode   => $mode,
-    onlyif => "test ! -f $root/storage/logs/laravel.log"
   }
 
 }
@@ -157,12 +162,7 @@ exec { 'clear-instance-cache-and-optimize':
   cwd         => $instance_root,
   environment => ["HOME=/home/$user"]
 }->
-class { correctFilePermissions:
-  ## Ensure all files are writable by the web server
-}->
   ## Fix up the permissions on the log file
-class { fixLogPermissions:
-  root  => $instance_root,
-  owner => $www_user,
-  group => $group,
+class { resetLaravelPermissions:
+  root=> $instance_root,
 }

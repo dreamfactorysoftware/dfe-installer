@@ -9,6 +9,82 @@
 ## Classes
 ############
 
+class clearLaravelCaches( $root ) {
+
+  Exec {
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"],
+  }
+
+  exec { "clc-clear-compiled":
+    command     => "$artisan clear-compiled",
+  }->
+  exec { "clc-cache-clear":
+    command     => "$artisan cache:clear",
+  }->
+  exec { "clc-config-clear":
+    command     => "$artisan config:clear",
+  }->
+  exec { "clc-route-clear":
+    command     => "$artisan route:clear",
+  }->
+  exec { "clc-optimize":
+    command     => "$artisan optimize",
+  }
+
+}
+
+class resetLaravelPermissions( $root ) {
+
+  Exec {
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }
+
+  exec { 'chmod-instance-storage':
+    command => "find $root/storage -type d -exec chmod 2775 {} \\;",
+  }->
+  exec { 'chmod-instance-storage-files':
+    command => "find $root/storage -type f -exec chmod 0664 {} \\;",
+  }
+
+  exec { 'chmod-instance-temp':
+    command => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
+  }->
+  exec { 'chmod-instance-temp-files':
+    command => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
+  }
+
+  exec { "check-cached-services":
+    command => "/bin/true",
+    onlyif  => "/usr/bin/test -e $root/bootstrap/cache/services.json",
+  }
+
+  exec { "check-storage-log-file":
+    command => "/bin/true",
+    onlyif  => "/usr/bin/test -e $root/storage/logs/laravel.log",
+  }
+
+  file { "$root/bootstrap/cache/services.json":
+    ensure  => present,
+    owner   => $www_user,
+    group   => $group,
+    mode    => 0664,
+    require => Exec["check-cached-services"],
+  }->
+  file { "$root/storage/logs/laravel.log":
+    ensure  => present,
+    owner   => $www_user,
+    group   => $group,
+    mode    => 0664,
+    require => Exec["check-storage-log-file"],
+  }
+
+}
+
 ## A class that creates the directories required for a Laravel 5+ application.
 ## Permissions are set accordingly.
 class laravelDirectories( $root, $owner, $group, $mode = 2775) {
@@ -152,16 +228,10 @@ exec { "generate-dashboard-app-key":
   cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
 }->
-exec { "clear-caches-and-optimize":
-  command     => "$artisan clear-compiled ; $artisan cache:clear ; $artisan config:clear ; $artisan route:clear ; $artisan optimize",
-  user        => $user,
-  provider    => shell,
-  cwd         => $dashboard_root,
-  environment => ["HOME=/home/$user"]
+class { clearLaravelCaches:
+  root => $dashboard_root,
 }->
   ## Fix up the permissions on the log file
-class { fixLogPermissions:
+class { resetLaravelPermissions:
   root  => $dashboard_root,
-  owner => $www_user,
-  group => $group,
 }
