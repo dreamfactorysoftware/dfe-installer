@@ -9,32 +9,101 @@
 ## Classes
 ##------------------------------------------------------------------------------
 
-class resetLaravelPermissions( $root ) {
+## A class that creates the directories required for a Laravel 5+ application.
+## Permissions are set accordingly.
+class laravelDirectories( $root, $owner, $group, $mode = 2775) {
 
-  exec { 'chmod-instance-storage':
-    command     => "find $pwd/storage -type d -exec chmod 2775 {} \\;",
+  file { [
+    "$root/bootstrap",
+  ]:
+    ensure => directory,
+    owner  => $user,
+    group  => $www_group,
+    mode   => $mode,
+  }->
+  file { [
+    "/tmp/.df-log",
+    "$instance_release/$instance_branch/bootstrap/cache",
+    "$instance_release/$instance_branch/storage",
+    "$instance_release/$instance_branch/storage/app",
+    "$instance_release/$instance_branch/storage/databases",
+    "$instance_release/$instance_branch/storage/logs",
+    "$instance_release/$instance_branch/storage/framework",
+    "$instance_release/$instance_branch/storage/framework/cache",
+    "$instance_release/$instance_branch/storage/framework/db",
+    "$instance_release/$instance_branch/storage/framework/sessions",
+    "$instance_release/$instance_branch/storage/framework/views",
+    "$instance_release/$instance_branch/storage/scripting",
+  ]:
+    ensure => directory,
+    owner  => $www_user,
+    group  => $group,
+    mode   => $mode,
+  }
+}
+
+class iniSettings( $root ) {
+
+  $_env = { 'path' => "$root/.env", }
+  $_settings = {
+    '' => {
+      'DF_INSTANCE_NAME'     => 'dfe-instance',
+      'DF_STANDALONE'        => 'false',
+      'APP_LOG'              => 'single',
+    }
+  }
+
+  ## Create .env file
+  create_ini_settings($_settings, $_env)
+}
+
+class clearCaches( $root ) {
+
+  Exec {
+    user        => $user,
     provider    => shell,
     cwd         => $root,
-    environment => ["HOME=/home/$user"]
+    environment => ["HOME=/home/$user"],
+  }
+
+  exec { "clc-clear-compiled":
+    command     => "$artisan clear-compiled",
   }->
-  exec { 'chmod-instance-storage-files':
-    command     => "find $pwd/storage -type f -exec chmod 0664 {} \\;",
+  exec { "clc-cache-clear":
+    command     => "$artisan cache:clear",
+  }->
+  exec { "clc-config-clear":
+    command     => "$artisan config:clear",
+  }->
+  exec { "clc-route-clear":
+    command     => "$artisan route:clear",
+  }->
+  exec { "clc-optimize":
+    command     => "$artisan optimize",
+  }
+
+}
+
+class resetFilePermissions( $root ) {
+
+  Exec {
     provider    => shell,
     cwd         => $root,
     environment => ["HOME=/home/$user"]
   }
 
+  exec { 'chmod-instance-storage':
+    command => "find $root/storage -type d -exec chmod 2775 {} \\;",
+  }->
+  exec { 'chmod-instance-storage-files':
+    command => "find $root/storage -type f -exec chmod 0664 {} \\;",
+  }
+
   exec { 'chmod-instance-temp':
-    command     => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
-    provider    => shell,
-    cwd         => $root,
-    environment => ["HOME=/home/$user"]
+    command => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
   }->
   exec { 'chmod-instance-temp-files':
-    command     => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
-    provider    => shell,
-    cwd         => $root,
-    environment => ["HOME=/home/$user"]
+    command => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
   }
 
   exec { "check-cached-services":
@@ -64,53 +133,6 @@ class resetLaravelPermissions( $root ) {
 
 }
 
-class iniSettings {
-
-  $_env = { 'path' => "$instance_root/.env", }
-  $_settings = {
-    '' => {
-      'DF_INSTANCE_NAME'     => 'dfe-instance',
-      'DF_STANDALONE'        => 'false',
-      'APP_LOG'              => 'single',
-    }
-  }
-
-  ## Create .env file
-  create_ini_settings($_settings, $_env)
-}
-
-class createDirectoryStructure {
-
-  file { [
-    "$instance_release/$instance_branch/bootstrap",
-  ]:
-    ensure => directory,
-    owner  => $user,
-    group  => $www_group,
-    mode   => 2775,
-  }->
-  file { [
-    "/tmp/.df-log",
-    "$instance_release/$instance_branch/bootstrap/cache",
-    "$instance_release/$instance_branch/storage",
-    "$instance_release/$instance_branch/storage/app",
-    "$instance_release/$instance_branch/storage/databases",
-    "$instance_release/$instance_branch/storage/logs",
-    "$instance_release/$instance_branch/storage/framework",
-    "$instance_release/$instance_branch/storage/framework/cache",
-    "$instance_release/$instance_branch/storage/framework/db",
-    "$instance_release/$instance_branch/storage/framework/sessions",
-    "$instance_release/$instance_branch/storage/framework/views",
-    "$instance_release/$instance_branch/storage/scripting",
-  ]:
-    ensure => directory,
-    owner  => $www_user,
-    group  => $group,
-    mode   => 2775,
-  }
-
-}
-
 ##------------------------------------------------------------------------------
 ## Logic
 ##------------------------------------------------------------------------------
@@ -135,11 +157,13 @@ file { "$instance_root/.env":
   mode   => 0750,
   source => "$instance_root/.env-dist"
 }->
-class { 'iniSettings':
   ## Applies INI settings in $_settings to .env
+class { iniSettings:
+  root => $instance_root,
 }->
-class { 'createDirectoryStructure':
   ## Make sure the directories are created with the right perms
+class { laravelDirectories:
+  root => $instance_root,
 }->
 exec { 'instance-composer-update':
   command     => "$composer_bin update",
@@ -155,14 +179,10 @@ exec { 'generate-instance-app-key':
   cwd         => $instance_root,
   environment => ["HOME=/home/$user"]
 }->
-exec { 'clear-instance-cache-and-optimize':
-  command     => "$artisan clear-compiled ; $artisan cache:clear ; $artisan config:clear ; $artisan route:clear ; $artisan optimize",
-  user        => $user,
-  provider    => shell,
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"]
-}->
-  ## Fix up the permissions on the log file
-class { resetLaravelPermissions:
+class { clearCaches:
+  root => $instance_root,
+}
+## Fix up the permissions on the log file
+class { resetFilePermissions:
   root=> $instance_root,
 }

@@ -2,14 +2,75 @@
 # DreamFactory Enterprise(tm) Installer Manifest
 # (c) 2012-∞ by DreamFactory Software, Inc. All Rights Reserved.
 #
-# Install dreamfactory/dfe-dashboard
+# Install dreamfactory/dfe-console
 ################################################################################
 
 ############
 ## Classes
 ############
 
-class clearLaravelCaches( $root ) {
+class createInitialCluster( $root ) {
+
+  exec { "create-web-server":
+    command     => "$artisan dfe:server create web-${vendor_id} -t web -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c {}",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+  }->
+  exec { "create-app-server":
+    command     => "$artisan dfe:server create app-${vendor_id} -t app -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c {}",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { "create-db-server":
+    command     => "$artisan dfe:server create db-${vendor_id} -t db -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c '{\"port\":3306, \"username\": \"${db_user}\", \"password\": \"${db_password}\", \"database\": \"${db_name}\", \"driver\": \"${db_driver}\", \"default-database-name\": \"\", \"charset\": \"utf8\", \"collation\": \"utf8_unicode_ci\", \"prefix\": \"\", \"multi-assign\": \"on\"}'",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { "create-cluster":
+    command     => "$artisan dfe:cluster create cluster-${vendor_id} --subdomain ${vendor_id}.${domain}",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { "assign-cluster-web-server":
+    command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id web-${vendor_id}",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { "assign-cluster-app-server":
+    command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id app-${vendor_id}",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { "assign-cluster-db-server":
+    command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id db-${vendor_id}",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }
+
+}
+
+#exec { "clear-caches-and-optimize":
+#  command     => "$artisan clear-compiled; $artisan cache:clear; $artisan config:clear; $artisan optimize",
+#  user        => $user,
+#  provider    => shell,
+#  cwd         => $console_root,
+#  environment => ["HOME=/home/$user"]
+#}->
+
+class clearCaches( $root ) {
 
   Exec {
     user        => $user,
@@ -36,7 +97,7 @@ class clearLaravelCaches( $root ) {
 
 }
 
-class resetLaravelPermissions( $root ) {
+class resetFilePermissions( $root ) {
 
   Exec {
     provider    => shell,
@@ -85,65 +146,16 @@ class resetLaravelPermissions( $root ) {
 
 }
 
-## A class that creates the directories required for a Laravel 5+ application.
-## Permissions are set accordingly.
-class laravelDirectories( $root, $owner, $group, $mode = 2775) {
-
-  file { [
-    "$root/bootstrap",
-  ]:
-    ensure => directory,
-    owner  => $user,
-    group  => $www_group,
-    mode   => $mode,
-  }->
-  file { [
-    "$root/bootstrap/cache",
-    "$root/storage",
-    "$root/storage/framework",
-    "$root/storage/framework/sessions",
-    "$root/storage/framework/views",
-    "$root/storage/logs",
-  ]:
-    ensure => directory,
-    owner  => $www_user,
-    group  => $group,
-    mode   => $mode,
-  }
-}
-
-class fixLogPermissions( $root, $owner, $group, $mode = 0664) {
-
-  file { "$root/bootstrap/cache/services.json":
-    ensure => present,
-    owner  => $www_user,
-    group  => $group,
-    mode   => $mode,
-    onlyif => "test ! -f $root/bootstrap/cache/services.json"
-  }
-
-  file { "$root/storage/logs/laravel.log":
-    ensure => present,
-    owner  => $www_user,
-    group  => $group,
-    mode   => $mode,
-    onlyif => "test ! -f $root/storage/logs/laravel.log"
-  }
-
-}
-
-## Defines the dashboard .env settings. Relies on FACTER_* data
-class dashboardEnvironmentSettings( $root, $zone, $domain, $protocol = "https") {
+## Defines the console .env settings. Relies on FACTER_* data
+class iniSettings( $root, $zone, $domain, $protocol = "https") {
   ## Define our stuff
   $_env = { "path" => "$root/.env", }
   $_consoleUrl = "$protocol://console.${zone}.${domain}"
-  $_dashboardUrl = "$protocol://dashboard.${zone}.${domain}"
   $_consoleApiUrl = "$_consoleUrl/api/v1/ops"
-
   $_settings = {
     "" => {
       "APP_DEBUG"                                  => $app_debug,
-      "APP_URL"                                    => $_dashboardUrl,
+      "APP_URL"                                    => $_consoleUrl,
       "DB_HOST"                                    => $db_host,
       "DB_DATABASE"                                => $db_name,
       "DB_USERNAME"                                => $db_user,
@@ -173,65 +185,111 @@ class dashboardEnvironmentSettings( $root, $zone, $domain, $protocol = "https") 
   create_ini_settings($_settings, $_env)
 }
 
+class laravelDirectories( $root, $owner, $group, $mode = 2775) {
+
+  file { [
+    "$root/bootstrap",
+  ]:
+    ensure => directory,
+    owner  => $user,
+    group  => $www_group,
+    mode   => $mode,
+  }->
+  file { [
+    "$root/bootstrap/cache",
+    "$root/storage",
+    "$root/storage/framework",
+    "$root/storage/framework/sessions",
+    "$root/storage/framework/views",
+    "$root/storage/logs",
+  ]:
+    ensure => directory,
+    owner  => $www_user,
+    group  => $group,
+    mode   => $mode,
+  }
+}
+
+############
+## Logic
+############
+
 ##------------------------------------------------------------------------------
 ## Check out the repo, update composer, change file permissions...
 ##------------------------------------------------------------------------------
 
-vcsrepo { "$dashboard_release/$dashboard_branch":
+vcsrepo { "$console_release/$console_branch":
   ensure   => present,
   provider => git,
-  source   => $dashboard_repo,
+  source   => $console_repo,
   user     => $user,
   owner    => $user,
   group    => $www_group,
-  revision => $dashboard_version,
+  revision => $console_version
 }->
-file { $dashboard_root:
+file { $console_root:
   ensure => link,
-  target => "$dashboard_release/$dashboard_branch",
+  target => "$console_release/$console_branch",
 }->
-file { "$dashboard_root/.env":
+file { "$console_root/.env":
   ensure => present,
   owner  => $user,
   group  => $www_group,
   mode   => 0750,
-  source => "$dashboard_root/.env-dist",
+  source => "$console_root/.env-dist",
 }->
-class { dashboardEnvironmentSettings:
+class { iniSettings:
   ## Applies INI settings in $_settings to .env
-  root     => $dashboard_root,
+  root     => $console_root,
   zone     => $vendor_id,
   domain   => $domain,
   protocol => $default_protocol,
 }->
 class { laravelDirectories:
-  root  => $dashboard_root,
+  root  => $console_root,
   owner => $www_user,
   group => $group,
 }->
-exec { "append-dashboard-api-keys":
-  command  => "cat $console_root/database/dfe/dashboard.env >> $dashboard_root/.env",
-  provider => shell,
-  user     => $user
-}->
-exec { "dashboard-composer-update":
+exec { "console-composer-update":
   command     => "$composer_bin update",
   user        => $user,
   provider    => shell,
-  cwd         => $dashboard_root,
+  cwd         => $console_root,
   environment => [ "HOME=/home/$user", ]
 }->
-exec { "generate-dashboard-app-key":
+exec { "generate-console-app-key":
   command     => "$artisan key:generate",
   user        => $user,
   provider    => shell,
-  cwd         => $dashboard_root,
+  cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
-class { clearLaravelCaches:
-  root => $dashboard_root,
+exec { "run-console-setup-command":
+  command     => "$artisan dfe:setup --force --admin-password=\"${admin_pwd}\" \"${admin_email}\"",
+  user        => $user,
+  provider    => shell,
+  cwd         => $console_root,
+  environment => ["HOME=/home/$user"]
 }->
-  ## Fix up the permissions on the log file
-class { resetLaravelPermissions:
-  root  => $dashboard_root,
+exec { "append-console-api-keys":
+  command  => "cat $console_root/database/dfe/console.env >> $console_root/.env",
+  provider => shell,
+  user     => $user
+}->
+file { "$doc_root_base_path/.dfe.cluster.json":
+  ensure => present,
+  owner  => $user,
+  group  => $www_group,
+  mode   => 0644,
+  source => "$console_root/database/dfe/.dfe.cluster.json"
+}->
+class { createInitialCluster:
+  root => $console_root,
+}->
+class { clearCaches:
+  root => $console_root,
+}
+## Fix up the permissions on the log file
+class { resetFilePermissions:
+  root => $console_root,
 }
