@@ -172,6 +172,12 @@ exec { "remove-services-json":
   onlyif          => "test -f $console_root/bootstrap/cache/services.json",
   path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
 }->
+exec { "remove-compiled-classes":
+  command         => "rm -f $console_root/bootstrap/cache/compiled.php",
+  user            => root,
+  onlyif          => "test -f $console_root/bootstrap/cache/compiled.php",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
 exec { "console-composer-update":
   command     => "$composer_bin update",
   user        => $user,
@@ -237,44 +243,38 @@ exec { "clc-route-clear":
   environment => ["HOME=/home/$user"],
 }->
 exec { "clc-optimize":
-  command     => "$artisan optimize",
+  command     => "$artisan optimize --force",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"],
 }->
-exec { 'chmod-instance-storage':
+exec { 'chmod-console-storage':
   command     => "find $console_root/storage -type d -exec chmod 2775 {} \\;",
   provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
-exec { 'chmod-instance-storage-files':
+exec { 'chmod-console-storage-files':
   command     => "find $console_root/storage -type f -exec chmod 0664 {} \\;",
   provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
-exec { 'chmod-instance-temp':
-  command     => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
-  provider    => shell,
-  cwd         => $console_root,
-  environment => ["HOME=/home/$user"]
-}->
-exec { 'chmod-instance-temp-files':
-  command     => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
-  provider    => shell,
-  cwd         => $console_root,
-  environment => ["HOME=/home/$user"]
-}->
 exec { "check-cached-services":
-  command         => "chmod 0664 $console_root/bootstrap/cache/services.json",
+  command         => "chmod 0664 $console_root/bootstrap/cache/services.json && chown $www_user:$group $console_root/bootstrap/cache/services.json",
   user            => root,
   onlyif          => "test -f $console_root/bootstrap/cache/services.json",
   path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
 }->
+exec { "check-compiled-classes":
+  command         => "chmod 0664 $console_root/bootstrap/cache/compiled.php && chown $www_user:$group $console_root/bootstrap/cache/compiled.php",
+  user            => root,
+  onlyif          => "test -f $console_root/bootstrap/cache/compiled.php",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
 exec { "check-storage-log-file":
-  command         => "chmod 0664 $console_root/storage/logs/laravel.log",
+  command         => "chmod 0664 $console_root/storage/logs/laravel.log && chown $www_user:$group $console_root/storage/logs/laravel.log",
   user            => root,
   onlyif          => "test -f $console_root/storage/logs/laravel.log",
   path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],

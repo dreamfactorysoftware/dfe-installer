@@ -87,7 +87,7 @@ class { iniSettings:
 }->
   ## Make sure the directories are created with the right perms
 class { laravelDirectories:
-  root  => $dashboard_root,
+  root  => $instance_root,
   owner => $www_user,
   group => $group,
 }->
@@ -95,6 +95,12 @@ exec { "remove-services-json":
   command         => "rm -f $instance_root/bootstrap/cache/services.json",
   user            => root,
   onlyif          => "test -f $instance_root/bootstrap/cache/services.json",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
+exec { "remove-compiled-classes":
+  command         => "rm -f $instance_root/bootstrap/cache/compiled.php",
+  user            => root,
+  onlyif          => "test -f $instance_root/bootstrap/cache/compiled.php",
   path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
 }->
 exec { 'instance-composer-update':
@@ -140,7 +146,7 @@ exec { "clc-route-clear":
   environment => ["HOME=/home/$user"],
 }->
 exec { "clc-optimize":
-  command     => "$artisan optimize",
+  command     => "$artisan optimize --force",
   user        => $user,
   provider    => shell,
   cwd         => $instance_root,
@@ -171,13 +177,19 @@ exec { 'chmod-instance-temp-files':
   environment => ["HOME=/home/$user"]
 }->
 exec { "check-cached-services":
-  command         => "chmod 0664 $instance_root/bootstrap/cache/services.json",
+  command         => "chmod 0664 $instance_root/bootstrap/cache/services.json && chown $www_user:$group $instance_root/bootstrap/cache/services.json",
   user            => root,
   onlyif          => "test -f $instance_root/bootstrap/cache/services.json",
   path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
 }->
+exec { "check-compiled-classes":
+  command         => "chmod 0664 $instance_root/bootstrap/cache/compiled.php && chown $www_user:$group $instance_root/bootstrap/cache/compiled.php",
+  user            => root,
+  onlyif          => "test -f $instance_root/bootstrap/cache/compiled.php",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
 exec { "check-storage-log-file":
-  command         => "chmod 0664 $instance_root/storage/logs/laravel.log",
+  command         => "chmod 0664 $instance_root/storage/logs/laravel.log && chown $www_user:$group $instance_root/storage/logs/laravel.log",
   user            => root,
   onlyif          => "test -f $instance_root/storage/logs/laravel.log",
   path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],

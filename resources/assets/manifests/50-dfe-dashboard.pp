@@ -124,6 +124,12 @@ exec { "remove-services-json":
   onlyif          => "test -f $dashboard_root/bootstrap/cache/services.json",
   path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
 }->
+exec { "remove-compiled-classes":
+  command         => "rm -f $dashboard_root/bootstrap/cache/compiled.php",
+  user            => root,
+  onlyif          => "test -f $dashboard_root/bootstrap/cache/compiled.php",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
 exec { "dashboard-composer-update":
   command     => "$composer_bin update",
   user        => $user,
@@ -167,44 +173,50 @@ exec { "clc-route-clear":
   environment => ["HOME=/home/$user"],
 }->
 exec { "clc-optimize":
-  command     => "$artisan optimize",
+  command     => "$artisan optimize --force",
   user        => $user,
   provider    => shell,
   cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"],
 }->
-exec { 'chmod-instance-storage':
+exec { 'chmod-dashboard-storage':
   command     => "find $dashboard_root/storage -type d -exec chmod 2775 {} \\;",
   provider    => shell,
   cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
 }->
-exec { 'chmod-instance-storage-files':
+exec { 'chmod-dashboard-storage-files':
   command     => "find $dashboard_root/storage -type f -exec chmod 0664 {} \\;",
   provider    => shell,
   cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
 }->
-exec { 'chmod-instance-temp':
+exec { 'chmod-dashboard-temp':
   command     => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
   provider    => shell,
   cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
 }->
-exec { 'chmod-instance-temp-files':
+exec { 'chmod-dashboard-temp-files':
   command     => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
   provider    => shell,
   cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
 }->
 exec { "check-cached-services":
-  command         => "chmod 0664 $dashboard_root/bootstrap/cache/services.json",
+  command         => "chmod 0664 $dashboard_root/bootstrap/cache/services.json && chown $www_user:$group $dashboard_root/bootstrap/cache/services.json",
   user            => root,
   onlyif          => "test -f $dashboard_root/bootstrap/cache/services.json",
   path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
 }->
+exec { "check-compiled-classes":
+  command         => "chmod 0664 $dashboard_root/bootstrap/cache/compiled.php && chown $www_user:$group $dashboard_root/bootstrap/cache/compiled.php",
+  user            => root,
+  onlyif          => "test -f $dashboard_root/bootstrap/cache/compiled.php",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
 exec { "check-storage-log-file":
-  command         => "chmod 0664 $dashboard_root/storage/logs/laravel.log",
+  command         => "chmod 0664 $dashboard_root/storage/logs/laravel.log && chown $www_user:$group $dashboard_root/storage/logs/laravel.log",
   user            => root,
   onlyif          => "test -f $dashboard_root/storage/logs/laravel.log",
   path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
