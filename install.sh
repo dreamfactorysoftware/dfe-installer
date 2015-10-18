@@ -171,10 +171,10 @@ MODULE_PATH="$PWD/resources/assets/puppet/modules:`puppet config print modulepat
 
 _info "Installing now..."
 
-for manifest in $(ls ./resources/assets/puppet/manifests/*.pp)
+for manifest in $(ls ./resources/assets/manifests/*.pp)
 do
 	_info "Applying ${manifest}..."
-	puppet apply --modulepath=${MODULE_PATH} -l "${LOG_FILE}" "${manifest}"
+	puppet apply -l "${LOG_FILE}" "${manifest}"
 
     if [ $? -ne 0 ]; then
         _error "An unexpected result code of $? was returned. Halting."
