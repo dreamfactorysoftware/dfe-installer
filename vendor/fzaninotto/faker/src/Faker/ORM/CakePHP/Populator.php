@@ -60,7 +60,7 @@ class Populator
 
         $entity->modifiers = $entity->guessModifiers($this);
         if ($customModifiers) {
-            $entity->mergeModifiersWith($customModifiers);
+            $entity->mergeModifiers($customModifiers);
         }
 
         $class = $entity->class;

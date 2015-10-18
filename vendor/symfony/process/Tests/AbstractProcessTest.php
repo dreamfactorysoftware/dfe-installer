@@ -74,9 +74,7 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
 
     public function testStopWithTimeoutIsActuallyWorking()
     {
-        if (!extension_loaded('pcntl')) {
-            $this->markTestSkipped('Extension pcntl is required.');
-        }
+        $this->verifyPosixIsEnabled();
 
         // exec is mandatory here since we send a signal to the process
         // see https://github.com/symfony/symfony/issues/5030 about prepending
@@ -724,8 +722,12 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessThrowsExceptionWhenExternallySignaled()
     {
+        if ('\\' === DIRECTORY_SEPARATOR) {
+            $this->markTestSkipped('Windows does not support POSIX signals');
+        }
+
         if (!function_exists('posix_kill')) {
-            $this->markTestSkipped('Function posix_kill is required.');
+            $this->markTestSkipped('posix_kill is required for this test');
         }
 
         $termSignal = defined('SIGKILL') ? SIGKILL : 9;
@@ -902,9 +904,7 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
 
     public function testSignal()
     {
-        if (!extension_loaded('pcntl')) {
-            $this->markTestSkipped('Extension pcntl is required.');
-        }
+        $this->verifyPosixIsEnabled();
 
         $process = $this->getProcess('exec php -f '.__DIR__.'/SignalListener.php');
         $process->start();
@@ -920,9 +920,7 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
 
     public function testExitCodeIsAvailableAfterSignal()
     {
-        if (!extension_loaded('pcntl')) {
-            $this->markTestSkipped('Extension pcntl is required.');
-        }
+        $this->verifyPosixIsEnabled();
 
         $process = $this->getProcess('sleep 4');
         $process->start();
@@ -943,10 +941,7 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
      */
     public function testSignalProcessNotRunning()
     {
-        if (!extension_loaded('pcntl')) {
-            $this->markTestSkipped('Extension pcntl is required.');
-        }
-
+        $this->verifyPosixIsEnabled();
         $process = $this->getProcess(self::$phpBin.' -v');
         $process->signal(SIGHUP);
     }
@@ -998,6 +993,16 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
             array('hasBeenStopped'),
             array('getStopSignal'),
         );
+    }
+
+    private function verifyPosixIsEnabled()
+    {
+        if ('\\' === DIRECTORY_SEPARATOR) {
+            $this->markTestSkipped('POSIX signals do not work on Windows');
+        }
+        if (!defined('SIGUSR1')) {
+            $this->markTestSkipped('The pcntl extension is not enabled');
+        }
     }
 
     /**

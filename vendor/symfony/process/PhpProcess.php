@@ -21,6 +21,8 @@ use Symfony\Component\Process\Exception\RuntimeException;
  * print $p->getOutput()."\n";
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @api
  */
 class PhpProcess extends Process
 {
@@ -32,6 +34,8 @@ class PhpProcess extends Process
      * @param array  $env     The environment variables
      * @param int    $timeout The timeout in seconds
      * @param array  $options An array of options for proc_open
+     *
+     * @api
      */
     public function __construct($script, $cwd = null, array $env = array(), $timeout = 60, array $options = array())
     {
@@ -45,6 +49,8 @@ class PhpProcess extends Process
 
     /**
      * Sets the path to the PHP binary to use.
+     *
+     * @api
      */
     public function setPhpBinary($php)
     {

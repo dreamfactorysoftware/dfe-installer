@@ -464,11 +464,12 @@ TABLE
         );
     }
 
-    /**
-     * @requires extension mbstring
-     */
     public function testRenderMultiByte()
     {
+        if (!function_exists('mb_strlen')) {
+            $this->markTestSkipped('The "mbstring" extension is not available');
+        }
+
         $table = new Table($output = $this->getOutputStream());
         $table
             ->setHeaders(array('■■'))

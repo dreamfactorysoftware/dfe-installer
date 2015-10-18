@@ -313,8 +313,6 @@ class Schema extends AbstractAsset
      * @param string $namespaceName The name of the namespace to create.
      *
      * @return \Doctrine\DBAL\Schema\Schema This schema instance.
-     *
-     * @throws SchemaException
      */
     public function createNamespace($namespaceName)
     {

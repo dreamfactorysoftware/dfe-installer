@@ -15,6 +15,8 @@ namespace Symfony\Component\HttpFoundation;
  * ResponseHeaderBag is a container for Response HTTP headers.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @api
  */
 class ResponseHeaderBag extends HeaderBag
 {
@@ -43,6 +45,8 @@ class ResponseHeaderBag extends HeaderBag
      * Constructor.
      *
      * @param array $headers An array of HTTP headers
+     *
+     * @api
      */
     public function __construct(array $headers = array())
     {
@@ -80,6 +84,8 @@ class ResponseHeaderBag extends HeaderBag
 
     /**
      * {@inheritdoc}
+     *
+     * @api
      */
     public function replace(array $headers = array())
     {
@@ -94,6 +100,8 @@ class ResponseHeaderBag extends HeaderBag
 
     /**
      * {@inheritdoc}
+     *
+     * @api
      */
     public function set($key, $values, $replace = true)
     {
@@ -113,6 +121,8 @@ class ResponseHeaderBag extends HeaderBag
 
     /**
      * {@inheritdoc}
+     *
+     * @api
      */
     public function remove($key)
     {
@@ -146,6 +156,8 @@ class ResponseHeaderBag extends HeaderBag
      * Sets a cookie.
      *
      * @param Cookie $cookie
+     *
+     * @api
      */
     public function setCookie(Cookie $cookie)
     {
@@ -158,6 +170,8 @@ class ResponseHeaderBag extends HeaderBag
      * @param string $name
      * @param string $path
      * @param string $domain
+     *
+     * @api
      */
     public function removeCookie($name, $path = '/', $domain = null)
     {
@@ -184,6 +198,8 @@ class ResponseHeaderBag extends HeaderBag
      * @throws \InvalidArgumentException When the $format is invalid
      *
      * @return array
+     *
+     * @api
      */
     public function getCookies($format = self::COOKIES_FLAT)
     {
@@ -215,6 +231,8 @@ class ResponseHeaderBag extends HeaderBag
      * @param string $domain
      * @param bool   $secure
      * @param bool   $httpOnly
+     *
+     * @api
      */
     public function clearCookie($name, $path = '/', $domain = null, $secure = false, $httpOnly = true)
     {

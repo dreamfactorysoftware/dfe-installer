@@ -15,8 +15,6 @@ use Symfony\Component\HttpFoundation\Session\Storage\Handler\MongoDbSessionHandl
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
- * @requires extension mongo
- * @group time-sensitive
  */
 class MongoDbSessionHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,7 +27,9 @@ class MongoDbSessionHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        parent::setUp();
+        if (!extension_loaded('mongo')) {
+            $this->markTestSkipped('MongoDbSessionHandler requires the PHP "mongo" extension.');
+        }
 
         $mongoClass = version_compare(phpversion('mongo'), '1.3.0', '<') ? 'Mongo' : 'MongoClient';
 

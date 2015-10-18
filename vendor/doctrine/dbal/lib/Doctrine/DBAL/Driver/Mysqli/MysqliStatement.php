@@ -264,16 +264,6 @@ class MysqliStatement implements \IteratorAggregate, Statement
 
                 return $ret;
 
-            case PDO::FETCH_OBJ:
-                $assoc = array_combine($this->_columnNames, $values);
-                $ret = new \stdClass();
-
-                foreach ($assoc as $column => $value) {
-                    $ret->$column = $value;
-                }
-
-                return $ret;
-
             default:
                 throw new MysqliException("Unknown fetch type '{$fetchMode}'");
         }

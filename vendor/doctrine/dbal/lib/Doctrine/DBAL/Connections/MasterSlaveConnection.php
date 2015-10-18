@@ -151,7 +151,7 @@ class MasterSlaveConnection extends Connection
         // If we have a connection open, and this is not an explicit connection
         // change request, then abort right here, because we are already done.
         // This prevents writes to the slave in case of "keepSlave" option enabled.
-        if (isset($this->_conn) && $this->_conn && !$requestedConnectionChange) {
+        if ($this->_conn && !$requestedConnectionChange) {
             return false;
         }
 
@@ -162,7 +162,7 @@ class MasterSlaveConnection extends Connection
             $forceMasterAsSlave = true;
         }
 
-        if (isset($this->connections[$connectionName]) && $this->connections[$connectionName]) {
+        if ($this->connections[$connectionName]) {
             $this->_conn = $this->connections[$connectionName];
 
             if ($forceMasterAsSlave && ! $this->keepSlave) {

@@ -29,7 +29,7 @@ use Doctrine\DBAL\Driver\PDOConnection;
 class Connection extends PDOConnection implements \Doctrine\DBAL\Driver\Connection
 {
     /**
-     * {@inheritDoc}
+     * @override
      */
     public function quote($value, $type=\PDO::PARAM_STR)
     {

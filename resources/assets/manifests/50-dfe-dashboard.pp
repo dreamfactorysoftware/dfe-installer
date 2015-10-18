@@ -11,7 +11,7 @@
 
 ## A class that creates the directories required for a Laravel 5+ application.
 ## Permissions are set accordingly.
-class laravelDirectories( $root, $owner, $group, $mode = 2775) {
+class laravelDirectories( $root, $owner, $group, $mode = 2775 ) {
 
   file { [
     "$root/bootstrap",
@@ -23,13 +23,6 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
   }->
   file { [
     "$root/bootstrap/cache",
-  ]:
-    ensure => directory,
-    owner  => $www_user,
-    group  => $group,
-    mode   => $mode,
-  }->
-  file { [
     "$root/storage",
     "$root/storage/framework",
     "$root/storage/framework/sessions",
@@ -43,22 +36,8 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
   }
 }
 
-class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
-
-  file { [
-    "$root/storage/logs/laravel.log",
-    "$root/bootstrap/cache/services.json",
-  ]:
-    ensure => present,
-    owner  => $www_user,
-    group  => $group,
-    mode   => $mode,
-  }
-
-}
-
 ## Defines the dashboard .env settings. Relies on FACTER_* data
-class dashboardEnvironmentSettings( $root, $zone, $domain, $protocol = "https") {
+class iniSettings( $root, $zone, $domain, $protocol = "https") {
   ## Define our stuff
   $_env = { "path" => "$root/.env", }
   $_consoleUrl = "$protocol://console.${zone}.${domain}"
@@ -122,7 +101,7 @@ file { "$dashboard_root/.env":
   mode   => 0750,
   source => "$dashboard_root/.env-dist",
 }->
-class { dashboardEnvironmentSettings:
+class { iniSettings:
   ## Applies INI settings in $_settings to .env
   root     => $dashboard_root,
   zone     => $vendor_id,
@@ -139,6 +118,18 @@ exec { "append-dashboard-api-keys":
   provider => shell,
   user     => $user
 }->
+exec { "remove-services-json":
+  command         => "rm -f $dashboard_root/bootstrap/cache/services.json",
+  user            => root,
+  onlyif          => "test -f $dashboard_root/bootstrap/cache/services.json",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
+exec { "remove-compiled-classes":
+  command         => "rm -f $dashboard_root/bootstrap/cache/compiled.php",
+  user            => root,
+  onlyif          => "test -f $dashboard_root/bootstrap/cache/compiled.php",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
 exec { "dashboard-composer-update":
   command     => "$composer_bin update",
   user        => $user,
@@ -153,16 +144,80 @@ exec { "generate-dashboard-app-key":
   cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
 }->
-exec { "clear-caches-and-optimize":
-  command     => "$artisan clear-compiled ; $artisan cache:clear ; $artisan config:clear ; $artisan route:clear ; $artisan optimize",
+exec { "clc-clear-compiled":
+  command     => "$artisan clear-compiled",
   user        => $user,
+  provider    => shell,
+  cwd         => $dashboard_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { "clc-cache-clear":
+  command     => "$artisan cache:clear",
+  user        => $user,
+  provider    => shell,
+  cwd         => $dashboard_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { "clc-config-clear":
+  command     => "$artisan config:clear",
+  user        => $user,
+  provider    => shell,
+  cwd         => $dashboard_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { "clc-route-clear":
+  command     => "$artisan route:clear",
+  user        => $user,
+  provider    => shell,
+  cwd         => $dashboard_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { "clc-optimize":
+  command     => "$artisan optimize --force",
+  user        => $user,
+  provider    => shell,
+  cwd         => $dashboard_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { 'chmod-dashboard-storage':
+  command     => "find $dashboard_root/storage -type d -exec chmod 2775 {} \\;",
   provider    => shell,
   cwd         => $dashboard_root,
   environment => ["HOME=/home/$user"]
 }->
-  ## Fix up the permissions on the log file
-class { fixLogPermissions:
-  root  => $dashboard_root,
-  owner => $www_user,
-  group => $group,
+exec { 'chmod-dashboard-storage-files':
+  command     => "find $dashboard_root/storage -type f -exec chmod 0664 {} \\;",
+  provider    => shell,
+  cwd         => $dashboard_root,
+  environment => ["HOME=/home/$user"]
+}->
+exec { 'chmod-dashboard-temp':
+  command     => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
+  provider    => shell,
+  cwd         => $dashboard_root,
+  environment => ["HOME=/home/$user"]
+}->
+exec { 'chmod-dashboard-temp-files':
+  command     => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
+  provider    => shell,
+  cwd         => $dashboard_root,
+  environment => ["HOME=/home/$user"]
+}->
+exec { "check-cached-services":
+  command         => "chmod 0664 $dashboard_root/bootstrap/cache/services.json && chown $www_user:$group $dashboard_root/bootstrap/cache/services.json",
+  user            => root,
+  onlyif          => "test -f $dashboard_root/bootstrap/cache/services.json",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
+exec { "check-compiled-classes":
+  command         => "chmod 0664 $dashboard_root/bootstrap/cache/compiled.php && chown $www_user:$group $dashboard_root/bootstrap/cache/compiled.php",
+  user            => root,
+  onlyif          => "test -f $dashboard_root/bootstrap/cache/compiled.php",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
+exec { "check-storage-log-file":
+  command         => "chmod 0664 $dashboard_root/storage/logs/laravel.log && chown $www_user:$group $dashboard_root/storage/logs/laravel.log",
+  user            => root,
+  onlyif          => "test -f $dashboard_root/storage/logs/laravel.log",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
 }

@@ -64,7 +64,7 @@ class SerializableClosure implements \Serializable
      * - `ReflectionFunction::invokeArgs()` should not be used here, because it
      *   does not work with closure bindings.
      * - Args passed-by-reference lose their references when proxied through
-     *   `__invoke()`. This is an unfortunate, but understandable, limitation
+     *   `__invoke()`. This is is an unfortunate, but understandable, limitation
      *   of PHP that will probably never change.
      *
      * @return mixed
@@ -75,34 +75,11 @@ class SerializableClosure implements \Serializable
     }
 
     /**
-     * Clones the SerializableClosure with a new bound object and class scope.
-     *
-     * The method is essentially a wrapped proxy to the \Closure::bindTo method.
-     *
-     * @param mixed $newthis  The object to which the closure should be bound,
-     *                        or NULL for the closure to be unbound.
-     * @param mixed $newscope The class scope to which the closure is to be
-     *                        associated, or 'static' to keep the current one.
-     *                        If an object is given, the type of the object will
-     *                        be used instead. This determines the visibility of
-     *                        protected and private methods of the bound object.
-     *
-     * @return SerializableClosure
-     * @link http://www.php.net/manual/en/closure.bindto.php
-     */
-    public function bindTo($newthis, $newscope = 'static')
-    {
-        return new self(
-            $this->closure->bindTo($newthis, $newscope),
-            $this->serializer
-        );
-    }
-
-    /**
      * Serializes the code, context, and binding of the closure.
      *
+     * @see http://php.net/manual/en/serializable.serialize.php
+     *
      * @return string|null
-     * @link http://php.net/manual/en/serializable.serialize.php
      */
     public function serialize()
     {
@@ -128,21 +105,17 @@ class SerializableClosure implements \Serializable
      * extracted into a fresh scope prior to redefining the closure. The
      * closure is also rebound to its former object and scope.
      *
+     * @see http://php.net/manual/en/serializable.unserialize.php
+     *
      * @param string $serialized
      *
      * @throws ClosureUnserializationException
-     * @link http://php.net/manual/en/serializable.unserialize.php
      */
     public function unserialize($serialized)
     {
         // Unserialize the data and reconstruct the SuperClosure.
         $this->data = unserialize($serialized);
-        try {
-            $this->reconstructClosure();
-        } catch (\ParseException $e) {
-            // Discard the parse exception, we'll throw a custom one
-            // a few lines down.
-        }
+        $this->reconstructClosure();
         if (!$this->closure instanceof \Closure) {
             throw new ClosureUnserializationException(
                 'The closure is corrupted and cannot be unserialized.'

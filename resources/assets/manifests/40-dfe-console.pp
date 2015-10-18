@@ -9,8 +9,61 @@
 ## Classes
 ############
 
+class createInitialCluster( $root ) {
+
+  exec { "create-web-server":
+    command     => "$artisan dfe:server create web-${vendor_id} -t web -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c {}",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+  }->
+  exec { "create-app-server":
+    command     => "$artisan dfe:server create app-${vendor_id} -t app -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c {}",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { "create-db-server":
+    command     => "$artisan dfe:server create db-${vendor_id} -t db -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c '{\"port\":3306, \"username\": \"${db_user}\", \"password\": \"${db_password}\", \"database\": \"${db_name}\", \"driver\": \"${db_driver}\", \"default-database-name\": \"\", \"charset\": \"utf8\", \"collation\": \"utf8_unicode_ci\", \"prefix\": \"\", \"multi-assign\": \"on\"}'",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { "create-cluster":
+    command     => "$artisan dfe:cluster create cluster-${vendor_id} --subdomain ${vendor_id}.${domain}",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { "assign-cluster-web-server":
+    command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id web-${vendor_id}",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { "assign-cluster-app-server":
+    command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id app-${vendor_id}",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { "assign-cluster-db-server":
+    command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id db-${vendor_id}",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }
+
+}
+
 ## Defines the console .env settings. Relies on FACTER_* data
-class consoleEnvironmentSettings( $root, $zone, $domain, $protocol = "https") {
+class iniSettings( $root, $zone, $domain, $protocol = "https") {
   ## Define our stuff
   $_env = { "path" => "$root/.env", }
   $_consoleUrl = "$protocol://console.${zone}.${domain}"
@@ -60,13 +113,6 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
   }->
   file { [
     "$root/bootstrap/cache",
-  ]:
-    ensure => directory,
-    owner  => $www_user,
-    group  => $group,
-    mode   => $mode,
-  }->
-  file { [
     "$root/storage",
     "$root/storage/framework",
     "$root/storage/framework/sessions",
@@ -78,20 +124,6 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
     group  => $group,
     mode   => $mode,
   }
-}
-
-class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
-
-  file { [
-    "$root/storage/logs/laravel.log",
-    "$root/bootstrap/cache/services.json",
-  ]:
-    ensure => present,
-    owner  => $www_user,
-    group  => $group,
-    mode   => $mode,
-  }
-
 }
 
 ############
@@ -122,7 +154,7 @@ file { "$console_root/.env":
   mode   => 0750,
   source => "$console_root/.env-dist",
 }->
-class { consoleEnvironmentSettings:
+class { iniSettings:
   ## Applies INI settings in $_settings to .env
   root     => $console_root,
   zone     => $vendor_id,
@@ -133,6 +165,18 @@ class { laravelDirectories:
   root  => $console_root,
   owner => $www_user,
   group => $group,
+}->
+exec { "remove-services-json":
+  command         => "rm -f $console_root/bootstrap/cache/services.json",
+  user            => root,
+  onlyif          => "test -f $console_root/bootstrap/cache/services.json",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
+exec { "remove-compiled-classes":
+  command         => "rm -f $console_root/bootstrap/cache/compiled.php",
+  user            => root,
+  onlyif          => "test -f $console_root/bootstrap/cache/compiled.php",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
 }->
 exec { "console-composer-update":
   command     => "$composer_bin update",
@@ -167,64 +211,71 @@ file { "$doc_root_base_path/.dfe.cluster.json":
   mode   => 0644,
   source => "$console_root/database/dfe/.dfe.cluster.json"
 }->
-exec { "create-web-server":
-  command     => "$artisan dfe:server create web-${vendor_id} -t web -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c {}",
+class { createInitialCluster:
+  root => $console_root,
+}->
+exec { "clc-clear-compiled":
+  command     => "$artisan clear-compiled",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
+  environment => ["HOME=/home/$user"],
 }->
-exec { "create-app-server":
-  command     => "$artisan dfe:server create app-${vendor_id} -t app -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c {}",
+exec { "clc-cache-clear":
+  command     => "$artisan cache:clear",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
-  environment => ["HOME=/home/$user"]
+  environment => ["HOME=/home/$user"],
 }->
-exec { "create-db-server":
-  command     => "$artisan dfe:server create db-${vendor_id} -t db -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c '{\"port\":3306, \"username\": \"${db_user}\", \"password\": \"${db_password}\", \"database\": \"${db_name}\", \"driver\": \"${db_driver}\", \"default-database-name\": \"\", \"charset\": \"utf8\", \"collation\": \"utf8_unicode_ci\", \"prefix\": \"\", \"multi-assign\": \"on\"}'",
+exec { "clc-config-clear":
+  command     => "$artisan config:clear",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
-  environment => ["HOME=/home/$user"]
+  environment => ["HOME=/home/$user"],
 }->
-exec { "create-cluster":
-  command     => "$artisan dfe:cluster create cluster-${vendor_id} --subdomain ${vendor_id}.${domain}",
+exec { "clc-route-clear":
+  command     => "$artisan route:clear",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
-  environment => ["HOME=/home/$user"]
+  environment => ["HOME=/home/$user"],
 }->
-exec { "assign-cluster-web-server":
-  command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id web-${vendor_id}",
+exec { "clc-optimize":
+  command     => "$artisan optimize --force",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
-  environment => ["HOME=/home/$user"]
+  environment => ["HOME=/home/$user"],
 }->
-exec { "assign-cluster-app-server":
-  command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id app-${vendor_id}",
-  user        => $user,
-  provider    => shell,
-  cwd         => $console_root,
-  environment => ["HOME=/home/$user"]
-}->
-exec { "assign-cluster-db-server":
-  command     => "$artisan dfe:cluster add cluster-${vendor_id} --server-id db-${vendor_id}",
-  user        => $user,
+exec { 'chmod-console-storage':
+  command     => "find $console_root/storage -type d -exec chmod 2775 {} \\;",
   provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
-exec { "clear-caches-and-optimize":
-  command     => "$artisan clear-compiled; $artisan cache:clear; $artisan config:clear; $artisan optimize",
-  user        => $user,
+exec { 'chmod-console-storage-files':
+  command     => "find $console_root/storage -type f -exec chmod 0664 {} \\;",
   provider    => shell,
   cwd         => $console_root,
   environment => ["HOME=/home/$user"]
 }->
-  ## Fix up the permissions on the log file
-class { fixLogPermissions:
-  root  => $console_root,
-  owner => $www_user,
-  group => $group,
+exec { "check-cached-services":
+  command         => "chmod 0664 $console_root/bootstrap/cache/services.json && chown $www_user:$group $console_root/bootstrap/cache/services.json",
+  user            => root,
+  onlyif          => "test -f $console_root/bootstrap/cache/services.json",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
+exec { "check-compiled-classes":
+  command         => "chmod 0664 $console_root/bootstrap/cache/compiled.php && chown $www_user:$group $console_root/bootstrap/cache/compiled.php",
+  user            => root,
+  onlyif          => "test -f $console_root/bootstrap/cache/compiled.php",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
+exec { "check-storage-log-file":
+  command         => "chmod 0664 $console_root/storage/logs/laravel.log && chown $www_user:$group $console_root/storage/logs/laravel.log",
+  user            => root,
+  onlyif          => "test -f $console_root/storage/logs/laravel.log",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
 }

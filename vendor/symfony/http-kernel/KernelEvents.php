@@ -15,6 +15,8 @@ namespace Symfony\Component\HttpKernel;
  * Contains all events thrown in the HttpKernel component.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
+ *
+ * @api
  */
 final class KernelEvents
 {
@@ -30,6 +32,8 @@ final class KernelEvents
      * @Event
      *
      * @var string
+     *
+     * @api
      */
     const REQUEST = 'kernel.request';
 
@@ -44,6 +48,8 @@ final class KernelEvents
      * @Event
      *
      * @var string
+     *
+     * @api
      */
     const EXCEPTION = 'kernel.exception';
 
@@ -59,6 +65,8 @@ final class KernelEvents
      * @Event
      *
      * @var string
+     *
+     * @api
      */
     const VIEW = 'kernel.view';
 
@@ -73,6 +81,8 @@ final class KernelEvents
      * @Event
      *
      * @var string
+     *
+     * @api
      */
     const CONTROLLER = 'kernel.controller';
 
@@ -87,6 +97,8 @@ final class KernelEvents
      * @Event
      *
      * @var string
+     *
+     * @api
      */
     const RESPONSE = 'kernel.response';
 

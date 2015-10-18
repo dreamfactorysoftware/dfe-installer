@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.1 2015-10-16 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.2 2015-10-18 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.1
+VERSION=1.1.2
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/manifests/
 ENV_FILE=./storage/.env-install
@@ -165,6 +165,9 @@ export FACTER_MAIL_FROM_ADDRESS="no.reply@${FACTER_DOMAIN}"
 export FACTER_MAIL_FROM_NAME=${FACTER_DOMAIN}
 export FACTER_MAIL_USERNAME=""
 export FACTER_MAIL_PASSWORD=""
+
+## Module path
+MODULE_PATH="$PWD/resources/assets/puppet/modules:`puppet config print modulepath`"
 
 _info "Installing now..."
 

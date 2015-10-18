@@ -20,18 +20,11 @@
   "support":           {
     "email": "support@dreamfactory.com"
   },
-  "minimum-stability": "dev",
-  "repositories":      [
-    {
-      "type": "vcs",
-      "url":  "https://github.com/dreamfactorysoftware/dfe-common.git"
-    }
-  ],
+  "minimum-stability": "stable",
   "require":           {
-    "php":                     ">=5.5.9",
-    "dreamfactory/dfe-common": "dev-develop as dev-master",
-    "dreamfactory/php-utils":  "1.*",
-    "laravel/framework":       "5.1.*"
+    "php":                    ">=5.5.9",
+    "dreamfactory/php-utils": "1.1.*",
+    "laravel/framework":      "5.1.*"
   },
   "require-dev":       {
     "barryvdh/laravel-ide-helper": "~2.0",
@@ -56,7 +49,7 @@
     ]
   },
   "scripts":           {
-    "post-update-cmd":  [
+    "post-update-cmd": [
       "php artisan clear-compiled",
       "php artisan ide-helper:generate",
       "php artisan vendor:publish --tag=public --force",

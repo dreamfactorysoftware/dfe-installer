@@ -8,7 +8,7 @@ namespace Faker;
  */
 class DefaultGenerator
 {
-    protected $default;
+    protected $default = null;
 
     public function __construct($default = null)
     {

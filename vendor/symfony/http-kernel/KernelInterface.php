@@ -21,6 +21,8 @@ use Symfony\Component\Config\Loader\LoaderInterface;
  * It manages an environment made of bundles.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @api
  */
 interface KernelInterface extends HttpKernelInterface, \Serializable
 {
@@ -28,6 +30,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * Returns an array of bundles to register.
      *
      * @return BundleInterface[] An array of bundle instances.
+     *
+     * @api
      */
     public function registerBundles();
 
@@ -35,11 +39,15 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * Loads the container configuration.
      *
      * @param LoaderInterface $loader A LoaderInterface instance
+     *
+     * @api
      */
     public function registerContainerConfiguration(LoaderInterface $loader);
 
     /**
      * Boots the current kernel.
+     *
+     * @api
      */
     public function boot();
 
@@ -47,6 +55,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * Shutdowns the kernel.
      *
      * This method is mainly useful when doing functional testing.
+     *
+     * @api
      */
     public function shutdown();
 
@@ -54,6 +64,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * Gets the registered bundle instances.
      *
      * @return BundleInterface[] An array of registered bundle instances
+     *
+     * @api
      */
     public function getBundles();
 
@@ -63,6 +75,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * @param string $class A class name
      *
      * @return bool true if the class belongs to an active bundle, false otherwise
+     *
+     * @api
      *
      * @deprecated since version 2.6, to be removed in 3.0.
      */
@@ -77,6 +91,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * @return BundleInterface|BundleInterface[] A BundleInterface instance or an array of BundleInterface instances if $first is false
      *
      * @throws \InvalidArgumentException when the bundle is not enabled
+     *
+     * @api
      */
     public function getBundle($name, $first = true);
 
@@ -107,6 +123,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      *
      * @throws \InvalidArgumentException if the file cannot be found or the name is not valid
      * @throws \RuntimeException         if the name contains invalid/unsafe characters
+     *
+     * @api
      */
     public function locateResource($name, $dir = null, $first = true);
 
@@ -114,6 +132,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * Gets the name of the kernel.
      *
      * @return string The kernel name
+     *
+     * @api
      */
     public function getName();
 
@@ -121,6 +141,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * Gets the environment.
      *
      * @return string The current environment
+     *
+     * @api
      */
     public function getEnvironment();
 
@@ -128,6 +150,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * Checks if debug mode is enabled.
      *
      * @return bool true if debug mode is enabled, false otherwise
+     *
+     * @api
      */
     public function isDebug();
 
@@ -135,6 +159,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * Gets the application root dir.
      *
      * @return string The application root dir
+     *
+     * @api
      */
     public function getRootDir();
 
@@ -142,6 +168,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * Gets the current container.
      *
      * @return ContainerInterface A ContainerInterface instance
+     *
+     * @api
      */
     public function getContainer();
 
@@ -149,6 +177,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * Gets the request start time (not available if debug is disabled).
      *
      * @return int The request start timestamp
+     *
+     * @api
      */
     public function getStartTime();
 
@@ -156,6 +186,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * Gets the cache directory.
      *
      * @return string The cache directory
+     *
+     * @api
      */
     public function getCacheDir();
 
@@ -163,6 +195,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * Gets the log directory.
      *
      * @return string The log directory
+     *
+     * @api
      */
     public function getLogDir();
 
@@ -170,6 +204,8 @@ interface KernelInterface extends HttpKernelInterface, \Serializable
      * Gets the charset of the application.
      *
      * @return string The charset
+     *
+     * @api
      */
     public function getCharset();
 }

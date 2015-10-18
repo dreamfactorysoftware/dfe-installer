@@ -15,6 +15,8 @@ namespace Symfony\Component\HttpFoundation;
  * RequestMatcher compares a pre-defined set of checks against a Request instance.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @api
  */
 class RequestMatcher implements RequestMatcherInterface
 {
@@ -142,6 +144,8 @@ class RequestMatcher implements RequestMatcherInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @api
      */
     public function matches(Request $request)
     {

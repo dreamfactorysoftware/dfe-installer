@@ -1,10 +1,10 @@
 <?php namespace DreamFactory\Enterprise\Installer;
 
-use DreamFactory\Enterprise\Common\Providers\InspectionServiceProvider;
 use DreamFactory\Library\Utility\Disk;
 use DreamFactory\Library\Utility\Exceptions\FileSystemException;
 use DreamFactory\Library\Utility\Json;
 use DreamFactory\Library\Utility\JsonFile;
+use DreamFactory\Library\Utility\Providers\InspectionServiceProvider;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;

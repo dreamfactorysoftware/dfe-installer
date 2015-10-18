@@ -25,6 +25,8 @@ use Symfony\Component\Console\Formatter\OutputFormatterInterface;
  * $output = new StreamOutput(fopen('/path/to/output.log', 'a', false));
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @api
  */
 class StreamOutput extends Output
 {
@@ -39,6 +41,8 @@ class StreamOutput extends Output
      * @param OutputFormatterInterface|null $formatter Output formatter instance (null to use default OutputFormatter)
      *
      * @throws \InvalidArgumentException When first argument is not a real stream
+     *
+     * @api
      */
     public function __construct($stream, $verbosity = self::VERBOSITY_NORMAL, $decorated = null, OutputFormatterInterface $formatter = null)
     {
@@ -83,7 +87,7 @@ class StreamOutput extends Output
      *
      * Colorization is disabled if not supported by the stream:
      *
-     *  -  Windows without Ansicon, ConEmu or Mintty
+     *  -  Windows without Ansicon and ConEmu
      *  -  non tty consoles
      *
      * @return bool true if the stream supports colorization, false otherwise
@@ -91,7 +95,7 @@ class StreamOutput extends Output
     protected function hasColorSupport()
     {
         if (DIRECTORY_SEPARATOR === '\\') {
-            return false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI') || 'xterm' === getenv('TERM');
+            return false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI');
         }
 
         return function_exists('posix_isatty') && @posix_isatty($this->stream);

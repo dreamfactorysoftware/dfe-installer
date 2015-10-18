@@ -5,28 +5,16 @@
 # Installs the DreamFactory v2.x instance code base
 ################################################################################
 
-$_env = { 'path' => "$instance_root/.env", }
-$_settings = {
-  '' => {
-    'DF_INSTANCE_NAME'     => 'dfe-instance',
-    'DF_STANDALONE'        => 'false',
-    'APP_LOG'              => 'single',
-  }
-}
-
 ##------------------------------------------------------------------------------
 ## Classes
 ##------------------------------------------------------------------------------
 
-class iniSettings {
-  ## Create .env file
-  create_ini_settings($_settings, $_env)
-}
-
-class createDirectoryStructure {
+## A class that creates the directories required for a Laravel 5+ application.
+## Permissions are set accordingly.
+class laravelDirectories( $root, $owner, $group, $mode = 2775) {
 
   file { [
-    "$instance_release/bootstrap",
+    "$root/bootstrap",
   ]:
     ensure => directory,
     owner  => $user,
@@ -34,75 +22,39 @@ class createDirectoryStructure {
     mode   => 2775,
   }->
   file { [
-    "$instance_release/bootstrap/cache",
-  ]:
-    ensure => directory,
-    owner  => $www_user,
-    group  => $group,
-    mode   => 2775,
-  }->
-  file { [
     "/tmp/.df-log",
-    "$instance_release/$instance_branch/storage",
-    "$instance_release/$instance_branch/storage/app",
-    "$instance_release/$instance_branch/storage/databases",
-    "$instance_release/$instance_branch/storage/logs",
-    "$instance_release/$instance_branch/storage/framework",
-    "$instance_release/$instance_branch/storage/framework/cache",
-    "$instance_release/$instance_branch/storage/framework/db",
-    "$instance_release/$instance_branch/storage/framework/sessions",
-    "$instance_release/$instance_branch/storage/framework/views",
-    "$instance_release/$instance_branch/storage/scripting",
+    "$root/bootstrap/cache",
+    "$root/storage",
+    "$root/storage/app",
+    "$root/storage/databases",
+    "$root/storage/logs",
+    "$root/storage/framework",
+    "$root/storage/framework/cache",
+    "$root/storage/framework/db",
+    "$root/storage/framework/sessions",
+    "$root/storage/framework/views",
+    "$root/storage/scripting",
   ]:
     ensure => directory,
     owner  => $www_user,
     group  => $group,
     mode   => 2775,
   }
-
 }
 
-class correctFilePermissions {
+class iniSettings( $root ) {
 
-  ##  These may not exist
-  exec { 'chmod-instance-log-files':
-    command     => "chmod 0664 ${instance_root}/storage/logs/* /tmp/.df-log/* ${instance_root}/bootstrap/cache/*",
-    provider    => shell,
-    cwd         => $instance_root,
+  $_env = { 'path' => "$root/.env", }
+  $_settings = {
+    '' => {
+      'DF_INSTANCE_NAME'     => 'dfe-instance',
+      'DF_STANDALONE'        => 'false',
+      'APP_LOG'              => 'single',
+    }
   }
 
-  exec { 'chown-instance-log-files':
-    command     => "chown -R ${www_user}:${group} ${instance_root}/storage/logs /tmp/.df-log",
-    provider    => shell,
-    cwd         => "/tmp",
-  }->
-  exec { 'chmod-instance-storage':
-    command     => "find $pwd/storage -type d -exec chmod 2775 {} \\;",
-    provider    => shell,
-    cwd         => $instance_root,
-    environment => ["HOME=/home/$user"]
-  }->
-  exec { 'chmod-instance-storage-files':
-    command     => "find $pwd/storage -type f -exec chmod 0664 {} \\;",
-    provider    => shell,
-    cwd         => $instance_root,
-    environment => ["HOME=/home/$user"]
-  }
-
-}
-
-class fixLogPermissions( $root, $owner, $group, $mode = 2775) {
-
-  file {  [
-    "$root/storage/logs/laravel.log",
-    "$root/bootstrap/cache/services.json",
-  ] :
-    ensure => present,
-    owner  => $www_user,
-    group  => $group,
-    mode   => $mode,
-  }
-
+  ## Create .env file
+  create_ini_settings($_settings, $_env)
 }
 
 ##------------------------------------------------------------------------------
@@ -129,11 +81,27 @@ file { "$instance_root/.env":
   mode   => 0750,
   source => "$instance_root/.env-dist"
 }->
-class { 'iniSettings':
   ## Applies INI settings in $_settings to .env
+class { iniSettings:
+  root => $instance_root,
 }->
-class { 'createDirectoryStructure':
   ## Make sure the directories are created with the right perms
+class { laravelDirectories:
+  root  => $instance_root,
+  owner => $www_user,
+  group => $group,
+}->
+exec { "remove-services-json":
+  command         => "rm -f $instance_root/bootstrap/cache/services.json",
+  user            => root,
+  onlyif          => "test -f $instance_root/bootstrap/cache/services.json",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
+exec { "remove-compiled-classes":
+  command         => "rm -f $instance_root/bootstrap/cache/compiled.php",
+  user            => root,
+  onlyif          => "test -f $instance_root/bootstrap/cache/compiled.php",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
 }->
 exec { 'instance-composer-update':
   command     => "$composer_bin update",
@@ -149,19 +117,80 @@ exec { 'generate-instance-app-key':
   cwd         => $instance_root,
   environment => ["HOME=/home/$user"]
 }->
-exec { 'clear-instance-cache-and-optimize':
-  command     => "$artisan clear-compiled ; $artisan cache:clear ; $artisan config:clear ; $artisan route:clear ; $artisan optimize",
+exec { "clc-clear-compiled":
+  command     => "$artisan clear-compiled",
   user        => $user,
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { "clc-cache-clear":
+  command     => "$artisan cache:clear",
+  user        => $user,
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { "clc-config-clear":
+  command     => "$artisan config:clear",
+  user        => $user,
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { "clc-route-clear":
+  command     => "$artisan route:clear",
+  user        => $user,
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { "clc-optimize":
+  command     => "$artisan optimize --force",
+  user        => $user,
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { 'chmod-instance-storage':
+  command     => "find $instance_root/storage -type d -exec chmod 2775 {} \\;",
   provider    => shell,
   cwd         => $instance_root,
   environment => ["HOME=/home/$user"]
 }->
-class { correctFilePermissions:
-  ## Ensure all files are writable by the web server
+exec { 'chmod-instance-storage-files':
+  command     => "find $instance_root/storage -type f -exec chmod 0664 {} \\;",
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"]
 }->
-  ## Fix up the permissions on the log file
-class { fixLogPermissions:
-  root  => $instance_root,
-  owner => $www_user,
-  group => $group,
+exec { 'chmod-instance-temp':
+  command     => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"]
+}->
+exec { 'chmod-instance-temp-files':
+  command     => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"]
+}->
+exec { "check-cached-services":
+  command         => "chmod 0664 $instance_root/bootstrap/cache/services.json && chown $www_user:$group $instance_root/bootstrap/cache/services.json",
+  user            => root,
+  onlyif          => "test -f $instance_root/bootstrap/cache/services.json",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
+exec { "check-compiled-classes":
+  command         => "chmod 0664 $instance_root/bootstrap/cache/compiled.php && chown $www_user:$group $instance_root/bootstrap/cache/compiled.php",
+  user            => root,
+  onlyif          => "test -f $instance_root/bootstrap/cache/compiled.php",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
+exec { "check-storage-log-file":
+  command         => "chmod 0664 $instance_root/storage/logs/laravel.log && chown $www_user:$group $instance_root/storage/logs/laravel.log",
+  user            => root,
+  onlyif          => "test -f $instance_root/storage/logs/laravel.log",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
 }

@@ -419,33 +419,15 @@ class OraclePlatform extends AbstractPlatform
     {
         $table = $this->normalizeIdentifier($table);
 
-        return "SELECT uind_col.index_name AS name,
-                       (
-                           SELECT uind.index_type
-                           FROM   user_indexes uind
-                           WHERE  uind.index_name = uind_col.index_name
-                       ) AS type,
-                       decode(
-                           (
-                               SELECT uind.uniqueness
-                               FROM   user_indexes uind
-                               WHERE  uind.index_name = uind_col.index_name
-                           ),
-                           'NONUNIQUE',
-                           0,
-                           'UNIQUE',
-                           1
-                       ) AS is_unique,
-                       uind_col.column_name AS column_name,
-                       uind_col.column_position AS column_pos,
-                       (
-                           SELECT ucon.constraint_type
-                           FROM   user_constraints ucon
-                           WHERE  ucon.constraint_name = uind_col.index_name
-                       ) AS is_primary
-             FROM      user_ind_columns uind_col
-             WHERE     uind_col.table_name = '" . $table->getName() . "'
-             ORDER BY  uind_col.column_position ASC";
+        return "SELECT uind.index_name AS name, " .
+             "       uind.index_type AS type, " .
+             "       decode( uind.uniqueness, 'NONUNIQUE', 0, 'UNIQUE', 1 ) AS is_unique, " .
+             "       uind_col.column_name AS column_name, " .
+             "       uind_col.column_position AS column_pos, " .
+             "       (SELECT ucon.constraint_type FROM user_constraints ucon WHERE ucon.constraint_name = uind.index_name) AS is_primary ".
+             "FROM user_indexes uind, user_ind_columns uind_col " .
+             "WHERE uind.index_name = uind_col.index_name AND uind_col.table_name = '" . $table->getName() . "' " .
+             "ORDER BY uind_col.column_position ASC";
     }
 
     /**
@@ -612,26 +594,23 @@ END;';
 
         return "SELECT alc.constraint_name,
           alc.DELETE_RULE,
+          alc.search_condition,
           cols.column_name \"local_column\",
           cols.position,
-          (
-              SELECT r_cols.table_name
-              FROM   user_cons_columns r_cols
-              WHERE  alc.r_constraint_name = r_cols.constraint_name
-              AND    r_cols.position = cols.position
-          ) AS \"references_table\",
-          (
-              SELECT r_cols.column_name
-              FROM   user_cons_columns r_cols
-              WHERE  alc.r_constraint_name = r_cols.constraint_name
-              AND    r_cols.position = cols.position
-          ) AS \"foreign_column\"
+          r_alc.table_name \"references_table\",
+          r_cols.column_name \"foreign_column\"
      FROM user_cons_columns cols
-     JOIN user_constraints alc
+LEFT JOIN user_constraints alc
        ON alc.constraint_name = cols.constraint_name
+LEFT JOIN user_constraints r_alc
+       ON alc.r_constraint_name = r_alc.constraint_name
+LEFT JOIN user_cons_columns r_cols
+       ON r_alc.constraint_name = r_cols.constraint_name
+      AND cols.position = r_cols.position
+    WHERE alc.constraint_name = cols.constraint_name
       AND alc.constraint_type = 'R'
       AND alc.table_name = '" . $table->getName() . "'
-    ORDER BY cols.constraint_name ASC, cols.position ASC";
+ ORDER BY alc.constraint_name ASC, cols.position ASC";
     }
 
     /**
@@ -662,16 +641,9 @@ END;';
             $ownerCondition = "AND c.owner = '" . $database->getName() . "'";
         }
 
-        return "SELECT   c.*,
-                         (
-                             SELECT d.comments
-                             FROM   $colCommentsTableName d
-                             WHERE  d.TABLE_NAME = c.TABLE_NAME
-                             AND    d.COLUMN_NAME = c.COLUMN_NAME
-                         ) AS comments
-                FROM     $tabColumnsTableName c
-                WHERE    c.table_name = '" . $table->getName() . "' $ownerCondition
-                ORDER BY c.column_name";
+        return "SELECT c.*, d.comments FROM $tabColumnsTableName c ".
+               "INNER JOIN " . $colCommentsTableName . " d ON d.TABLE_NAME = c.TABLE_NAME AND d.COLUMN_NAME = c.COLUMN_NAME ".
+               "WHERE c.table_name = '" . $table->getName() . "' ".$ownerCondition." ORDER BY c.column_name";
     }
 
     /**
@@ -890,7 +862,7 @@ END;';
             $check = (isset($field['check']) && $field['check']) ?
                 ' ' . $field['check'] : '';
 
-            $typeDecl = $field['type']->getSQLDeclaration($field, $this);
+            $typeDecl = $field['type']->getSqlDeclaration($field, $this);
             $columnDef = $typeDecl . $default . $notnull . $unique . $check;
         }
 

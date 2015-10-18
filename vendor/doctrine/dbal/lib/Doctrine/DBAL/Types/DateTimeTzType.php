@@ -67,15 +67,8 @@ class DateTimeTzType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        if (null === $value) {
-            return $value;
-        }
-
-        if ($value instanceof \DateTime) {
-            return $value->format($platform->getDateTimeTzFormatString());
-        }
-
-        throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', 'DateTime']);
+        return ($value !== null)
+            ? $value->format($platform->getDateTimeTzFormatString()) : null;
     }
 
     /**

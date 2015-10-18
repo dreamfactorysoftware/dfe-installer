@@ -2,7 +2,7 @@
 
 namespace Faker\Provider;
 
-class Miscellaneous extends Base
+class Miscellaneous extends \Faker\Provider\Base
 {
     protected static $languageCode = array('cn', 'de', 'en', 'es', 'fr', 'it', 'pt', 'ru');
 
@@ -186,7 +186,7 @@ class Miscellaneous extends Base
      */
     public static function boolean($chanceOfGettingTrue = 50)
     {
-        return mt_rand(1, 100) <= $chanceOfGettingTrue;
+        return mt_rand(1, 100) <= $chanceOfGettingTrue ? true : false;
     }
 
     /**
