@@ -89,6 +89,12 @@ class { iniSettings:
 class { laravelDirectories:
   root => $instance_root,
 }->
+exec { "remove-services-json":
+  command         => "rm -f $instance_root/bootstrap/cache/services.json",
+  user            => root,
+  onlyif          => "test -f $instance_root/bootstrap/cache/services.json",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
 exec { 'instance-composer-update':
   command     => "$composer_bin update",
   user        => $user,
@@ -102,79 +108,75 @@ exec { 'generate-instance-app-key':
   provider    => shell,
   cwd         => $instance_root,
   environment => ["HOME=/home/$user"]
-}
-
-class clearCaches {
-
-  Exec {
-    user        => $user,
-    provider    => shell,
-    cwd         => $_instance_root,
-    environment => ["HOME=/home/$user"],
-  }
-
-  exec { "clc-clear-compiled":
-    command     => "$artisan clear-compiled",
-  }->
-  exec { "clc-cache-clear":
-    command     => "$artisan cache:clear",
-  }->
-  exec { "clc-config-clear":
-    command     => "$artisan config:clear",
-  }->
-  exec { "clc-route-clear":
-    command     => "$artisan route:clear",
-  }->
-  exec { "clc-optimize":
-    command     => "$artisan optimize",
-  }
-
-}
-
-## Clear caches
-class { clearCaches:
-  root => $instance_root,
-}
-
-class resetFilePermissions {
-
-  Exec {
-    provider    => shell,
-    cwd         => $instance_root,
-    environment => ["HOME=/home/$user"]
-  }
-
-  exec { 'chmod-instance-storage':
-    command => "find $instance_root/storage -type d -exec chmod 2775 {} \\;",
-  }->
-  exec { 'chmod-instance-storage-files':
-    command => "find $instance_root/storage -type f -exec chmod 0664 {} \\;",
-  }
-
-  exec { 'chmod-instance-temp':
-    command => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
-  }->
-  exec { 'chmod-instance-temp-files':
-    command => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
-  }
-
-  exec { "check-cached-services":
-    command         => "chmod 0664 $instance_root/bootstrap/cache/services.json",
-    user            => root,
-    onlyif          => "test -f $instance_root/bootstrap/cache/services.json",
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-  }
-
-  exec { "check-storage-log-file":
-    command         => "chmod 0664 $instance_root/storage/logs/laravel.log",
-    user            => root,
-    onlyif          => "test -f $instance_root/storage/logs/laravel.log",
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-  }
-
-}
-
-## Fix up file permissions
-class { resetFilePermissions:
-  root=> $instance_root,
+}->
+exec { "clc-clear-compiled":
+  command     => "$artisan clear-compiled",
+  user        => $user,
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { "clc-cache-clear":
+  command     => "$artisan cache:clear",
+  user        => $user,
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { "clc-config-clear":
+  command     => "$artisan config:clear",
+  user        => $user,
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { "clc-route-clear":
+  command     => "$artisan route:clear",
+  user        => $user,
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { "clc-optimize":
+  command     => "$artisan optimize",
+  user        => $user,
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"],
+}->
+exec { 'chmod-instance-storage':
+  command     => "find $instance_root/storage -type d -exec chmod 2775 {} \\;",
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"]
+}->
+exec { 'chmod-instance-storage-files':
+  command     => "find $instance_root/storage -type f -exec chmod 0664 {} \\;",
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"]
+}->
+exec { 'chmod-instance-temp':
+  command     => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"]
+}->
+exec { 'chmod-instance-temp-files':
+  command     => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => ["HOME=/home/$user"]
+}->
+exec { "check-cached-services":
+  command         => "chmod 0664 $instance_root/bootstrap/cache/services.json",
+  user            => root,
+  onlyif          => "test -f $instance_root/bootstrap/cache/services.json",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+}->
+exec { "check-storage-log-file":
+  command         => "chmod 0664 $instance_root/storage/logs/laravel.log",
+  user            => root,
+  onlyif          => "test -f $instance_root/storage/logs/laravel.log",
+  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
 }
