@@ -152,10 +152,16 @@ server {
 ## Services
 ##------------------------------------------------------------------------------
 
+package { "nginx-extras":
+  ensure => latest,
+}->
 service { "nginx":
   ensure  => running,
   enable  => true,
   require => Package["nginx-extras"],
+}->
+package { "php5-fpm":
+  ensure => latest,
 }->
 service { "php5-fpm":
   ensure  => running,
