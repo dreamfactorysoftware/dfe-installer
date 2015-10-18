@@ -3,7 +3,6 @@
 namespace Faker\Provider\lv_LV;
 
 use Faker\Calculator\Luhn;
-use Faker\Provider\DateTime;
 
 class Person extends \Faker\Provider\Person
 {
@@ -54,12 +53,12 @@ class Person extends \Faker\Provider\Person
 
     public function driverLicence()
     {
-        return static::bothify('??######');
+        return $this->bothify("??######");
     }
 
     public function passportNumber()
     {
-        return static::bothify('??#######');
+        return $this->bothify("??#######");
     }
 
     /**
@@ -71,7 +70,7 @@ class Person extends \Faker\Provider\Person
     public function personalIdentityNumber(\DateTime $birthdate = null)
     {
         if (!$birthdate) {
-            $birthdate = DateTime::dateTimeThisCentury();
+            $birthdate = \Faker\Provider\DateTime::dateTimeThisCentury();
         }
 
         $datePart = $birthdate->format('dmy');

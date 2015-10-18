@@ -1517,7 +1517,7 @@ class SQLServerPlatform extends AbstractPlatform
             $check = (isset($field['check']) && $field['check']) ?
                 ' ' . $field['check'] : '';
 
-            $typeDecl = $field['type']->getSQLDeclaration($field, $this);
+            $typeDecl = $field['type']->getSqlDeclaration($field, $this);
             $columnDef = $typeDecl . $collation . $notnull . $unique . $check;
         }
 

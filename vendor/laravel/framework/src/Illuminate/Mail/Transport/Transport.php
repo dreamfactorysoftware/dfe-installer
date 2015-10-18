@@ -54,17 +54,15 @@ abstract class Transport implements Swift_Transport
     /**
      * Iterate through registered plugins and execute plugins' methods.
      *
-     * @param  \Swift_Mime_Message  $message
+     * @param  \Swift_Mime_Message $message
      * @return void
      */
     protected function beforeSendPerformed(Swift_Mime_Message $message)
     {
-        $event = new Swift_Events_SendEvent($this, $message);
-
         foreach ($this->plugins as $plugin) {
-            if (method_exists($plugin, 'beforeSendPerformed')) {
-                $plugin->beforeSendPerformed($event);
-            }
+            $evt = new Swift_Events_SendEvent($this, $message);
+
+            $plugin->beforeSendPerformed($evt);
         }
     }
 }

@@ -418,12 +418,6 @@ class SqliteSchemaManager extends AbstractSchemaManager
         return $tableDiff;
     }
 
-    /**
-     * @param string $column
-     * @param string $sql
-     *
-     * @return string|false
-     */
     private function parseColumnCollationFromSQL($column, $sql)
     {
         if (preg_match(

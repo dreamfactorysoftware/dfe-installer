@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Drak <drak@zikula.org>
+ *
+ * @api
  */
 interface SessionStorageInterface
 {
@@ -27,6 +29,8 @@ interface SessionStorageInterface
      * @throws \RuntimeException If something goes wrong starting the session.
      *
      * @return bool True if started.
+     *
+     * @api
      */
     public function start();
 
@@ -41,6 +45,8 @@ interface SessionStorageInterface
      * Returns the session ID.
      *
      * @return string The session ID or empty.
+     *
+     * @api
      */
     public function getId();
 
@@ -48,6 +54,8 @@ interface SessionStorageInterface
      * Sets the session ID.
      *
      * @param string $id
+     *
+     * @api
      */
     public function setId($id);
 
@@ -55,6 +63,8 @@ interface SessionStorageInterface
      * Returns the session name.
      *
      * @return mixed The session name.
+     *
+     * @api
      */
     public function getName();
 
@@ -62,6 +72,8 @@ interface SessionStorageInterface
      * Sets the session name.
      *
      * @param string $name
+     *
+     * @api
      */
     public function setName($name);
 
@@ -93,6 +105,8 @@ interface SessionStorageInterface
      * @return bool True if session regenerated, false if error
      *
      * @throws \RuntimeException If an error occurs while regenerating this storage
+     *
+     * @api
      */
     public function regenerate($destroy = false, $lifetime = null);
 

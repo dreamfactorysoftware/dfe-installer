@@ -2,12 +2,12 @@
 
 namespace Faker\Provider;
 
-abstract class Text extends Base
+abstract class Text extends \Faker\Provider\Base
 {
     protected static $baseText = '';
     protected static $separator = ' ';
     protected static $separatorLen = 1;
-    protected $explodedText;
+    protected $explodedText = null;
     protected $consecutiveWords = array();
 
     /**

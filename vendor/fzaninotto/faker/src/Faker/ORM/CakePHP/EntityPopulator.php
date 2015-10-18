@@ -99,6 +99,7 @@ class EntityPopulator
                 }
 
                 $foreignKey = $foreignKeys[array_rand($foreignKeys)];
+                $primaryKey = $table->primaryKey();
                 $data[$assoc->foreignKey()] = $foreignKey;
                 return $data;
             };
@@ -129,11 +130,7 @@ class EntityPopulator
         }
 
         $pk = $table->primaryKey();
-        if (is_string($pk)) {
-            return $entity->{$pk};
-        }
-
-        return $entity->{$pk[0]};
+        return $entity->{$pk};
     }
 
     public function setConnection($name)

@@ -22,7 +22,6 @@ trait DetectsLostConnections
             'no connection to the server',
             'Lost connection',
             'is dead or not enabled',
-            'Error while sending',
         ]);
     }
 }

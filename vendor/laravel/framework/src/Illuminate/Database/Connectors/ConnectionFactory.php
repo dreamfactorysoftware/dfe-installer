@@ -99,9 +99,8 @@ class ConnectionFactory
         $readConfig = $this->getReadWriteConfig($config, 'read');
 
         if (isset($readConfig['host']) && is_array($readConfig['host'])) {
-            $readConfig['host'] = count($readConfig['host']) > 1
-                ? $readConfig['host'][array_rand($readConfig['host'])]
-                : $readConfig['host'][0];
+            $readConfig['host'] = count($readConfig['host']) > 1 ?
+                $readConfig['host'][array_rand($readConfig['host'])] : $readConfig['host'][0];
         }
 
         return $this->mergeReadWriteConfig($config, $readConfig);

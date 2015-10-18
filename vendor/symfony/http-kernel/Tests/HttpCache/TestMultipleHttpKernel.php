@@ -23,7 +23,7 @@ class TestMultipleHttpKernel extends HttpKernel implements ControllerResolverInt
     protected $bodies = array();
     protected $statuses = array();
     protected $headers = array();
-    protected $called = false;
+    protected $call = false;
     protected $backendRequest;
 
     public function __construct($responses)
@@ -75,6 +75,6 @@ class TestMultipleHttpKernel extends HttpKernel implements ControllerResolverInt
 
     public function reset()
     {
-        $this->called = false;
+        $this->call = false;
     }
 }

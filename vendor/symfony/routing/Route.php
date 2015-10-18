@@ -16,6 +16,8 @@ namespace Symfony\Component\Routing;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Tobias Schultze <http://tobion.de>
+ *
+ * @api
  */
 class Route implements \Serializable
 {
@@ -79,6 +81,8 @@ class Route implements \Serializable
      * @param string|array $schemes      A required URI scheme or an array of restricted schemes
      * @param string|array $methods      A required HTTP method or an array of restricted methods
      * @param string       $condition    A condition that should evaluate to true for the route to match
+     *
+     * @api
      */
     public function __construct($path, array $defaults = array(), array $requirements = array(), array $options = array(), $host = '', $schemes = array(), $methods = array(), $condition = '')
     {
@@ -368,6 +372,8 @@ class Route implements \Serializable
      * @param mixed  $value The option value
      *
      * @return Route The current Route instance
+     *
+     * @api
      */
     public function setOption($name, $value)
     {
@@ -477,6 +483,8 @@ class Route implements \Serializable
      * @param mixed  $default The default value
      *
      * @return Route The current Route instance
+     *
+     * @api
      */
     public function setDefault($name, $default)
     {
@@ -568,6 +576,8 @@ class Route implements \Serializable
      * @param string $regex The regex
      *
      * @return Route The current Route instance
+     *
+     * @api
      */
     public function setRequirement($key, $regex)
     {

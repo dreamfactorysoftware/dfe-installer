@@ -22,6 +22,8 @@ use Symfony\Component\HttpFoundation\Request;
  * the controller method arguments.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @api
  */
 class ControllerResolver implements ControllerResolverInterface
 {
@@ -42,6 +44,8 @@ class ControllerResolver implements ControllerResolverInterface
      *
      * This method looks for a '_controller' request attribute that represents
      * the controller name (a string like ClassName::MethodName).
+     *
+     * @api
      */
     public function getController(Request $request)
     {
@@ -84,6 +88,8 @@ class ControllerResolver implements ControllerResolverInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @api
      */
     public function getArguments(Request $request, $controller)
     {
@@ -131,7 +137,7 @@ class ControllerResolver implements ControllerResolverInterface
      *
      * @param string $controller A Controller string
      *
-     * @return callable A PHP callable
+     * @return mixed A PHP callable
      *
      * @throws \InvalidArgumentException
      */

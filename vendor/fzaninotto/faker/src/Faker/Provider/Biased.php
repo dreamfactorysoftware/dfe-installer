@@ -2,7 +2,7 @@
 
 namespace Faker\Provider;
 
-class Biased extends Base
+class Biased extends \Faker\Provider\Base
 {
     /**
      * Returns a biased integer between $min and $max (both inclusive).

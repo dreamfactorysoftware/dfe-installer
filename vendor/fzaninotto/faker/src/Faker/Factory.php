@@ -8,12 +8,6 @@ class Factory
 
     protected static $defaultProviders = array('Address', 'Barcode', 'Biased', 'Color', 'Company', 'DateTime', 'File', 'Image', 'Internet', 'Lorem', 'Miscellaneous', 'Payment', 'Person', 'PhoneNumber', 'Text', 'UserAgent', 'Uuid');
 
-    /**
-     * Create a new generator
-     * 
-     * @param string $locale
-     * @return Generator
-     */
     public static function create($locale = self::DEFAULT_LOCALE)
     {
         $generator = new Generator();
@@ -35,7 +29,8 @@ class Factory
             return $providerClass;
         }
         // fallback to no locale
-        if ($providerClass = self::findProviderClassname($provider)) {
+        $providerClass = self::findProviderClassname($provider);
+        if (class_exists($providerClass)) {
             return $providerClass;
         }
         throw new \InvalidArgumentException(sprintf('Unable to find provider "%s" with locale "%s"', $provider, $locale));

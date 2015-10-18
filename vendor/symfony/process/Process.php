@@ -26,6 +26,8 @@ use Symfony\Component\Process\Pipes\WindowsPipes;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Romain Neutron <imprec@gmail.com>
+ *
+ * @api
  */
 class Process
 {
@@ -137,6 +139,8 @@ class Process
      * @param array          $options     An array of options for proc_open
      *
      * @throws RuntimeException When proc_open is not installed
+     *
+     * @api
      */
     public function __construct($commandline, $cwd = null, array $env = null, $input = null, $timeout = 60, array $options = array())
     {
@@ -196,6 +200,8 @@ class Process
      * @throws RuntimeException When process can't be launched
      * @throws RuntimeException When process stopped after receiving signal
      * @throws LogicException   In case a callback is provided and output has been disabled
+     *
+     * @api
      */
     public function run($callback = null)
     {
@@ -457,6 +463,8 @@ class Process
      *
      * @throws LogicException in case the output has been disabled
      * @throws LogicException In case the process is not started
+     *
+     * @api
      */
     public function getOutput()
     {
@@ -519,6 +527,8 @@ class Process
      *
      * @throws LogicException in case the output has been disabled
      * @throws LogicException In case the process is not started
+     *
+     * @api
      */
     public function getErrorOutput()
     {
@@ -581,6 +591,8 @@ class Process
      * @return null|int The exit status code, null if the Process is not terminated
      *
      * @throws RuntimeException In case --enable-sigchild is activated and the sigchild compatibility mode is disabled
+     *
+     * @api
      */
     public function getExitCode()
     {
@@ -619,6 +631,8 @@ class Process
      * Checks if the process ended successfully.
      *
      * @return bool true if the process ended successfully, false otherwise
+     *
+     * @api
      */
     public function isSuccessful()
     {
@@ -634,6 +648,8 @@ class Process
      *
      * @throws RuntimeException In case --enable-sigchild is activated
      * @throws LogicException   In case the process is not terminated
+     *
+     * @api
      */
     public function hasBeenSignaled()
     {
@@ -657,6 +673,8 @@ class Process
      *
      * @throws RuntimeException In case --enable-sigchild is activated
      * @throws LogicException   In case the process is not terminated
+     *
+     * @api
      */
     public function getTermSignal()
     {
@@ -679,6 +697,8 @@ class Process
      * @return bool
      *
      * @throws LogicException In case the process is not terminated
+     *
+     * @api
      */
     public function hasBeenStopped()
     {
@@ -697,6 +717,8 @@ class Process
      * @return int
      *
      * @throws LogicException In case the process is not terminated
+     *
+     * @api
      */
     public function getStopSignal()
     {
@@ -1270,7 +1292,7 @@ class Process
      *
      * @param callable|null $callback The user defined PHP callback
      *
-     * @return \Closure A PHP closure
+     * @return callable A PHP callable
      */
     protected function buildCallback($callback)
     {

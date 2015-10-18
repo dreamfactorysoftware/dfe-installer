@@ -20,7 +20,7 @@
   "support":           {
     "email": "support@dreamfactory.com"
   },
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "require":           {
     "php":                    ">=5.5.9",
     "dreamfactory/php-utils": "1.1.*",

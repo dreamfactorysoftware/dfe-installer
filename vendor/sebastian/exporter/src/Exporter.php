@@ -89,10 +89,11 @@ class Exporter
      * Exports a value into a single-line string
      *
      * The output of this method is similar to the output of
-     * SebastianBergmann\Exporter\Exporter::export().
+     * SebastianBergmann\Exporter\Exporter::export. This method guarantees
+     * thought that the result contains now newlines.
      *
-     * Newlines are replaced by the visible string '\n'.
-     * Contents of arrays and objects (if any) are replaced by '...'.
+     * Newlines are replaced by the visible string '\n'. Contents of arrays
+     * and objects (if any) are replaced by '...'.
      *
      * @param  mixed  $value
      * @return string
@@ -103,14 +104,8 @@ class Exporter
         if (is_string($value)) {
             $string = $this->export($value);
 
-            if (function_exists('mb_strlen')) {
-                if (mb_strlen($string) > 40) {
-                    $string = mb_substr($string, 0, 30) . '...' . mb_substr($string, -7);
-                }
-            } else {
-                if (strlen($string) > 40) {
-                    $string = substr($string, 0, 30) . '...' . substr($string, -7);
-                }
+            if (strlen($string) > 40) {
+                $string = substr($string, 0, 30) . '...' . substr($string, -7);
             }
 
             return str_replace("\n", '\n', $string);

@@ -82,8 +82,7 @@ class EntityPopulator
                 continue;
             }
 
-            $size = isset($this->class->fieldMappings[$fieldName]['length']) ? $this->class->fieldMappings[$fieldName]['length'] : null;
-            if ($formatter = $nameGuesser->guessFormat($fieldName, $size)) {
+            if ($formatter = $nameGuesser->guessFormat($fieldName)) {
                 $formatters[$fieldName] = $formatter;
                 continue;
             }
@@ -114,19 +113,16 @@ class EntityPopulator
 
             $index = 0;
             $formatters[$assocName] = function ($inserted) use ($relatedClass, &$index, $unique, $optional) {
-
-                if (isset($inserted[$relatedClass])) {
-                    if ($unique) {
-                        $related = null;
-                        if (isset($inserted[$relatedClass][$index]) || !$optional) {
-                            $related = $inserted[$relatedClass][$index];
-                        }
-
-                        $index++;
-
-                        return $related;
+                if ($unique && isset($inserted[$relatedClass])) {
+                    $related = null;
+                    if (isset($inserted[$relatedClass][$index]) || !$optional) {
+                        $related = $inserted[$relatedClass][$index];
                     }
 
+                    $index++;
+
+                    return $related;
+                } elseif (isset($inserted[$relatedClass])) {
                     return $inserted[$relatedClass][mt_rand(0, count($inserted[$relatedClass]) - 1)];
                 }
 
@@ -189,7 +185,7 @@ class EntityPopulator
 
         $id = null;
         do {
-            $id = mt_rand();
+            $id = rand();
         } while (in_array($id, $ids));
 
         return $id;

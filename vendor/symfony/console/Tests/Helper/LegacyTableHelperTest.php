@@ -256,11 +256,12 @@ TABLE
         );
     }
 
-    /**
-     * @requires extension mbstring
-     */
     public function testRenderMultiByte()
     {
+        if (!function_exists('mb_strwidth')) {
+            $this->markTestSkipped('The "mbstring" extension is not available');
+        }
+
         $table = new TableHelper();
         $table
             ->setHeaders(array('■■'))
@@ -282,11 +283,12 @@ TABLE;
         $this->assertEquals($expected, $this->getOutputContent($output));
     }
 
-    /**
-     * @requires extension mbstring
-     */
     public function testRenderFullWidthCharacters()
     {
+        if (!function_exists('mb_strwidth')) {
+            $this->markTestSkipped('The "mbstring" extension is not available');
+        }
+
         $table = new TableHelper();
         $table
             ->setHeaders(array('あいうえお'))

@@ -15,6 +15,8 @@ namespace Symfony\Component\HttpFoundation;
  * ParameterBag is a container for key/value pairs.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @api
  */
 class ParameterBag implements \IteratorAggregate, \Countable
 {
@@ -29,6 +31,8 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * Constructor.
      *
      * @param array $parameters An array of parameters
+     *
+     * @api
      */
     public function __construct(array $parameters = array())
     {
@@ -39,6 +43,8 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * Returns the parameters.
      *
      * @return array An array of parameters
+     *
+     * @api
      */
     public function all()
     {
@@ -49,6 +55,8 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * Returns the parameter keys.
      *
      * @return array An array of parameter keys
+     *
+     * @api
      */
     public function keys()
     {
@@ -59,6 +67,8 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * Replaces the current parameters by a new set.
      *
      * @param array $parameters An array of parameters
+     *
+     * @api
      */
     public function replace(array $parameters = array())
     {
@@ -69,6 +79,8 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * Adds parameters.
      *
      * @param array $parameters An array of parameters
+     *
+     * @api
      */
     public function add(array $parameters = array())
     {
@@ -85,6 +97,8 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * @return mixed
      *
      * @throws \InvalidArgumentException
+     *
+     * @api
      */
     public function get($path, $default = null, $deep = false)
     {
@@ -140,6 +154,8 @@ class ParameterBag implements \IteratorAggregate, \Countable
      *
      * @param string $key   The key
      * @param mixed  $value The value
+     *
+     * @api
      */
     public function set($key, $value)
     {
@@ -152,6 +168,8 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * @param string $key The key
      *
      * @return bool true if the parameter exists, false otherwise
+     *
+     * @api
      */
     public function has($key)
     {
@@ -162,6 +180,8 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * Removes a parameter.
      *
      * @param string $key The key
+     *
+     * @api
      */
     public function remove($key)
     {
@@ -176,6 +196,8 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * @param bool   $deep    If true, a path like foo[bar] will find deeper items
      *
      * @return string The filtered value
+     *
+     * @api
      */
     public function getAlpha($key, $default = '', $deep = false)
     {
@@ -190,6 +212,8 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * @param bool   $deep    If true, a path like foo[bar] will find deeper items
      *
      * @return string The filtered value
+     *
+     * @api
      */
     public function getAlnum($key, $default = '', $deep = false)
     {
@@ -204,6 +228,8 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * @param bool   $deep    If true, a path like foo[bar] will find deeper items
      *
      * @return string The filtered value
+     *
+     * @api
      */
     public function getDigits($key, $default = '', $deep = false)
     {
@@ -219,6 +245,8 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * @param bool   $deep    If true, a path like foo[bar] will find deeper items
      *
      * @return int The filtered value
+     *
+     * @api
      */
     public function getInt($key, $default = 0, $deep = false)
     {

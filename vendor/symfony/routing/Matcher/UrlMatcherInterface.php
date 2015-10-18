@@ -19,6 +19,8 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
  * UrlMatcherInterface is the interface that all URL matcher classes must implement.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @api
  */
 interface UrlMatcherInterface extends RequestContextAwareInterface
 {
@@ -34,6 +36,8 @@ interface UrlMatcherInterface extends RequestContextAwareInterface
      *
      * @throws ResourceNotFoundException If the resource could not be found
      * @throws MethodNotAllowedException If the resource was found but the request method is not allowed
+     *
+     * @api
      */
     public function match($pathinfo);
 }

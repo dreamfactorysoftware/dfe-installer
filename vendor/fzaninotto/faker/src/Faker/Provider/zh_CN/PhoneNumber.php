@@ -12,7 +12,7 @@ class PhoneNumber extends \Faker\Provider\PhoneNumber
 
     protected static $formats = array('########');
 
-    public function phoneNumber()
+    public static function phoneNumber()
     {
         $operators = static::randomElement(static::$operators);
 

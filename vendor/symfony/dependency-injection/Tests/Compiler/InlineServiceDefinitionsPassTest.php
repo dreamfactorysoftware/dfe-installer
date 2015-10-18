@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\DependencyInjection\Tests\Compiler;
 
+use Symfony\Component\DependencyInjection\Scope;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Compiler\AnalyzeServiceReferencesPass;
 use Symfony\Component\DependencyInjection\Compiler\RepeatedPass;
@@ -40,7 +41,7 @@ class InlineServiceDefinitionsPassTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($container->getDefinition('inlinable.service'), $arguments[0]);
     }
 
-    public function testProcessDoesNotInlinesWhenAliasedServiceIsShared()
+    public function testProcessDoesNotInlineWhenAliasedServiceIsNotOfPrototypeScope()
     {
         $container = new ContainerBuilder();
         $container
@@ -60,17 +61,17 @@ class InlineServiceDefinitionsPassTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($ref, $arguments[0]);
     }
 
-    public function testProcessDoesInlineNonSharedService()
+    public function testProcessDoesInlineServiceOfPrototypeScope()
     {
         $container = new ContainerBuilder();
         $container
             ->register('foo')
-            ->setShared(false)
+            ->setScope('prototype')
         ;
         $container
             ->register('bar')
             ->setPublic(false)
-            ->setShared(false)
+            ->setScope('prototype')
         ;
         $container->setAlias('moo', 'bar');
 
@@ -185,6 +186,20 @@ class InlineServiceDefinitionsPassTest extends \PHPUnit_Framework_TestCase
 
         $args = $container->getDefinition('foo')->getArguments();
         $this->assertSame($ref, $args[0]);
+    }
+
+    public function testProcessInlinesOnlyIfSameScope()
+    {
+        $container = new ContainerBuilder();
+
+        $container->addScope(new Scope('foo'));
+        $a = $container->register('a')->setPublic(false)->setScope('foo');
+        $b = $container->register('b')->addArgument(new Reference('a'));
+
+        $this->process($container);
+        $arguments = $b->getArguments();
+        $this->assertEquals(new Reference('a'), $arguments[0]);
+        $this->assertTrue($container->hasDefinition('a'));
     }
 
     public function testProcessDoesNotInlineWhenServiceIsPrivateButLazy()

@@ -24,7 +24,6 @@ return array(
     'Symfony\\Component\\ClassLoader\\' => array($vendorDir . '/symfony/class-loader'),
     'SuperClosure\\' => array($vendorDir . '/jeremeamia/SuperClosure/src'),
     'Stringy\\' => array($vendorDir . '/danielstjules/stringy/src'),
-    'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'League\\Flysystem\\' => array($vendorDir . '/league/flysystem/src'),
     'Illuminate\\' => array($vendorDir . '/laravel/framework/src/Illuminate'),

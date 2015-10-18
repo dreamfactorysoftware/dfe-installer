@@ -26,6 +26,8 @@ interface SessionInterface
      * @return bool True if session started.
      *
      * @throws \RuntimeException If session fails to start.
+     *
+     * @api
      */
     public function start();
 
@@ -33,6 +35,8 @@ interface SessionInterface
      * Returns the session ID.
      *
      * @return string The session ID.
+     *
+     * @api
      */
     public function getId();
 
@@ -40,6 +44,8 @@ interface SessionInterface
      * Sets the session ID.
      *
      * @param string $id
+     *
+     * @api
      */
     public function setId($id);
 
@@ -47,6 +53,8 @@ interface SessionInterface
      * Returns the session name.
      *
      * @return mixed The session name.
+     *
+     * @api
      */
     public function getName();
 
@@ -54,6 +62,8 @@ interface SessionInterface
      * Sets the session name.
      *
      * @param string $name
+     *
+     * @api
      */
     public function setName($name);
 
@@ -69,6 +79,8 @@ interface SessionInterface
      *                      not a Unix timestamp.
      *
      * @return bool True if session invalidated, false if error.
+     *
+     * @api
      */
     public function invalidate($lifetime = null);
 
@@ -83,6 +95,8 @@ interface SessionInterface
      *                       not a Unix timestamp.
      *
      * @return bool True if session migrated, false if error.
+     *
+     * @api
      */
     public function migrate($destroy = false, $lifetime = null);
 
@@ -101,6 +115,8 @@ interface SessionInterface
      * @param string $name The attribute name
      *
      * @return bool true if the attribute is defined, false otherwise
+     *
+     * @api
      */
     public function has($name);
 
@@ -111,6 +127,8 @@ interface SessionInterface
      * @param mixed  $default The default value if not found.
      *
      * @return mixed
+     *
+     * @api
      */
     public function get($name, $default = null);
 
@@ -119,6 +137,8 @@ interface SessionInterface
      *
      * @param string $name
      * @param mixed  $value
+     *
+     * @api
      */
     public function set($name, $value);
 
@@ -126,6 +146,8 @@ interface SessionInterface
      * Returns attributes.
      *
      * @return array Attributes
+     *
+     * @api
      */
     public function all();
 
@@ -142,11 +164,15 @@ interface SessionInterface
      * @param string $name
      *
      * @return mixed The removed value or null when it does not exist
+     *
+     * @api
      */
     public function remove($name);
 
     /**
      * Clears all attributes.
+     *
+     * @api
      */
     public function clear();
 

@@ -47,13 +47,13 @@ class LoadConfiguration
      * Load the configuration items from all of the files.
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  \Illuminate\Contracts\Config\Repository  $repository
+     * @param  \Illuminate\Contracts\Config\Repository  $config
      * @return void
      */
-    protected function loadConfigurationFiles(Application $app, RepositoryContract $repository)
+    protected function loadConfigurationFiles(Application $app, RepositoryContract $config)
     {
         foreach ($this->getConfigurationFiles($app) as $key => $path) {
-            $repository->set($key, require $path);
+            $config->set($key, require $path);
         }
     }
 

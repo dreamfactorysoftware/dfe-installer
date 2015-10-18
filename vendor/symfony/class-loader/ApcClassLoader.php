@@ -44,6 +44,8 @@ namespace Symfony\Component\ClassLoader;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Kris Wallsmith <kris@symfony.com>
+ *
+ * @api
  */
 class ApcClassLoader
 {
@@ -64,6 +66,8 @@ class ApcClassLoader
      *
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
+     *
+     * @api
      */
     public function __construct($prefix, $decorated)
     {
