@@ -124,7 +124,6 @@ class resetFilePermissions( $root ) {
     user            => root,
     onlyif          => "test -f $root/bootstrap/cache/services.json",
     path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-    notify          => Notify["$root/bootstrap/cache/services.json *found*"],
   }
 
   exec { "check-storage-log-file":
@@ -132,7 +131,6 @@ class resetFilePermissions( $root ) {
     user            => root,
     onlyif          => "test -f $root/storage/logs/laravel.log",
     path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-    notify          => Notify["$root/storage/logs/laravel.log *found*"],
   }
 
 }
