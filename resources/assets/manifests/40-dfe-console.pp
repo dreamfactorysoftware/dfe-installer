@@ -62,79 +62,6 @@ class createInitialCluster( $root ) {
 
 }
 
-#exec { "clear-caches-and-optimize":
-#  command     => "$artisan clear-compiled; $artisan cache:clear; $artisan config:clear; $artisan optimize",
-#  user        => $user,
-#  provider    => shell,
-#  cwd         => $console_root,
-#  environment => ["HOME=/home/$user"]
-#}->
-
-class clearCaches( $root ) {
-
-  Exec {
-    user        => $user,
-    provider    => shell,
-    cwd         => $root,
-    environment => ["HOME=/home/$user"],
-  }
-
-  exec { "clc-clear-compiled":
-    command     => "$artisan clear-compiled",
-  }->
-  exec { "clc-cache-clear":
-    command     => "$artisan cache:clear",
-  }->
-  exec { "clc-config-clear":
-    command     => "$artisan config:clear",
-  }->
-  exec { "clc-route-clear":
-    command     => "$artisan route:clear",
-  }->
-  exec { "clc-optimize":
-    command     => "$artisan optimize",
-  }
-
-}
-
-class resetFilePermissions( $root ) {
-
-  Exec {
-    provider    => shell,
-    cwd         => $root,
-    environment => ["HOME=/home/$user"]
-  }
-
-  exec { 'chmod-instance-storage':
-    command => "find $root/storage -type d -exec chmod 2775 {} \\;",
-  }->
-  exec { 'chmod-instance-storage-files':
-    command => "find $root/storage -type f -exec chmod 0664 {} \\;",
-  }
-
-  exec { 'chmod-instance-temp':
-    command => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
-  }->
-  exec { 'chmod-instance-temp-files':
-    command => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
-  }
-
-  exec { "check-cached-services":
-    command         => "chmod 0664 $root/bootstrap/cache/services.json",
-    user            => root,
-    onlyif          => "test -f $root/bootstrap/cache/services.json",
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-  }
-
-  exec { "check-storage-log-file":
-    command         => "chmod 0664 $root/storage/logs/laravel.log",
-    user            => root,
-    onlyif          => "test -f $root/storage/logs/laravel.log",
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-  }
-
-}
-
 ## Defines the console .env settings. Relies on FACTER_* data
 class iniSettings( $root, $zone, $domain, $protocol = "https") {
   ## Define our stuff
@@ -274,10 +201,78 @@ file { "$doc_root_base_path/.dfe.cluster.json":
 }->
 class { createInitialCluster:
   root => $console_root,
-}->
+}
+
+class clearCaches( $root ) {
+
+  Exec {
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"],
+  }
+
+  exec { "clc-clear-compiled":
+    command     => "$artisan clear-compiled",
+  }->
+  exec { "clc-cache-clear":
+    command     => "$artisan cache:clear",
+  }->
+  exec { "clc-config-clear":
+    command     => "$artisan config:clear",
+  }->
+  exec { "clc-route-clear":
+    command     => "$artisan route:clear",
+  }->
+  exec { "clc-optimize":
+    command     => "$artisan optimize",
+  }
+
+}
+
+## Clear caches
 class { clearCaches:
   root => $console_root,
 }
+
+class resetFilePermissions( $root ) {
+
+  Exec {
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }
+
+  exec { 'chmod-instance-storage':
+    command => "find $root/storage -type d -exec chmod 2775 {} \\;",
+  }->
+  exec { 'chmod-instance-storage-files':
+    command => "find $root/storage -type f -exec chmod 0664 {} \\;",
+  }
+
+  exec { 'chmod-instance-temp':
+    command => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
+  }->
+  exec { 'chmod-instance-temp-files':
+    command => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
+  }
+
+  exec { "check-cached-services":
+    command         => "chmod 0664 $root/bootstrap/cache/services.json",
+    user            => root,
+    onlyif          => "test -f $root/bootstrap/cache/services.json",
+    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+  }
+
+  exec { "check-storage-log-file":
+    command         => "chmod 0664 $root/storage/logs/laravel.log",
+    user            => root,
+    onlyif          => "test -f $root/storage/logs/laravel.log",
+    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+  }
+
+}
+
 ## Fix up the permissions on the log file
 class { resetFilePermissions:
   root => $console_root,
