@@ -19,13 +19,23 @@
             ubuntu@console:~/dfe-installer$ sudo ./install.sh
         </pre>
 
-        <p>If you experience any issues, you may try again or contact DreamFactory customer support at <a
+        <p>If you experience any issues, you may try again (click "Go Back" below), or contact DreamFactory customer support at <a
                     href="mailto:support@dreamfactory.com">support@dreamfactory.com</a></p>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-md btn-success">
-                <i class="fa fa-arrow-circle-right"></i> Save Configuration
+            <button id="btn-back" type="button" class="btn btn-md btn-success">
+                <i class="fa fa-arrow-circle-left"></i> Go Back
             </button>
         </div>
     </section>
+
+    <script>
+        jQuery(function($){
+            $('#btn-back').on('click',function(e){
+                e.preventDefault();
+
+                window.top.history.back();
+            });
+        })
+    </script>
 @stop
