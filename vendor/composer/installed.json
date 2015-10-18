@@ -86,246 +86,6 @@
         ]
     },
     {
-        "name": "league/flysystem-ziparchive",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/thephpleague/flysystem-ziparchive.git",
-            "reference": "352742ccee8af50b8cd231a90c64f0688d41b19f"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem-ziparchive/zipball/352742ccee8af50b8cd231a90c64f0688d41b19f",
-            "reference": "352742ccee8af50b8cd231a90c64f0688d41b19f",
-            "shasum": ""
-        },
-        "require": {
-            "league/flysystem": "~1.0@alpha",
-            "php": ">=5.4.0"
-        },
-        "require-dev": {
-            "mockery/mockery": "0.9.*",
-            "phpunit/phpunit": "~4.0"
-        },
-        "time": "2015-05-26 12:52:38",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "League\\Flysystem\\ZipArchive\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Frank de Jonge",
-                "email": "info@frenky.net"
-            }
-        ],
-        "description": "Flysystem adapter for ZipArchive's"
-    },
-    {
-        "name": "phpseclib/phpseclib",
-        "version": "0.3.10",
-        "version_normalized": "0.3.10.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/phpseclib/phpseclib.git",
-            "reference": "d15bba1edcc7c89e09cc74c5d961317a8b947bf4"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d15bba1edcc7c89e09cc74c5d961317a8b947bf4",
-            "reference": "d15bba1edcc7c89e09cc74c5d961317a8b947bf4",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.0.0"
-        },
-        "require-dev": {
-            "phing/phing": "~2.7",
-            "phpunit/phpunit": "~4.0",
-            "sami/sami": "~2.0",
-            "squizlabs/php_codesniffer": "~1.5"
-        },
-        "suggest": {
-            "ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.",
-            "ext-mcrypt": "Install the Mcrypt extension in order to speed up a wide variety of cryptographic operations.",
-            "pear-pear/PHP_Compat": "Install PHP_Compat to get phpseclib working on PHP < 4.3.3."
-        },
-        "time": "2015-01-28 21:50:33",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "0.3-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Crypt": "phpseclib/",
-                "File": "phpseclib/",
-                "Math": "phpseclib/",
-                "Net": "phpseclib/",
-                "System": "phpseclib/"
-            },
-            "files": [
-                "phpseclib/Crypt/Random.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "include-path": [
-            "phpseclib/"
-        ],
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Jim Wigginton",
-                "email": "terrafrost@php.net",
-                "role": "Lead Developer"
-            },
-            {
-                "name": "Patrick Monnerat",
-                "email": "pm@datasphere.ch",
-                "role": "Developer"
-            },
-            {
-                "name": "Andreas Fischer",
-                "email": "bantu@phpbb.com",
-                "role": "Developer"
-            },
-            {
-                "name": "Hans-Jürgen Petrich",
-                "email": "petrich@tronic-media.com",
-                "role": "Developer"
-            }
-        ],
-        "description": "PHP Secure Communications Library - Pure-PHP implementations of RSA, AES, SSH2, SFTP, X.509 etc.",
-        "homepage": "http://phpseclib.sourceforge.net",
-        "keywords": [
-            "BigInteger",
-            "aes",
-            "asn.1",
-            "asn1",
-            "blowfish",
-            "crypto",
-            "cryptography",
-            "encryption",
-            "rsa",
-            "security",
-            "sftp",
-            "signature",
-            "signing",
-            "ssh",
-            "twofish",
-            "x.509",
-            "x509"
-        ]
-    },
-    {
-        "name": "league/flysystem-sftp",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/thephpleague/flysystem-sftp.git",
-            "reference": "ebe7df7e3d5ff00418b2d5df21938767b18894b6"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem-sftp/zipball/ebe7df7e3d5ff00418b2d5df21938767b18894b6",
-            "reference": "ebe7df7e3d5ff00418b2d5df21938767b18894b6",
-            "shasum": ""
-        },
-        "require": {
-            "league/flysystem": "~1.0",
-            "php": ">=5.4.0",
-            "phpseclib/phpseclib": "~0.3.8"
-        },
-        "require-dev": {
-            "mockery/mockery": "0.9.*",
-            "phpunit/phpunit": "~4.0"
-        },
-        "time": "2015-09-20 13:42:04",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "League\\Flysystem\\Sftp\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Frank de Jonge",
-                "email": "info@frenky.net"
-            }
-        ],
-        "description": "Flysystem adapter for SFTP"
-    },
-    {
-        "name": "wpb/string-blade-compiler",
-        "version": "2.0.x-dev",
-        "version_normalized": "2.0.9999999.9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/igormatkovic/StringBladeCompiler.git",
-            "reference": "1dc5083557bba931f179070a7ab5d3f4ce3462a5"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/igormatkovic/StringBladeCompiler/zipball/1dc5083557bba931f179070a7ab5d3f4ce3462a5",
-            "reference": "1dc5083557bba931f179070a7ab5d3f4ce3462a5",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0"
-        },
-        "time": "2015-01-24 00:55:58",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Wpb\\StringBladeCompiler\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Terre Porter",
-                "email": "tporter@webpage-builders.com"
-            }
-        ],
-        "description": "Render Blade templates from string",
-        "keywords": [
-            "blade",
-            "compiler",
-            "laravel"
-        ]
-    },
-    {
         "name": "danielstjules/stringy",
         "version": "1.x-dev",
         "version_normalized": "1.9999999.9999999.9999999-dev",
@@ -2686,12 +2446,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/dreamfactorysoftware/php-utils.git",
-            "reference": "b49fe77cea165f0d2689a506aa8d88b498e3f1d5"
+            "reference": "bdeef2ac5ec1f165b803a6a1127e319cb8ecdb74"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/dreamfactorysoftware/php-utils/zipball/b49fe77cea165f0d2689a506aa8d88b498e3f1d5",
-            "reference": "b49fe77cea165f0d2689a506aa8d88b498e3f1d5",
+            "url": "https://api.github.com/repos/dreamfactorysoftware/php-utils/zipball/bdeef2ac5ec1f165b803a6a1127e319cb8ecdb74",
+            "reference": "bdeef2ac5ec1f165b803a6a1127e319cb8ecdb74",
             "shasum": ""
         },
         "require": {
@@ -2702,7 +2462,7 @@
             "laravel/framework": "5.1.*",
             "phpunit/phpunit": "@stable"
         },
-        "time": "2015-09-20 01:45:08",
+        "time": "2015-10-18 20:02:31",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3138,54 +2898,6 @@
         "homepage": "https://symfony.com"
     },
     {
-        "name": "symfony/process",
-        "version": "2.7.x-dev",
-        "version_normalized": "2.7.9999999.9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/process.git",
-            "reference": "7440f966e8719f39a88600e5c47915a867830126"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/process/zipball/7440f966e8719f39a88600e5c47915a867830126",
-            "reference": "7440f966e8719f39a88600e5c47915a867830126",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.9"
-        },
-        "time": "2015-10-11 09:39:48",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.7-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Symfony\\Component\\Process\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony Process Component",
-        "homepage": "https://symfony.com"
-    },
-    {
         "name": "sebastian/global-state",
         "version": "1.1.1",
         "version_normalized": "1.1.1.0",
@@ -3590,78 +3302,6 @@
         "homepage": "https://symfony.com"
     },
     {
-        "name": "dreamfactory/dfe-common",
-        "version": "dev-develop",
-        "version_normalized": "dev-develop",
-        "source": {
-            "type": "git",
-            "url": "git@github.com:dreamfactorysoftware/dfe-common.git",
-            "reference": "3e4ab7da606861303b7fb417fa86f78980ba1cf1"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/dreamfactorysoftware/dfe-common/zipball/3e4ab7da606861303b7fb417fa86f78980ba1cf1",
-            "reference": "3e4ab7da606861303b7fb417fa86f78980ba1cf1",
-            "shasum": ""
-        },
-        "require": {
-            "dreamfactory/php-utils": "1.1.*",
-            "league/flysystem-sftp": "*",
-            "league/flysystem-ziparchive": "*",
-            "wpb/string-blade-compiler": "2.*@dev"
-        },
-        "require-dev": {
-            "barryvdh/laravel-ide-helper": "~2.0",
-            "doctrine/dbal": "~2.3",
-            "dreamfactory/dfe-database": "dev-develop as dev-master",
-            "laravel/framework": "5.1.*",
-            "phpspec/phpspec": "~2.1",
-            "phpunit/phpunit": "~4.0",
-            "way/generators": "~3.0"
-        },
-        "time": "2015-10-14 03:32:58",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-develop": "0.1.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "DreamFactory\\Enterprise\\Common\\": "src/"
-            }
-        },
-        "autoload-dev": {
-            "classmap": [
-                "tests/TestCase.php",
-                "tests/CommandTestCase.php"
-            ]
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Jerry Ablan",
-                "email": "jerryablan@dreamfactory.com"
-            }
-        ],
-        "description": "DreamFactory Enterprise(tm) Common Components",
-        "homepage": "https://www.dreamfactory.com/",
-        "keywords": [
-            "common",
-            "dreamfactory",
-            "fabric",
-            "queue",
-            "utility"
-        ],
-        "support": {
-            "source": "https://github.com/dreamfactorysoftware/dfe-common/tree/develop",
-            "issues": "https://github.com/dreamfactorysoftware/dfe-common/issues"
-        }
-    },
-    {
         "name": "monolog/monolog",
         "version": "1.17.2",
         "version_normalized": "1.17.2.0",
@@ -3741,127 +3381,6 @@
         ]
     },
     {
-        "name": "phpunit/phpunit",
-        "version": "4.8.x-dev",
-        "version_normalized": "4.8.9999999.9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sebastianbergmann/phpunit.git",
-            "reference": "be067d6105286b74272facefc2697038f8807b77"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/be067d6105286b74272facefc2697038f8807b77",
-            "reference": "be067d6105286b74272facefc2697038f8807b77",
-            "shasum": ""
-        },
-        "require": {
-            "ext-dom": "*",
-            "ext-json": "*",
-            "ext-pcre": "*",
-            "ext-reflection": "*",
-            "ext-spl": "*",
-            "php": ">=5.3.3",
-            "phpspec/prophecy": "^1.3.1",
-            "phpunit/php-code-coverage": "~2.1",
-            "phpunit/php-file-iterator": "~1.4",
-            "phpunit/php-text-template": "~1.2",
-            "phpunit/php-timer": ">=1.0.6",
-            "phpunit/phpunit-mock-objects": "~2.3",
-            "sebastian/comparator": "~1.1",
-            "sebastian/diff": "~1.2",
-            "sebastian/environment": "~1.3",
-            "sebastian/exporter": "~1.2",
-            "sebastian/global-state": "~1.0",
-            "sebastian/version": "~1.0",
-            "symfony/yaml": "~2.1|~3.0"
-        },
-        "suggest": {
-            "phpunit/php-invoker": "~1.1"
-        },
-        "time": "2015-10-14 13:49:40",
-        "bin": [
-            "phpunit"
-        ],
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "4.8.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "src/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Sebastian Bergmann",
-                "email": "sebastian@phpunit.de",
-                "role": "lead"
-            }
-        ],
-        "description": "The PHP Unit Testing framework.",
-        "homepage": "https://phpunit.de/",
-        "keywords": [
-            "phpunit",
-            "testing",
-            "xunit"
-        ]
-    },
-    {
-        "name": "paragonie/random_compat",
-        "version": "1.0.6",
-        "version_normalized": "1.0.6.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/paragonie/random_compat.git",
-            "reference": "9a0ce69360aa22413a96f2bf93f61235e2c18486"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/paragonie/random_compat/zipball/9a0ce69360aa22413a96f2bf93f61235e2c18486",
-            "reference": "9a0ce69360aa22413a96f2bf93f61235e2c18486",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.2.0"
-        },
-        "suggest": {
-            "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
-        },
-        "time": "2015-10-16 03:43:13",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "lib/random.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Paragon Initiative Enterprises",
-                "email": "security@paragonie.com",
-                "homepage": "https://paragonie.com"
-            }
-        ],
-        "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
-        "keywords": [
-            "csprng",
-            "pseudorandom",
-            "random"
-        ]
-    },
-    {
         "name": "symfony/dependency-injection",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
@@ -3920,18 +3439,187 @@
         "homepage": "https://symfony.com"
     },
     {
+        "name": "paragonie/random_compat",
+        "version": "1.0.7",
+        "version_normalized": "1.0.7.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/paragonie/random_compat.git",
+            "reference": "df1207683dfbd1399f0fa931a368082a28fed50b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/paragonie/random_compat/zipball/df1207683dfbd1399f0fa931a368082a28fed50b",
+            "reference": "df1207683dfbd1399f0fa931a368082a28fed50b",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.0"
+        },
+        "suggest": {
+            "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
+        },
+        "time": "2015-10-16 14:10:15",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "lib/random.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Paragon Initiative Enterprises",
+                "email": "security@paragonie.com",
+                "homepage": "https://paragonie.com"
+            }
+        ],
+        "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
+        "keywords": [
+            "csprng",
+            "pseudorandom",
+            "random"
+        ]
+    },
+    {
+        "name": "symfony/process",
+        "version": "2.7.x-dev",
+        "version_normalized": "2.7.9999999.9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/process.git",
+            "reference": "74078dbc5d7639dc74f7ee30b048cc74c21149bf"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/process/zipball/74078dbc5d7639dc74f7ee30b048cc74c21149bf",
+            "reference": "74078dbc5d7639dc74f7ee30b048cc74c21149bf",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.9"
+        },
+        "time": "2015-10-18 09:49:40",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.7-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\Process\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony Process Component",
+        "homepage": "https://symfony.com"
+    },
+    {
+        "name": "phpunit/phpunit",
+        "version": "4.8.x-dev",
+        "version_normalized": "4.8.9999999.9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/sebastianbergmann/phpunit.git",
+            "reference": "b4900675926860bef091644849305399b986efa2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b4900675926860bef091644849305399b986efa2",
+            "reference": "b4900675926860bef091644849305399b986efa2",
+            "shasum": ""
+        },
+        "require": {
+            "ext-dom": "*",
+            "ext-json": "*",
+            "ext-pcre": "*",
+            "ext-reflection": "*",
+            "ext-spl": "*",
+            "php": ">=5.3.3",
+            "phpspec/prophecy": "^1.3.1",
+            "phpunit/php-code-coverage": "~2.1",
+            "phpunit/php-file-iterator": "~1.4",
+            "phpunit/php-text-template": "~1.2",
+            "phpunit/php-timer": ">=1.0.6",
+            "phpunit/phpunit-mock-objects": "~2.3",
+            "sebastian/comparator": "~1.1",
+            "sebastian/diff": "~1.2",
+            "sebastian/environment": "~1.3",
+            "sebastian/exporter": "~1.2",
+            "sebastian/global-state": "~1.0",
+            "sebastian/version": "~1.0",
+            "symfony/yaml": "~2.1|~3.0"
+        },
+        "suggest": {
+            "phpunit/php-invoker": "~1.1"
+        },
+        "time": "2015-10-17 15:03:30",
+        "bin": [
+            "phpunit"
+        ],
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "4.8.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Sebastian Bergmann",
+                "email": "sebastian@phpunit.de",
+                "role": "lead"
+            }
+        ],
+        "description": "The PHP Unit Testing framework.",
+        "homepage": "https://phpunit.de/",
+        "keywords": [
+            "phpunit",
+            "testing",
+            "xunit"
+        ]
+    },
+    {
         "name": "laravel/framework",
         "version": "5.1.x-dev",
         "version_normalized": "5.1.9999999.9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/laravel/framework.git",
-            "reference": "0422b201c40a0fd72d8acfdeb5a220f7a416d34a"
+            "reference": "8cff1840a73cf6c71e5de2534d6cd6858c306e6b"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/laravel/framework/zipball/0422b201c40a0fd72d8acfdeb5a220f7a416d34a",
-            "reference": "0422b201c40a0fd72d8acfdeb5a220f7a416d34a",
+            "url": "https://api.github.com/repos/laravel/framework/zipball/8cff1840a73cf6c71e5de2534d6cd6858c306e6b",
+            "reference": "8cff1840a73cf6c71e5de2534d6cd6858c306e6b",
             "shasum": ""
         },
         "require": {
@@ -4013,7 +3701,7 @@
             "predis/predis": "Required to use the redis cache and queue drivers (~1.0).",
             "pusher/pusher-php-server": "Required to use the Pusher broadcast driver (~2.0)."
         },
-        "time": "2015-10-16 21:48:41",
+        "time": "2015-10-18 13:45:34",
         "type": "library",
         "extra": {
             "branch-alias": {

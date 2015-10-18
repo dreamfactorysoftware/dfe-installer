@@ -1,9 +1,0 @@
-/vendor
-/node_modules
-.env
-/storage
-.idea/workspace.xml
-.idea/tasks.xml
-tests/data/storage/*
-tests/Services/sst-*
-composer.lock

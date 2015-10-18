@@ -1,5 +1,0 @@
-suites:
-    main:
-        namespace: DreamFactory\Enterprise\Common
-        psr4_prefix: DreamFactory\Enterprise\Common
-        src_path: app

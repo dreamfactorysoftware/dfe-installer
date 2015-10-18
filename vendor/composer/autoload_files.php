@@ -15,5 +15,4 @@ return array(
     $vendorDir . '/paragonie/random_compat/lib/random.php',
     $vendorDir . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
     $vendorDir . '/laravel/framework/src/Illuminate/Support/helpers.php',
-    $vendorDir . '/phpseclib/phpseclib/phpseclib/Crypt/Random.php',
 );

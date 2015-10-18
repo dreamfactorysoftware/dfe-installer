@@ -39,7 +39,7 @@ return [
         DreamFactory\Enterprise\Installer\Providers\AuthServiceProvider::class,
         DreamFactory\Enterprise\Installer\Providers\EventServiceProvider::class,
         DreamFactory\Enterprise\Installer\Providers\RouteServiceProvider::class,
-        DreamFactory\Enterprise\Common\Providers\InspectionServiceProvider::class,
+        DreamFactory\Library\Utility\Providers\InspectionServiceProvider::class,
         /** Third-party Providers */
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
     ],
