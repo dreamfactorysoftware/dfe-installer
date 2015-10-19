@@ -31,7 +31,7 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="#"><img src="img/apple-touch-icon.png" alt="DreamFactory"><span>DreamFactory Enterprise&trade;
-                    Installer</span></a>
+                    Installer v{{ config('app.version') }}</span></a>
         </div>
     </div><!-- /.container-fluid -->
 </nav>
