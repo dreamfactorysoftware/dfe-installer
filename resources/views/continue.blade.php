@@ -8,9 +8,9 @@
     <section id="section-inspection">
         <h2>Configuration Created!</h2>
 
-        <p>The information supplied on the previous screen has been written to a file called <span class="text-muted">.env-install</span>
-            in the root of where you installed this software. This file is utilized by the <span class="text-muted">install.sh</span>
-            script. That is actually the next step in the installation.</p>
+        <p>The information supplied on the previous screen has been written to a file called <span class="text-muted">.env-install</span>. This can be located in
+            the <span class="text-muted">storage</span> directory of this package's installation. This file is utilized by the <span class="text-muted">install.sh</span>
+            script. Running that script is the next step in the installation.</p>
 
         <p>Go back to where you started up the PHP configuration utility and press Control-C to break out of the server.
             At this point, simply issue the following command:</p>
