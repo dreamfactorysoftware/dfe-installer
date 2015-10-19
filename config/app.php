@@ -9,6 +9,7 @@ return [
     'cipher'          => 'AES-256-CBC',
     'log'             => 'single',
     'os_type'         => `which lsb_release` ? strtolower(trim(`lsb_release -si`)) : null,
+    'version'         => env('APP_VERSION'),
     'providers'       => [
         /** Laravel Framework Service Providers */
         Illuminate\Foundation\Providers\ArtisanServiceProvider::class,
