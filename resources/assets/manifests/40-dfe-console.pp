@@ -141,7 +141,7 @@ vcsrepo { "$console_release/$console_branch":
   user     => $user,
   owner    => $user,
   group    => $www_group,
-  revision => $console_version
+  revision => $console_branch,
 }->
 file { $console_root:
   ensure => link,

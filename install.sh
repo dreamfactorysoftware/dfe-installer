@@ -117,12 +117,9 @@ export FACTER_DB_USER=dfe_user
 export FACTER_DB_PWD=dfe_user
 export FACTER_DB_HOST=localhost
 export FACTER_DB_NAME=dfe_local
-export FACTER_CONSOLE_VERSION=develop
 export FACTER_CONSOLE_BRANCH=develop
-export FACTER_DASHBOARD_VERSION=develop
 export FACTER_DASHBOARD_BRANCH=develop
-export FACTER_INSTANCE_VERSION=develop
-export FACTER_INSTANCE_BRANCH=develop
+export FACTER_INSTANCE_BRANCH=master
 
 ## Blanks filled in by .env-install
 export FACTER_ADMIN_EMAIL FACTER_ADMIN_PWD
@@ -165,9 +162,6 @@ export FACTER_MAIL_FROM_ADDRESS="no.reply@${FACTER_DOMAIN}"
 export FACTER_MAIL_FROM_NAME=${FACTER_DOMAIN}
 export FACTER_MAIL_USERNAME=""
 export FACTER_MAIL_PASSWORD=""
-
-## Module path
-MODULE_PATH="$PWD/resources/assets/puppet/modules:`puppet config print modulepath`"
 
 _info "Installing now..."
 
