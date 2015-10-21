@@ -68,7 +68,7 @@ vcsrepo { "$instance_release/$instance_branch":
   user     => $user,
   owner    => $user,
   group    => $www_group,
-  revision => $instance_version
+  revision => $instance_branch,
 }->
 file { $instance_root:
   ensure => link,

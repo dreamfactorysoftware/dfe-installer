@@ -88,7 +88,7 @@ vcsrepo { "$dashboard_release/$dashboard_branch":
   user     => $user,
   owner    => $user,
   group    => $www_group,
-  revision => $dashboard_version,
+  revision => $dashboard_branch,
 }->
 file { $dashboard_root:
   ensure => link,
