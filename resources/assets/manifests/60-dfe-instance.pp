@@ -50,6 +50,7 @@ class iniSettings( $root ) {
       'DF_INSTANCE_NAME'     => 'dfe-instance',
       'DF_STANDALONE'        => 'false',
       'APP_LOG'              => 'single',
+      'DB_DRIVER'            => 'mysql',
     }
   }
 
