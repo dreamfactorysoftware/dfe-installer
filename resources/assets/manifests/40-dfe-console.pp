@@ -67,8 +67,8 @@ class setupApp( $root ) {
 
   exec { "composer-self-update":
     command     => "$composer_bin self-update --quiet",
-    provider    => shell,
-    cwd         => $root,
+    user        => root,
+    cwd         => $composer_root,
   }->
   exec { "composer-update":
     command     => "$composer_bin update",
