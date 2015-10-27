@@ -93,6 +93,7 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
       "MAIL_USERNAME"                              => $mail_username,
       "MAIL_PASSWORD"                              => $mail_password,
       "DFE_HOSTED_BASE_PATH"                       => $storage_path,
+      "DFE_SNAPSHOT_TRASH_PATH"                    => $trash_path,
       "DFE_CONSOLE_API_URL"                        => $_consoleApiUrl,
     }
   }
