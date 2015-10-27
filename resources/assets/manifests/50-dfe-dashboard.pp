@@ -5,6 +5,10 @@
 # Install dreamfactory/dfe-dashboard
 ################################################################################
 
+notify { 'announce-thyself':
+  message => '[DFE] Install/update dashboard software',
+}
+
 ############
 ## Classes
 ############
@@ -34,6 +38,23 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775 ) {
     group  => $group,
     mode   => $mode,
   }
+
+  ## Blow away cache on update
+  if ( true == str2bool($dfe_update) ) {
+    exec { "remove-services-json":
+      command         => "rm -f $root/bootstrap/cache/services.json",
+      user            => root,
+      onlyif          => "test -f $root/bootstrap/cache/services.json",
+      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+    }->
+    exec { "remove-compiled-classes":
+      command         => "rm -f $root/bootstrap/cache/compiled.php",
+      user            => root,
+      onlyif          => "test -f $root/bootstrap/cache/compiled.php",
+      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+    }
+  }
+
 }
 
 ## Defines the dashboard .env settings. Relies on FACTER_* data
@@ -74,7 +95,103 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
   }
 
   ## Update the .env file
-  create_ini_settings($_settings, $_env)
+  if ( false == str2bool($dfe_update) ) {
+    file { "$root/.env":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0750,
+      source => "$root/.env-dist",
+    }
+
+    create_ini_settings($_settings, $_env)
+
+    exec { "append-api-keys":
+      command         => "cat $console_root/database/dfe/dashboard.env >> $root/.env",
+      user            => root,
+      onlyif          => "test -f $console_root/database/dfe/dashboard.env",
+      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+    }
+  }
+}
+
+## Setup the app / composer update
+class setupApp( $root ) {
+
+  if ( false == str2bool($dfe_update) ) {
+    exec { "generate-app-key":
+      command     => "$artisan key:generate",
+      user        => $user,
+      provider    => shell,
+      cwd         => $root,
+      environment => ["HOME=/home/$user"]
+    }
+  }
+
+}
+
+## Check file permissions
+class checkPermissions( $root ) {
+
+  exec { 'chmod-storage':
+    command     => "find $root/storage -type d -exec chmod 2775 {} \\;",
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { 'chmod-storage-files':
+    command     => "find $root/storage -type f -exec chmod 0664 {} \\;",
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { 'chmod-temp-df-log':
+    command         => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
+    provider        => shell,
+    cwd             => $root,
+    onlyif          => "test -d /tmp/.df-log",
+    environment     => ["HOME=/home/$user"]
+  }->
+  exec { 'chmod-temp-df-cache':
+    command         => "find /tmp/.df-cache -type d -exec chmod 2775 {} \\;",
+    provider        => shell,
+    cwd             => $root,
+    onlyif          => "test -d /tmp/.df-cache",
+    environment     => ["HOME=/home/$user"]
+  }->
+  exec { 'chmod-temp-df-log-files':
+    command         => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
+    provider        => shell,
+    cwd             => $root,
+    onlyif          => "test -d /tmp/.df-log",
+    environment     => ["HOME=/home/$user"]
+  }->
+  exec { 'chmod-temp-df-cache-files':
+    command         => "find /tmp/.df-cache -type f -exec chmod 0664 {} \\;",
+    provider        => shell,
+    cwd             => $root,
+    onlyif          => "test -d /tmp/.df-cache",
+    environment     => ["HOME=/home/$user"]
+  }->
+  exec { "check-cached-services":
+    command         => "chmod 0664 $root/bootstrap/cache/services.json && chown $www_user:$group $root/bootstrap/cache/services.json",
+    user            => root,
+    onlyif          => "test -f $root/bootstrap/cache/services.json",
+    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+  }->
+  exec { "check-compiled-classes":
+    command         => "chmod 0664 $root/bootstrap/cache/compiled.php && chown $www_user:$group $root/bootstrap/cache/compiled.php",
+    user            => root,
+    onlyif          => "test -f $root/bootstrap/cache/compiled.php",
+    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+  }->
+  exec { "check-storage-log-file":
+    command         => "chmod 0664 $root/storage/logs/laravel.log && chown $www_user:$group $root/storage/logs/laravel.log",
+    user            => root,
+    onlyif          => "test -f $root/storage/logs/laravel.log",
+    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+  }
+
 }
 
 ##------------------------------------------------------------------------------
@@ -94,13 +211,6 @@ file { $dashboard_root:
   ensure => link,
   target => "$dashboard_release/$dashboard_branch",
 }->
-file { "$dashboard_root/.env":
-  ensure => present,
-  owner  => $user,
-  group  => $www_group,
-  mode   => 0750,
-  source => "$dashboard_root/.env-dist",
-}->
 class { iniSettings:
   ## Applies INI settings in $_settings to .env
   root     => $dashboard_root,
@@ -113,111 +223,16 @@ class { laravelDirectories:
   owner => $www_user,
   group => $group,
 }->
-exec { "append-dashboard-api-keys":
-  command  => "cat $console_root/database/dfe/dashboard.env >> $dashboard_root/.env",
-  provider => shell,
-  user     => $user
-}->
-exec { "remove-services-json":
-  command         => "rm -f $dashboard_root/bootstrap/cache/services.json",
-  user            => root,
-  onlyif          => "test -f $dashboard_root/bootstrap/cache/services.json",
-  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-}->
-exec { "remove-compiled-classes":
-  command         => "rm -f $dashboard_root/bootstrap/cache/compiled.php",
-  user            => root,
-  onlyif          => "test -f $dashboard_root/bootstrap/cache/compiled.php",
-  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-}->
-exec { "dashboard-composer-update":
+exec { "composer-update":
   command     => "$composer_bin update",
   user        => $user,
   provider    => shell,
   cwd         => $dashboard_root,
   environment => [ "HOME=/home/$user", ]
 }->
-exec { "generate-dashboard-app-key":
-  command     => "$artisan key:generate",
-  user        => $user,
-  provider    => shell,
-  cwd         => $dashboard_root,
-  environment => ["HOME=/home/$user"]
+class { setupApp:
+  root => $dashboard_root,
 }->
-exec { "clc-clear-compiled":
-  command     => "$artisan clear-compiled",
-  user        => $user,
-  provider    => shell,
-  cwd         => $dashboard_root,
-  environment => ["HOME=/home/$user"],
-}->
-exec { "clc-cache-clear":
-  command     => "$artisan cache:clear",
-  user        => $user,
-  provider    => shell,
-  cwd         => $dashboard_root,
-  environment => ["HOME=/home/$user"],
-}->
-exec { "clc-config-clear":
-  command     => "$artisan config:clear",
-  user        => $user,
-  provider    => shell,
-  cwd         => $dashboard_root,
-  environment => ["HOME=/home/$user"],
-}->
-exec { "clc-route-clear":
-  command     => "$artisan route:clear",
-  user        => $user,
-  provider    => shell,
-  cwd         => $dashboard_root,
-  environment => ["HOME=/home/$user"],
-}->
-exec { "clc-optimize":
-  command     => "$artisan optimize --force",
-  user        => $user,
-  provider    => shell,
-  cwd         => $dashboard_root,
-  environment => ["HOME=/home/$user"],
-}->
-exec { 'chmod-dashboard-storage':
-  command     => "find $dashboard_root/storage -type d -exec chmod 2775 {} \\;",
-  provider    => shell,
-  cwd         => $dashboard_root,
-  environment => ["HOME=/home/$user"]
-}->
-exec { 'chmod-dashboard-storage-files':
-  command     => "find $dashboard_root/storage -type f -exec chmod 0664 {} \\;",
-  provider    => shell,
-  cwd         => $dashboard_root,
-  environment => ["HOME=/home/$user"]
-}->
-exec { 'chmod-dashboard-temp':
-  command     => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
-  provider    => shell,
-  cwd         => $dashboard_root,
-  environment => ["HOME=/home/$user"]
-}->
-exec { 'chmod-dashboard-temp-files':
-  command     => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
-  provider    => shell,
-  cwd         => $dashboard_root,
-  environment => ["HOME=/home/$user"]
-}->
-exec { "check-cached-services":
-  command         => "chmod 0664 $dashboard_root/bootstrap/cache/services.json && chown $www_user:$group $dashboard_root/bootstrap/cache/services.json",
-  user            => root,
-  onlyif          => "test -f $dashboard_root/bootstrap/cache/services.json",
-  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-}->
-exec { "check-compiled-classes":
-  command         => "chmod 0664 $dashboard_root/bootstrap/cache/compiled.php && chown $www_user:$group $dashboard_root/bootstrap/cache/compiled.php",
-  user            => root,
-  onlyif          => "test -f $dashboard_root/bootstrap/cache/compiled.php",
-  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-}->
-exec { "check-storage-log-file":
-  command         => "chmod 0664 $dashboard_root/storage/logs/laravel.log && chown $www_user:$group $dashboard_root/storage/logs/laravel.log",
-  user            => root,
-  onlyif          => "test -f $dashboard_root/storage/logs/laravel.log",
-  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+class { checkPermissions:
+  root => $dashboard_root,
 }

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.7 2015-10-27 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.8 2015-10-27 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,13 +11,33 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.7
+VERSION=1.1.8
 SYSTEM_TYPE=`uname -s`
-MANIFEST_PATH=./resources/manifests/
+MANIFEST_PATH=./resources/assets/manifests
 ENV_FILE=./storage/.env-install
 PHP_BIN=`which php`
 PHP_ENMOD_BIN=`which php5enmod`
 LOG_FILE=/tmp/dfe-installer.log
+DFE_UPDATE=false
+
+## Basic usage statement
+usage() {
+	_msg "usage" ${_YELLOW} "${_ME} [-u|--update]"
+	exit 1
+}
+
+## Check out the command line
+while [[ $# > 0 ]] ; do
+    key="$1"
+
+    case ${key} in
+        -h|--help) usage ;;
+        -u|--update) DFE_UPDATE=true ;;
+        *) ;; ## Default/ignored
+    esac
+
+    shift
+done
 
 ## Who am I?
 if [ $UID -ne 0 ]; then
@@ -30,11 +50,10 @@ if [ -z "${PHP_BIN}" ]; then
     exit 1
 fi
 
-## Basic usage statement
-usage() {
-	_msg "usage" ${_YELLOW} "${_ME}"
-	exit 1
-}
+if [[ -n $1 ]]; then
+    echo "Last line of file specified as non-opt/last argument:"
+    tail -1 $1
+fi
 
 ## Check for the puppet modules we need
 _checkPuppetModules() {
@@ -66,23 +85,31 @@ _checkPuppetModules() {
         fi
     done
 
-    [ ${_count} -ne 0 ] && _info "   > Installed ${_count} required modules"
+    [ ${_count} -ne 0 ] && _info "Installed ${_count} required puppet modules"
+
+    ##  Update composer if already installed
+    if [ -f "${FACTER_COMPOSER_BIN}" ]; then
+        ${FACTER_COMPOSER_BIN} self-update --quiet
+        _info "Composer updated to latest version"
+    fi
 }
 
 ## Defaults and executable locations
 export FACTER_APP_DEBUG=true
+export FACTER_DFE_UPDATE=${DFE_UPDATE}
 export FACTER_PREFERRED_MAIL_PACKAGE=exim4
 export FACTER_PHP_BIN=${PHP_BIN}
 export FACTER_PHP_ENMOD_BIN=${PHP_ENMOD_BIN}
 export FACTER_ARTISAN="${PHP_BIN} artisan"
-export FACTER_COMPOSER_BIN=/usr/local/bin/composer
+export FACTER_COMPOSER_ROOT=/usr/local/bin
+export FACTER_COMPOSER_BIN="${FACTER_COMPOSER_ROOT}/composer"
 export FACTER_DEFAULT_LOCAL_MOUNT_NAME=mount-local-1
 export FACTER_FSTAB=/etc/fstab
 export FACTER_USER_PWD=`openssl rand -base64 32`
 export FACTER_PERCONA_VERSION=5.6
 export FACTER_NGINX_PATH=/etc/nginx
 export FACTER_DEFAULT_PROTOCOL=http
-export FACTER_RUN_USER=$USER
+export FACTER_RUN_USER=${USER}
 export FACTER_LOG_USER=ubuntu
 export FACTER_STATIC_ZONE_NAME=local
 export FACTER_INSTALL_HOSTNAME=`/bin/hostname`
@@ -125,7 +152,7 @@ export FACTER_ADMIN_EMAIL FACTER_ADMIN_PWD
 export FACTER_MOUNT_POINT FACTER_DOMAIN FACTER_GH_USER FACTER_GH_PWD
 
 ## Rotate log
-[ -f "${LOG_FILE}" ] && mv "${LOG_FILE}" "${LOG_FILE}.1"
+#[ -f "${LOG_FILE}" ] && mv "${LOG_FILE}" "${LOG_FILE}.1"
 
 ## Header
 sectionHeader " ${B1}DreamFactory Enterprise(tm)${B2} ${SYSTEM_TYPE} Installer v${VERSION}"
@@ -138,8 +165,7 @@ else
     exit 2
 fi
 
-_info "Checking system requirements..."
-
+##  Check requirements
 _checkPuppetModules
 
 ## Composite/aggregate values
@@ -162,9 +188,10 @@ export FACTER_MAIL_FROM_NAME=${FACTER_DOMAIN}
 export FACTER_MAIL_USERNAME=""
 export FACTER_MAIL_PASSWORD=""
 
-_info "Installing now..."
+## Manifest destiny
+[ "true" = "${DFE_UPDATE}" ] && _info "Updating now.." || _info "Installing now..."
 
-for manifest in $(ls ./resources/assets/manifests/*.pp)
+for manifest in $(ls ${MANIFEST_PATH}/*.pp)
 do
 	_info "Applying ${manifest}..."
 	puppet apply -l "${LOG_FILE}" "${manifest}"

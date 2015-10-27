@@ -5,6 +5,10 @@
 # Installs the DreamFactory v2.x instance code base
 ################################################################################
 
+notify { 'announce-thyself':
+  message => '[DFE] Install/update instance software',
+}
+
 ##------------------------------------------------------------------------------
 ## Classes
 ##------------------------------------------------------------------------------
@@ -40,8 +44,25 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
     group  => $group,
     mode   => 2775,
   }
+
+  ##  Blow away cache on update
+  if ( true == str2bool($dfe_update) ) {
+    exec { "remove-services-json":
+      command         => "rm -f $root/bootstrap/cache/services.json",
+      user            => root,
+      onlyif          => "test -f $root/bootstrap/cache/services.json",
+      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+    }->
+    exec { "remove-compiled-classes":
+      command         => "rm -f $root/bootstrap/cache/compiled.php",
+      user            => root,
+      onlyif          => "test -f $root/bootstrap/cache/compiled.php",
+      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+    }
+  }
 }
 
+## set the .env vars
 class iniSettings( $root ) {
 
   $_env = { 'path' => "$root/.env", }
@@ -54,8 +75,83 @@ class iniSettings( $root ) {
     }
   }
 
-  ## Create .env file
-  create_ini_settings($_settings, $_env)
+  if ( false == str2bool($dfe_update) ) {
+    file { "$instance_root/.env":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => "$instance_root/.env-dist"
+    }
+
+    ## Create .env file
+    create_ini_settings($_settings, $_env)
+  }
+}
+
+## Setup the app / composer update
+class setupApp( $root ) {
+
+  if ( false == str2bool($dfe_update) ) {
+    exec { 'generate-app-key':
+      command     => "$artisan key:generate",
+      user        => $user,
+      provider    => shell,
+      cwd         => $root,
+      environment => ["HOME=/home/$user"]
+    }
+  }
+
+}
+
+## Check file permissions
+class checkPermissions( $root ) {
+
+  exec { 'chmod-instance-storage':
+    command     => "find $root/storage -type d -exec chmod 2775 {} \\;",
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { 'chmod-instance-storage-files':
+    command     => "find $root/storage -type f -exec chmod 0664 {} \\;",
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"]
+  }->
+  exec { 'chmod-instance-temp':
+    command         => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
+    provider        => shell,
+    cwd             => $root,
+    onlyif          => "test -d /tmp/.df-log",
+    environment     => ["HOME=/home/$user"]
+  }->
+  exec { 'chmod-instance-temp-files':
+    command         => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
+    provider        => shell,
+    cwd             => $root,
+    onlyif          => "test -d /tmp/.df-log",
+    environment     => ["HOME=/home/$user"]
+  }->
+  exec { "check-cached-services":
+    command         => "chmod 0664 $root/bootstrap/cache/services.json && chown $www_user:$group $root/bootstrap/cache/services.json",
+    user            => root,
+    onlyif          => "test -f $root/bootstrap/cache/services.json",
+    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+  }->
+  exec { "check-compiled-classes":
+    command         => "chmod 0664 $root/bootstrap/cache/compiled.php && chown $www_user:$group $root/bootstrap/cache/compiled.php",
+    user            => root,
+    onlyif          => "test -f $root/bootstrap/cache/compiled.php",
+    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+  }->
+  exec { "check-storage-log-file":
+    command         => "chmod 0664 $root/storage/logs/laravel.log && chown $www_user:$group $root/storage/logs/laravel.log",
+    user            => root,
+    onlyif          => "test -f $root/storage/logs/laravel.log",
+    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+  }
+
 }
 
 ##------------------------------------------------------------------------------
@@ -75,13 +171,6 @@ file { $instance_root:
   ensure => link,
   target => "$instance_release/$instance_branch",
 }->
-file { "$instance_root/.env":
-  ensure => present,
-  owner  => $user,
-  group  => $www_group,
-  mode   => 0750,
-  source => "$instance_root/.env-dist"
-}->
   ## Applies INI settings in $_settings to .env
 class { iniSettings:
   root => $instance_root,
@@ -92,106 +181,16 @@ class { laravelDirectories:
   owner => $www_user,
   group => $group,
 }->
-exec { "remove-services-json":
-  command         => "rm -f $instance_root/bootstrap/cache/services.json",
-  user            => root,
-  onlyif          => "test -f $instance_root/bootstrap/cache/services.json",
-  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-}->
-exec { "remove-compiled-classes":
-  command         => "rm -f $instance_root/bootstrap/cache/compiled.php",
-  user            => root,
-  onlyif          => "test -f $instance_root/bootstrap/cache/compiled.php",
-  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-}->
-exec { 'instance-composer-update':
+exec { 'composer-update':
   command     => "$composer_bin update",
   user        => $user,
   provider    => shell,
   cwd         => $instance_root,
   environment => [ "HOME=/home/$user", ]
 }->
-exec { 'generate-instance-app-key':
-  command     => "$artisan key:generate",
-  user        => $user,
-  provider    => shell,
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"]
+class { setupApp:
+  root => $instance_root,
 }->
-exec { "clc-clear-compiled":
-  command     => "$artisan clear-compiled",
-  user        => $user,
-  provider    => shell,
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"],
-}->
-exec { "clc-cache-clear":
-  command     => "$artisan cache:clear",
-  user        => $user,
-  provider    => shell,
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"],
-}->
-exec { "clc-config-clear":
-  command     => "$artisan config:clear",
-  user        => $user,
-  provider    => shell,
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"],
-}->
-exec { "clc-route-clear":
-  command     => "$artisan route:clear",
-  user        => $user,
-  provider    => shell,
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"],
-}->
-exec { "clc-optimize":
-  command     => "$artisan optimize --force",
-  user        => $user,
-  provider    => shell,
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"],
-}->
-exec { 'chmod-instance-storage':
-  command     => "find $instance_root/storage -type d -exec chmod 2775 {} \\;",
-  provider    => shell,
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"]
-}->
-exec { 'chmod-instance-storage-files':
-  command     => "find $instance_root/storage -type f -exec chmod 0664 {} \\;",
-  provider    => shell,
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"]
-}->
-exec { 'chmod-instance-temp':
-  command     => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
-  provider    => shell,
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"]
-}->
-exec { 'chmod-instance-temp-files':
-  command     => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
-  provider    => shell,
-  cwd         => $instance_root,
-  environment => ["HOME=/home/$user"]
-}->
-exec { "check-cached-services":
-  command         => "chmod 0664 $instance_root/bootstrap/cache/services.json && chown $www_user:$group $instance_root/bootstrap/cache/services.json",
-  user            => root,
-  onlyif          => "test -f $instance_root/bootstrap/cache/services.json",
-  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-}->
-exec { "check-compiled-classes":
-  command         => "chmod 0664 $instance_root/bootstrap/cache/compiled.php && chown $www_user:$group $instance_root/bootstrap/cache/compiled.php",
-  user            => root,
-  onlyif          => "test -f $instance_root/bootstrap/cache/compiled.php",
-  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-}->
-exec { "check-storage-log-file":
-  command         => "chmod 0664 $instance_root/storage/logs/laravel.log && chown $www_user:$group $instance_root/storage/logs/laravel.log",
-  user            => root,
-  onlyif          => "test -f $instance_root/storage/logs/laravel.log",
-  path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+class { checkPermissions:
+  root => $instance_root,
 }

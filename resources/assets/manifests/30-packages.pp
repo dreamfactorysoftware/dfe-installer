@@ -5,6 +5,10 @@
 # Installs all required packages
 ################################################################################
 
+notify { 'announce-thyself':
+  message => '[DFE] Updating system packages',
+}
+
 $_basePackages = [
   'nginx-extras',
   'php5',
@@ -83,10 +87,9 @@ file_line { 'update-exim-other-host':
 exec { 'update-exim-config':
   command  => '/usr/sbin/update-exim4.conf',
   provider => posix,
-}
-
-## Install Composer
+}->
 exec { 'install-composer':
+  ## Install/update Composer
   command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
   creates => $composer_bin,
   require => Package['curl']
