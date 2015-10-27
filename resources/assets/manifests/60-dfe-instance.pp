@@ -120,16 +120,18 @@ class checkPermissions( $root ) {
     environment => ["HOME=/home/$user"]
   }->
   exec { 'chmod-instance-temp':
-    command     => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
-    provider    => shell,
-    cwd         => $root,
-    environment => ["HOME=/home/$user"]
+    command         => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
+    provider        => shell,
+    cwd             => $root,
+    onlyif          => "test -d /tmp/.df-log",
+    environment     => ["HOME=/home/$user"]
   }->
   exec { 'chmod-instance-temp-files':
-    command     => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
-    provider    => shell,
-    cwd         => $root,
-    environment => ["HOME=/home/$user"]
+    command         => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
+    provider        => shell,
+    cwd             => $root,
+    onlyif          => "test -d /tmp/.df-log",
+    environment     => ["HOME=/home/$user"]
   }->
   exec { "check-cached-services":
     command         => "chmod 0664 $root/bootstrap/cache/services.json && chown $www_user:$group $root/bootstrap/cache/services.json",
