@@ -5,6 +5,10 @@
 # Ensures the necessary directory structure is in place
 ################################################################################
 
+notify { 'announce-thyself':
+  message => '[DFE] Creating required directory structure(s)',
+}
+
 ############
 ## Classes
 ############
@@ -28,7 +32,6 @@ class createRequiredDirectories {
   ## Create all directories under the $mount_point
   file { [
     $mount_point,
-    "$mount_point/trash",
     $storage_path,
     $log_path,
     $trash_path,

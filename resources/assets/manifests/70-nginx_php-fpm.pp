@@ -5,7 +5,9 @@
 # Installs and configures nginx
 ################################################################################
 
-include stdlib
+notify { 'announce-thyself':
+  message => '[DFE] Configuring PHP runtime and web server',
+}
 
 ##------------------------------------------------------------------------------
 ## Variables

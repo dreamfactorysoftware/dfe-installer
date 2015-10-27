@@ -5,58 +5,63 @@
 # Installs MySQL/Percona server
 ################################################################################
 
-##------------------------------------------------------------------------------
-## Classes
-##------------------------------------------------------------------------------
-
-class { "apt":
-  update => {
-    frequency => "always"
-  }
+notify { 'announce-thyself':
+  message => '[DFE] Install/update database software',
 }
 
-class { "mysql::server":
-  root_password    => $mysql_root_pwd,
-  restart          => true,
-  package_name     => "percona-server-server-${percona_version}",
-  require          => Apt::Source["percona.trusty"]
-}
-
-class { "mysql::client":
-  package_name => "percona-server-client-${percona_version}",
-  require      => Apt::Source["percona.trusty"]
-}
-
-##------------------------------------------------------------------------------
-## Execute an "apt-get update"
-##------------------------------------------------------------------------------
-
-exec { "apt-update":
-  command => "/usr/bin/apt-get update"
-}
-
-##------------------------------------------------------------------------------
-## Logic
-##------------------------------------------------------------------------------
-
-apt::source { "percona.trusty":
-  comment  => "Repo for percona db server",
-  location => "http://repo.percona.com/apt",
-  release  => "trusty",
-  repos    => "main",
-  key      => {
-    "id"     => "430BDF5C56E7C94E848EE60C1C4CBDCDCD2EFD2A",
-    "server" => "keys.gnupg.net"
-  },
-  include  => {
-    "src" => false,
-    "deb" => true
-  },
-  notify   => Exec["apt-update"]
-}
-
-## Create the database "dfe_local" if not an update
+## Install database on non updates
 if ( false == str2bool($dfe_update)) {
+
+  ##------------------------------------------------------------------------------
+  ## Classes
+  ##------------------------------------------------------------------------------
+
+  class { "apt":
+    update => {
+      frequency => "always"
+    }
+  }
+
+  class { "mysql::server":
+    root_password    => $mysql_root_pwd,
+    restart          => true,
+    package_name     => "percona-server-server-${percona_version}",
+    require          => Apt::Source["percona.trusty"]
+  }
+
+  class { "mysql::client":
+    package_name => "percona-server-client-${percona_version}",
+    require      => Apt::Source["percona.trusty"]
+  }
+
+  ##------------------------------------------------------------------------------
+  ## Execute an "apt-get update"
+  ##------------------------------------------------------------------------------
+
+  exec { "apt-update":
+    command => "/usr/bin/apt-get update"
+  }
+
+  ##------------------------------------------------------------------------------
+  ## Logic
+  ##------------------------------------------------------------------------------
+
+  apt::source { "percona.trusty":
+    comment  => "Repo for percona db server",
+    location => "http://repo.percona.com/apt",
+    release  => "trusty",
+    repos    => "main",
+    key      => {
+      "id"     => "430BDF5C56E7C94E848EE60C1C4CBDCDCD2EFD2A",
+      "server" => "keys.gnupg.net"
+    },
+    include  => {
+      "src" => false,
+      "deb" => true
+    },
+    notify   => Exec["apt-update"]
+  }
+
   mysql::db { $db_name:
     ensure   => present,
     charset  => "utf8",
@@ -81,4 +86,5 @@ if ( false == str2bool($dfe_update)) {
     ensure  => present,
     members => [$user]
   }
+
 }

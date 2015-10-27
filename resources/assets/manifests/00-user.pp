@@ -5,6 +5,10 @@
 # users, groups, sudo
 ################################################################################
 
+notify { 'announce-thyself':
+  message => '[DFE] Creating required users and groups',
+}
+
 ## Only new installations
 if ( false == str2bool($dfe_update) ) {
 

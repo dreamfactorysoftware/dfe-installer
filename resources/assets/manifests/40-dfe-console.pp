@@ -5,6 +5,10 @@
 # Install dreamfactory/dfe-console
 ################################################################################
 
+notify { 'announce-thyself':
+  message => '[DFE] Install/update console software',
+}
+
 ############
 ## Classes
 ############
@@ -74,7 +78,14 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
 
 class setupApp( $root ) {
 
-  exec { "console-composer-update":
+  exec { "composer-self-update":
+    command     => "$composer_bin self-update --quiet",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    environment => [ "HOME=/home/$user", ]
+  }->
+  exec { "composer-update":
     command     => "$composer_bin update",
     user        => $user,
     provider    => shell,
@@ -83,14 +94,14 @@ class setupApp( $root ) {
   }
 
   if ( false == str2bool($dfe_update) ) {
-    exec { "generate-console-app-key":
+    exec { "generate-app-key":
       command     => "$artisan key:generate",
       user        => $user,
       provider    => shell,
       cwd         => $root,
       environment => ["HOME=/home/$user"]
     }->
-    exec { "run-console-setup-command":
+    exec { "run-setup-command":
       command     => "$artisan dfe:setup --force --admin-password=\"${admin_pwd}\" \"${admin_email}\"",
       user        => $user,
       provider    => shell,

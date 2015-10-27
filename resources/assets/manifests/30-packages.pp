@@ -5,6 +5,10 @@
 # Installs all required packages
 ################################################################################
 
+notify { 'announce-thyself':
+  message => '[DFE] Updating system packages',
+}
+
 $_basePackages = [
   'nginx-extras',
   'php5',
@@ -91,9 +95,5 @@ if ( false == str2bool($dfe_update) ) {
     command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
     creates => $composer_bin,
     require => Package['curl']
-  }
-} else {
-  exec { 'update-composer':
-    command => "$composer_bin self-update",
   }
 }

@@ -13,7 +13,7 @@
 
 VERSION=1.1.7
 SYSTEM_TYPE=`uname -s`
-MANIFEST_PATH=./resources/manifests/
+MANIFEST_PATH=./resources/assets/manifests
 ENV_FILE=./storage/.env-install
 PHP_BIN=`which php`
 PHP_ENMOD_BIN=`which php5enmod`
@@ -55,9 +55,6 @@ if [[ -n $1 ]]; then
     tail -1 $1
 fi
 
-## Alter manifest path on updates...
-[ "true" = "${DFE_UPDATE}" ] && MANIFEST_PATH=${MANIFEST_PATH}/update/
-
 ## Check for the puppet modules we need
 _checkPuppetModules() {
     ## Create the hiera.yaml file for puppet
@@ -88,7 +85,7 @@ _checkPuppetModules() {
         fi
     done
 
-    [ ${_count} -ne 0 ] && _info "   > Installed ${_count} required modules"
+    [ ${_count} -ne 0 ] && _info "Installed ${_count} required puppet modules"
 }
 
 ## Defaults and executable locations
@@ -148,7 +145,7 @@ export FACTER_ADMIN_EMAIL FACTER_ADMIN_PWD
 export FACTER_MOUNT_POINT FACTER_DOMAIN FACTER_GH_USER FACTER_GH_PWD
 
 ## Rotate log
-[ -f "${LOG_FILE}" ] && mv "${LOG_FILE}" "${LOG_FILE}.1"
+#[ -f "${LOG_FILE}" ] && mv "${LOG_FILE}" "${LOG_FILE}.1"
 
 ## Header
 sectionHeader " ${B1}DreamFactory Enterprise(tm)${B2} ${SYSTEM_TYPE} Installer v${VERSION}"
@@ -161,8 +158,7 @@ else
     exit 2
 fi
 
-_info "Checking system requirements..."
-
+##  Check requirements
 _checkPuppetModules
 
 ## Composite/aggregate values
@@ -185,9 +181,9 @@ export FACTER_MAIL_FROM_NAME=${FACTER_DOMAIN}
 export FACTER_MAIL_USERNAME=""
 export FACTER_MAIL_PASSWORD=""
 
-_info "Installing now..."
-
 ## Manifest destiny
+[ "true" = "${DFE_UPDATE}" ] && _info "Updating now.." || _info "Installing now..."
+
 for manifest in $(ls ${MANIFEST_PATH}/*.pp)
 do
 	_info "Applying ${manifest}..."

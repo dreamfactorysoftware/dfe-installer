@@ -5,6 +5,10 @@
 # Install dreamfactory/dfe-dashboard
 ################################################################################
 
+notify { 'announce-thyself':
+  message => '[DFE] Install/update dashboard software',
+}
+
 ############
 ## Classes
 ############
