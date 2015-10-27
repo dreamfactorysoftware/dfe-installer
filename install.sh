@@ -86,6 +86,12 @@ _checkPuppetModules() {
     done
 
     [ ${_count} -ne 0 ] && _info "Installed ${_count} required puppet modules"
+
+    if [ "true" = "${DFE_UPDATE}" ]; then
+        if [ -f "${FACTER_COMPOSER_BIN}" ]; then
+            ${FACTER_COMPOSER_BIN} self-update --quiet
+        fi
+    fi
 }
 
 ## Defaults and executable locations

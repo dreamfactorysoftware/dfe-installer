@@ -65,11 +65,6 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
 
 class setupApp( $root ) {
 
-  exec { "composer-self-update":
-    command     => "$composer_bin self-update --quiet",
-    user        => root,
-    cwd         => $composer_root,
-  }->
   exec { "composer-update":
     command     => "$composer_bin update",
     user        => $user,
