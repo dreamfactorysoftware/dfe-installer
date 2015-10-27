@@ -65,15 +65,8 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
 
 class setupApp( $root ) {
 
-  exec { "composer-update":
-    command     => "$composer_bin update",
-    user        => $user,
-    provider    => shell,
-    cwd         => $root,
-    environment => [ "HOME=/home/$user", ]
-  }
-
   if ( false == str2bool($dfe_update) ) {
+
     exec { "generate-app-key":
       command     => "$artisan key:generate",
       user        => $user,
@@ -89,9 +82,10 @@ class setupApp( $root ) {
       environment => ["HOME=/home/$user"]
     }->
     exec { "append-api-keys":
-      command  => "cat $root/database/dfe/console.env >> $root/.env",
-      provider => shell,
-      user     => $user
+      command         => "cat $console_root/database/dfe/console.env >> $root/.env",
+      user            => root,
+      onlyif          => "test -f $console_root/database/dfe/console.env",
+      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
     }->
     file { "$doc_root_base_path/.dfe.cluster.json":
       ensure => present,
@@ -270,6 +264,13 @@ class { laravelDirectories:
   root  => $console_root,
   owner => $www_user,
   group => $group,
+}->
+exec { "composer-update":
+  command     => "$composer_bin update",
+  user        => $user,
+  provider    => shell,
+  cwd         => $console_root,
+  environment => [ "HOME=/home/$user", ]
 }->
 class { setupApp:
   root => $console_root,

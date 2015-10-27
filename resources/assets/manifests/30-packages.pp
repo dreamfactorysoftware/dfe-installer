@@ -96,4 +96,10 @@ if ( false == str2bool($dfe_update) ) {
     creates => $composer_bin,
     require => Package['curl']
   }
+} else {
+  exec { 'update-composer':
+    command         => "$composer_bin self-update --quiet",
+    onlyif          => "test -f $composer_bin",
+    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+  }
 }

@@ -106,10 +106,11 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
 
     create_ini_settings($_settings, $_env)
 
-    exec { "append-dashboard-api-keys":
-      command  => "cat $console_root/database/dfe/dashboard.env >> $root/.env",
-      provider => shell,
-      user     => $user
+    exec { "append-api-keys":
+      command         => "cat $console_root/database/dfe/dashboard.env >> $root/.env",
+      user            => root,
+      onlyif          => "test -f $console_root/database/dfe/dashboard.env",
+      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
     }
   }
 }
@@ -117,16 +118,8 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
 ## Setup the app / composer update
 class setupApp( $root ) {
 
-  exec { "dashboard-composer-update":
-    command     => "$composer_bin update",
-    user        => $user,
-    provider    => shell,
-    cwd         => $root,
-    environment => [ "HOME=/home/$user", ]
-  }
-
   if ( false == str2bool($dfe_update) ) {
-    exec { "generate-dashboard-app-key":
+    exec { "generate-app-key":
       command     => "$artisan key:generate",
       user        => $user,
       provider    => shell,
@@ -225,6 +218,13 @@ class { laravelDirectories:
   root  => $dashboard_root,
   owner => $www_user,
   group => $group,
+}->
+exec { "composer-update":
+  command     => "$composer_bin update",
+  user        => $user,
+  provider    => shell,
+  cwd         => $dashboard_root,
+  environment => [ "HOME=/home/$user", ]
 }->
 class { setupApp:
   root => $dashboard_root,

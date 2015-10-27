@@ -92,20 +92,12 @@ class iniSettings( $root ) {
 ## Setup the app / composer update
 class setupApp( $root ) {
 
-  exec { 'composer-update':
-    command     => "$composer_bin update",
-    user        => $user,
-    provider    => shell,
-    cwd         => $root,
-    environment => [ "HOME=/home/$user", ]
-  }
-
   if ( false == str2bool($dfe_update) ) {
     exec { 'generate-app-key':
       command     => "$artisan key:generate",
       user        => $user,
       provider    => shell,
-      cwd         => $instance_root,
+      cwd         => $root,
       environment => ["HOME=/home/$user"]
     }
   }
@@ -186,6 +178,13 @@ class { laravelDirectories:
   root  => $instance_root,
   owner => $www_user,
   group => $group,
+}->
+exec { 'composer-update':
+  command     => "$composer_bin update",
+  user        => $user,
+  provider    => shell,
+  cwd         => $instance_root,
+  environment => [ "HOME=/home/$user", ]
 }->
 class { setupApp:
   root => $instance_root,
