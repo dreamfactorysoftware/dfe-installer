@@ -20,14 +20,14 @@
     <ConfirmationsSetting value="0" id="Add" />
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
-  <component name="ProjectRootManager" version="2" />
   <component name="PuppetProjectConfiguration">
     <environmentSettings>
-      <PuppetEnvironmentSettings currentEnvironmentName="develop">
+      <PuppetEnvironmentSettings currentEnvironmentName="release/1.1.7">
         <environmentSet>
           <Environment name="production" modulepath="/etc/puppet/modules:/usr/share/puppet/modules:/opt/puppet/share/puppet/modules" />
           <Environment name="master" modulepath="/etc/puppet/modules:/usr/share/puppet/modules:/opt/puppet/share/puppet/modules" />
           <Environment name="develop" modulepath="/etc/puppet/modules:/usr/share/puppet/modules:/opt/puppet/share/puppet/modules" />
+          <Environment name="release/1.1.7" modulepath="/etc/puppet/modules:/usr/share/puppet/modules:/opt/puppet/share/puppet/modules" />
         </environmentSet>
       </PuppetEnvironmentSettings>
     </environmentSettings>
