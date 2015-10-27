@@ -80,7 +80,7 @@ class iniSettings( $root ) {
       ensure => present,
       owner  => $user,
       group  => $www_group,
-      mode   => 0750,
+      mode   => 0640,
       source => "$instance_root/.env-dist"
     }
 

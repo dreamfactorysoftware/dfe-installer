@@ -60,19 +60,6 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
     }
 
     create_ini_settings($_settings, $_env)
-
-    exec { "append-api-keys":
-      command  => "cat $root/database/dfe/console.env >> $root/.env",
-      provider => shell,
-      user     => $user
-    }->
-    file { "$doc_root_base_path/.dfe.cluster.json":
-      ensure => present,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0644,
-      source => "$root/database/dfe/.dfe.cluster.json"
-    }
   }
 }
 
@@ -107,6 +94,18 @@ class setupApp( $root ) {
       provider    => shell,
       cwd         => $root,
       environment => ["HOME=/home/$user"]
+    }->
+    exec { "append-api-keys":
+      command  => "cat $root/database/dfe/console.env >> $root/.env",
+      provider => shell,
+      user     => $user
+    }->
+    file { "$doc_root_base_path/.dfe.cluster.json":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0644,
+      source => "$root/database/dfe/.dfe.cluster.json"
     }
   }
 
