@@ -87,7 +87,8 @@ _checkPuppetModules() {
 
     [ ${_count} -ne 0 ] && _info "Installed ${_count} required puppet modules"
 
-    if [ "true" = "${DFE_UPDATE}" -a -f "${FACTER_COMPOSER_BIN}" ]; then
+    ##  Update composer if already installed
+    if [ -f "${FACTER_COMPOSER_BIN}" ]; then
         ${FACTER_COMPOSER_BIN} self-update --quiet
         _info "Composer updated to latest version"
     fi

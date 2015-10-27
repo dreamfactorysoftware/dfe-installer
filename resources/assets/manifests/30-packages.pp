@@ -92,6 +92,5 @@ exec { 'install-composer':
   ## Install/update Composer
   command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
   creates => $composer_bin,
-  onlyif  => "test ! -f $composer_bin",
   require => Package['curl']
 }
