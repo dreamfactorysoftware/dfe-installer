@@ -90,6 +90,7 @@ _checkPuppetModules() {
     if [ "true" = "${DFE_UPDATE}" ]; then
         if [ -f "${FACTER_COMPOSER_BIN}" ]; then
             ${FACTER_COMPOSER_BIN} self-update --quiet
+            _info "Composer updated to latest version"
         fi
     fi
 }
