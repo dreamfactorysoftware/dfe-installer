@@ -51,17 +51,17 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
 
   ## Update the .env file on new install only
   if ( false == str2bool($dfe_update) ) {
-    file { "$console_root/.env":
+    file { "$root/.env":
       ensure => present,
       owner  => $user,
       group  => $www_group,
-      mode   => 0750,
-      source => "$console_root/.env-dist",
+      mode   => 0640,
+      source => "$root/.env-dist",
     }
 
     create_ini_settings($_settings, $_env)
 
-    exec { "append-console-api-keys":
+    exec { "append-api-keys":
       command  => "cat $root/database/dfe/console.env >> $root/.env",
       provider => shell,
       user     => $user
