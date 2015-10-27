@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.6 2015-10-21 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.7 2015-10-27 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.6
+VERSION=1.1.7
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/manifests/
 ENV_FILE=./storage/.env-install
@@ -85,7 +85,6 @@ export FACTER_DEFAULT_PROTOCOL=http
 export FACTER_RUN_USER=$USER
 export FACTER_LOG_USER=ubuntu
 export FACTER_STATIC_ZONE_NAME=local
-export FACTER_STORAGE_MOUNT_POINT=
 export FACTER_INSTALL_HOSTNAME=`/bin/hostname`
 
 ## Needs to match DB name in dfe_local.schema.sql
@@ -146,7 +145,7 @@ _checkPuppetModules
 ## Composite/aggregate values
 export FACTER_STORAGE_USER=${FACTER_USER}
 export FACTER_STORAGE_PATH=${FACTER_MOUNT_POINT}/${FACTER_STORAGE_PATH}
-export FACTER_STORAGE_MOUNT_POINT=${FACTER_STORAGE_MOUNT_POINT}
+export FACTER_TRASH_PATH=${FACTER_MOUNT_POINT}/trash
 export FACTER_SSL_CERT_STUB=$(echo ${FACTER_DOMAIN} | tr '.' '-')
 
 ## Repositories from which to pull
