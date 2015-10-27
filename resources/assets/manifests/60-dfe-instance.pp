@@ -47,10 +47,10 @@ class iniSettings( $root ) {
   $_env = { 'path' => "$root/.env", }
   $_settings = {
     '' => {
-      'DF_INSTANCE_NAME'     => 'dfe-instance',
-      'DF_STANDALONE'        => 'false',
-      'APP_LOG'              => 'single',
-      'DB_DRIVER'            => 'mysql',
+      'DF_INSTANCE_NAME' => 'dfe-instance',
+      'DF_MANAGED'       => 'true',
+      'APP_LOG'          => 'single',
+      'DB_DRIVER'        => 'mysql',
     }
   }
 
