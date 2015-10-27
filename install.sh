@@ -18,6 +18,26 @@ ENV_FILE=./storage/.env-install
 PHP_BIN=`which php`
 PHP_ENMOD_BIN=`which php5enmod`
 LOG_FILE=/tmp/dfe-installer.log
+DFE_UPDATE=false
+
+## Basic usage statement
+usage() {
+	_msg "usage" ${_YELLOW} "${_ME} [-u|--update]"
+	exit 1
+}
+
+## Check out the command line
+while [[ $# > 0 ]] ; do
+    key="$1"
+
+    case ${key} in
+        -h|--help) usage ;;
+        -u|--update) DFE_UPDATE=true ;;
+        *) ;; ## Default/ignored
+    esac
+
+    shift
+done
 
 ## Who am I?
 if [ $UID -ne 0 ]; then
@@ -30,11 +50,13 @@ if [ -z "${PHP_BIN}" ]; then
     exit 1
 fi
 
-## Basic usage statement
-usage() {
-	_msg "usage" ${_YELLOW} "${_ME}"
-	exit 1
-}
+if [[ -n $1 ]]; then
+    echo "Last line of file specified as non-opt/last argument:"
+    tail -1 $1
+fi
+
+## Alter manifest path on updates...
+[ "true" = "${DFE_UPDATE}" ] && MANIFEST_PATH=${MANIFEST_PATH}/update/
 
 ## Check for the puppet modules we need
 _checkPuppetModules() {
@@ -71,6 +93,7 @@ _checkPuppetModules() {
 
 ## Defaults and executable locations
 export FACTER_APP_DEBUG=true
+export FACTER_DFE_UPDATE=${DFE_UPDATE}
 export FACTER_PREFERRED_MAIL_PACKAGE=exim4
 export FACTER_PHP_BIN=${PHP_BIN}
 export FACTER_PHP_ENMOD_BIN=${PHP_ENMOD_BIN}
@@ -82,7 +105,7 @@ export FACTER_USER_PWD=`openssl rand -base64 32`
 export FACTER_PERCONA_VERSION=5.6
 export FACTER_NGINX_PATH=/etc/nginx
 export FACTER_DEFAULT_PROTOCOL=http
-export FACTER_RUN_USER=$USER
+export FACTER_RUN_USER=${USER}
 export FACTER_LOG_USER=ubuntu
 export FACTER_STATIC_ZONE_NAME=local
 export FACTER_INSTALL_HOSTNAME=`/bin/hostname`
@@ -164,7 +187,8 @@ export FACTER_MAIL_PASSWORD=""
 
 _info "Installing now..."
 
-for manifest in $(ls ./resources/assets/manifests/*.pp)
+## Manifest destiny
+for manifest in $(ls ${MANIFEST_PATH}/*.pp)
 do
 	_info "Applying ${manifest}..."
 	puppet apply -l "${LOG_FILE}" "${manifest}"

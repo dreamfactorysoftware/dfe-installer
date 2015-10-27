@@ -55,30 +55,28 @@ apt::source { "percona.trusty":
   notify   => Exec["apt-update"]
 }
 
-## Create the database "dfe_local" if not an update
-if ( false == str2bool($dfe_update)) {
-  mysql::db { $db_name:
-    ensure   => present,
-    charset  => "utf8",
-    host     => $db_host,
-    user     => $db_user,
-    password => $db_pwd,
-    sql      => "$pwd/resources/assets/sql/dfe_local.schema.sql"
-  }
+## Create the database "dfe_local"
+mysql::db { $db_name:
+  ensure   => present,
+  charset  => "utf8",
+  host     => $db_host,
+  user     => $db_user,
+  password => $db_pwd,
+  sql      => "$pwd/resources/assets/sql/dfe_local.schema.sql"
+}
 
-  ## Grant access to the DFE app user
-  mysql_grant { "${db_user}@${db_host}/*.*":
-    ensure     => present,
-    options    => ["GRANT"],
-    privileges => ["ALL"],
-    table      => "*.*",
-    user       => "${db_user}@${db_host}",
-    require    => Mysql::Db[$db_name]
-  }
+## Grant access to the DFE app user
+mysql_grant { "${db_user}@${db_host}/*.*":
+  ensure     => present,
+  options    => ["GRANT"],
+  privileges => ["ALL"],
+  table      => "*.*",
+  user       => "${db_user}@${db_host}",
+  require    => Mysql::Db[$db_name]
+}
 
-  ## Ensure dfadmin is in the mysql group
-  group { "mysql":
-    ensure  => present,
-    members => [$user]
-  }
+## Ensure dfadmin is in the mysql group
+group { "mysql":
+  ensure  => present,
+  members => [$user]
 }

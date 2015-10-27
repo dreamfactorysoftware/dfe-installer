@@ -85,15 +85,9 @@ exec { 'update-exim-config':
   provider => posix,
 }
 
-## Install/update Composer
-if ( false == str2bool($dfe_update) ) {
-  exec { 'install-composer':
-    command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
-    creates => $composer_bin,
-    require => Package['curl']
-  }
-} else {
-  exec { 'update-composer':
-    command => "$composer_bin self-update",
-  }
+## Install Composer
+exec { 'install-composer':
+  command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
+  creates => $composer_bin,
+  require => Package['curl']
 }
