@@ -146,6 +146,22 @@ class checkPermissions( $root ) {
 
 }
 
+##  Create an environment file
+class createEnvFile( $root, $source = ".env-dist" ) {
+
+  ##  On new installs only
+  if ( false == str2bool($dfe_update) ) {
+    file { "${root}/.env":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => "${root}/${source}",
+    }
+  }
+
+}
+
 ##------------------------------------------------------------------------------
 ## Logic
 ##------------------------------------------------------------------------------
@@ -163,15 +179,11 @@ file { $instance_root:
   ensure => link,
   target => "$instance_release/$instance_branch",
 }->
-file { "$instance_root/.env":
-  ensure => present,
-  owner  => $user,
-  group  => $www_group,
-  mode   => 0640,
-  source => "$instance_root/.env-dist"
+class { createEnvFile:
+  root => $instance_root,
 }->
-  ## Applies INI settings in $_settings to .env
 class { iniSettings:
+  ## Applies INI settings in $_settings to .env
   root => $instance_root,
 }->
   ## Make sure the directories are created with the right perms
@@ -181,7 +193,7 @@ class { laravelDirectories:
   group => $group,
 }->
 exec { 'composer-update':
-  command     => "$composer_bin update --quiet --no-interaction --no-dev --prefer-source",
+  command     => "$composer_bin update --quiet --no-interaction --no-dev",
   user        => $user,
   provider    => shell,
   cwd         => $instance_root,
