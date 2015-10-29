@@ -185,6 +185,7 @@ exec { 'composer-update':
   user        => $user,
   provider    => shell,
   cwd         => $instance_root,
+  timeout     => 1800,
   environment => [ "HOME=/home/$user", ]
 }->
 class { setupApp:
