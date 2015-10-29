@@ -51,14 +51,6 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
 
   ## Update the .env file on new install only
   if ( false == str2bool($dfe_update) ) {
-    file { "$root/.env":
-      ensure => present,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0640,
-      source => "$root/.env-dist",
-    }
-
     create_ini_settings($_settings, $_env)
   }
 }
@@ -253,6 +245,13 @@ file { $console_root:
   ensure => link,
   target => "$console_release/$console_branch",
 }->
+file { "$console_root/.env":
+  ensure => present,
+  owner  => $user,
+  group  => $www_group,
+  mode   => 0640,
+  source => "$console_root/.env-dist",
+}->
 class { iniSettings:
   ## Applies INI settings in $_settings to .env
   root     => $console_root,
@@ -266,7 +265,7 @@ class { laravelDirectories:
   group => $group,
 }->
 exec { "composer-update":
-  command     => "$composer_bin update",
+  command     => "$composer_bin update --quiet --no-interaction --no-dev --prefer-source",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,

@@ -96,22 +96,7 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
 
   ## Update the .env file
   if ( false == str2bool($dfe_update) ) {
-    file { "$root/.env":
-      ensure => present,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0750,
-      source => "$root/.env-dist",
-    }
-
     create_ini_settings($_settings, $_env)
-
-    exec { "append-api-keys":
-      command         => "cat $console_root/database/dfe/dashboard.env >> $root/.env",
-      user            => root,
-      onlyif          => "test -f $console_root/database/dfe/dashboard.env",
-      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-    }
   }
 }
 
@@ -125,6 +110,12 @@ class setupApp( $root ) {
       provider    => shell,
       cwd         => $root,
       environment => ["HOME=/home/$user"]
+    }->
+    exec { "append-api-keys":
+      command         => "cat $console_root/database/dfe/dashboard.env >> $root/.env",
+      user            => root,
+      onlyif          => "test -f $console_root/database/dfe/dashboard.env",
+      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
     }
   }
 
@@ -211,6 +202,13 @@ file { $dashboard_root:
   ensure => link,
   target => "$dashboard_release/$dashboard_branch",
 }->
+file { "$dashboard_root/.env":
+  ensure => present,
+  owner  => $user,
+  group  => $www_group,
+  mode   => 0750,
+  source => "$dashboard_root/.env-dist",
+}->
 class { iniSettings:
   ## Applies INI settings in $_settings to .env
   root     => $dashboard_root,
@@ -224,7 +222,7 @@ class { laravelDirectories:
   group => $group,
 }->
 exec { "composer-update":
-  command     => "$composer_bin update",
+  command     => "$composer_bin update --quiet --no-interaction --no-dev --prefer-source",
   user        => $user,
   provider    => shell,
   cwd         => $dashboard_root,
