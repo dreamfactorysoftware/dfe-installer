@@ -185,6 +185,22 @@ class checkPermissions( $root ) {
 
 }
 
+##  Create an environment file
+class createEnvFile( $root, $source = ".env-dist" ) {
+
+  ##  On new installs only
+  if ( false == str2bool($dfe_update) ) {
+    file { "${root}/.env":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => "${root}/${source}",
+    }
+  }
+
+}
+
 ##------------------------------------------------------------------------------
 ## Check out the repo, update composer, change file permissions...
 ##------------------------------------------------------------------------------
@@ -202,12 +218,8 @@ file { $dashboard_root:
   ensure => link,
   target => "$dashboard_release/$dashboard_branch",
 }->
-file { "$dashboard_root/.env":
-  ensure => present,
-  owner  => $user,
-  group  => $www_group,
-  mode   => 0750,
-  source => "$dashboard_root/.env-dist",
+class { createEnvFile:
+  root => $dashboard_root,
 }->
 class { iniSettings:
   ## Applies INI settings in $_settings to .env
@@ -222,7 +234,7 @@ class { laravelDirectories:
   group => $group,
 }->
 exec { "composer-update":
-  command     => "$composer_bin update --quiet --no-interaction --no-dev --prefer-source",
+  command     => "$composer_bin update --quiet --no-interaction --no-dev",
   user        => $user,
   provider    => shell,
   cwd         => $dashboard_root,

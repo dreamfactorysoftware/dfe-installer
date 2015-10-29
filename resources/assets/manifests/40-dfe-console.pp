@@ -83,9 +83,13 @@ class setupApp( $root ) {
       ensure => present,
       owner  => $user,
       group  => $www_group,
-      mode   => 0644,
+      mode   => 0640,
       source => "$root/database/dfe/.dfe.cluster.json"
+    }->
+    class { createInitialCluster:
+      root => $root,
     }
+
   }
 
 }
@@ -224,6 +228,22 @@ class checkPermissions( $root ) {
 
 }
 
+##  Create an environment file
+class createEnvFile( $root, $source = ".env-dist" ) {
+
+  ##  On new installs only
+  if ( false == str2bool($dfe_update) ) {
+    file { "${root}/.env":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => "${root}/${source}",
+    }
+  }
+
+}
+
 ############
 ## Logic
 ############
@@ -245,12 +265,8 @@ file { $console_root:
   ensure => link,
   target => "$console_release/$console_branch",
 }->
-file { "$console_root/.env":
-  ensure => present,
-  owner  => $user,
-  group  => $www_group,
-  mode   => 0640,
-  source => "$console_root/.env-dist",
+class { createEnvFile:
+  root => $console_root,
 }->
 class { iniSettings:
   ## Applies INI settings in $_settings to .env
@@ -265,7 +281,7 @@ class { laravelDirectories:
   group => $group,
 }->
 exec { "composer-update":
-  command     => "$composer_bin update --quiet --no-interaction --no-dev --prefer-source",
+  command     => "$composer_bin update --quiet --no-interaction --no-dev",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
@@ -273,9 +289,6 @@ exec { "composer-update":
   environment => [ "HOME=/home/$user", ]
 }->
 class { setupApp:
-  root => $console_root,
-}->
-class { createInitialCluster:
   root => $console_root,
 }->
 class { checkPermissions:
