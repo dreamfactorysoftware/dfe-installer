@@ -68,22 +68,14 @@ class iniSettings( $root ) {
   $_env = { 'path' => "$root/.env", }
   $_settings = {
     '' => {
-      'DF_INSTANCE_NAME' => 'dfe-instance',
-      'DF_MANAGED'       => 'true',
       'APP_LOG'          => 'single',
       'DB_DRIVER'        => 'mysql',
+      'DF_INSTANCE_NAME' => 'dfe-instance',
+      'DF_MANAGED'       => 'true',
     }
   }
 
   if ( false == str2bool($dfe_update) ) {
-    file { "$instance_root/.env":
-      ensure => present,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0640,
-      source => "$instance_root/.env-dist"
-    }
-
     ## Create .env file
     create_ini_settings($_settings, $_env)
   }
@@ -171,6 +163,13 @@ file { $instance_root:
   ensure => link,
   target => "$instance_release/$instance_branch",
 }->
+file { "$instance_root/.env":
+  ensure => present,
+  owner  => $user,
+  group  => $www_group,
+  mode   => 0640,
+  source => "$instance_root/.env-dist"
+}->
   ## Applies INI settings in $_settings to .env
 class { iniSettings:
   root => $instance_root,
@@ -182,7 +181,7 @@ class { laravelDirectories:
   group => $group,
 }->
 exec { 'composer-update':
-  command     => "$composer_bin update",
+  command     => "$composer_bin update --quiet --no-interaction --no-dev --prefer-source",
   user        => $user,
   provider    => shell,
   cwd         => $instance_root,
