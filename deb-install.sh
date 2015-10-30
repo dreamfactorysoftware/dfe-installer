@@ -167,7 +167,7 @@ while [[ $# > 0 ]] ; do
 done
 
 ## Who am I?
-if [ $UID -ne 0 ]; then
+if [ ${UID} -ne 0 ]; then
    _error "This script must be run as root"
    exit 1
 fi
@@ -197,11 +197,10 @@ fi
 
 _info "Retrieving full installation utility..."
 git clone ${DFE_INSTALLER_REPO} "./${DFE_INSTALLER_DIR}" >>${LOG_FILE} 2>&1
-_rv=$?
 
-if [ ${_rv} -ne 0 ]; then
+if [ "$?" != "0" ]; then
     _error "Error pulling installation utility from repository. Check log in \"${LOG_FILE}\" for more info."
-    exit ${_rv}
+    exit 3
 fi
 
 echo # blank line
@@ -214,11 +213,10 @@ php -S ${LOCAL_IP}:${LOCAL_PORT} -t public/ >>${LOG_FILE} 2>&1
 
 _info "Beginning installation..."
 ./install.sh ${DFE_UPDATE} >>${LOG_FILE} 2>&1
-_rv=$?
 
-if [ ${_rv} -ne 0 ]; then
+if [ "$?" != "0" ]; then
     _error "Install script did not complete successfully. Check log in \"${LOG_FILE}\" for more info."
-    exit ${_rv}
+    exit 4
 fi
 
 cd
