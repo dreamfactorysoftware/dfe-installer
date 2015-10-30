@@ -190,27 +190,35 @@ apt-get -y --quiet upgrade >>${LOG_FILE} 2>&1
 _info "Installing Git, PHP, and Puppet..."
 apt-get -y --quiet install git puppet php5 >>${LOG_FILE} 2>&1
 
+if [ -d "./${DFE_INSTALLER_DIR}" ]; then
+    _notice "Removing existing \"./${DFE_INSTALLER_DIR}\" directory..."
+    rm -rf "./${DFE_INSTALLER_DIR}"
+fi
+
 _info "Retrieving full installation utility..."
-_rv=`git clone ${DFE_INSTALLER_REPO} ${DFE_INSTALLER_DIR} >>${LOG_FILE} 2>&1`
+git clone ${DFE_INSTALLER_REPO} "./${DFE_INSTALLER_DIR}" >>${LOG_FILE} 2>&1
+_rv=$?
 
 if [ ${_rv} -ne 0 ]; then
     _error "Error pulling installation utility from repository. Check log in \"${LOG_FILE}\" for more info."
-    exit 3
+    exit ${_rv}
 fi
 
-echo
+echo # blank line
+echo # blank line
 
 _info "Starting configuration web utility. Please go to ${PUBLIC_URL} in your browser."
-_info "When you're finished, press <Control-C> to continue..."
+_info "When you are finished, press ${B1}<Control-C>${B2} to continue..."
 cd ${DFE_INSTALLER_DIR}
 php -S ${LOCAL_IP}:${LOCAL_PORT} -t public/ >>${LOG_FILE} 2>&1
 
 _info "Beginning installation..."
-_rv=`./install.sh ${DFE_UPDATE} >>${LOG_FILE} 2>&1`
+./install.sh ${DFE_UPDATE} >>${LOG_FILE} 2>&1
+_rv=$?
 
 if [ ${_rv} -ne 0 ]; then
     _error "Install script did not complete successfully. Check log in \"${LOG_FILE}\" for more info."
-    exit 4
+    exit ${_rv}
 fi
 
 cd
