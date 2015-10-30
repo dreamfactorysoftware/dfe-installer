@@ -17,6 +17,20 @@ DFE_UPDATE=
 APT_BIN=`which apt-get`
 _ME=`basename $0`
 BASE_PATH=`pwd`
+DFE_INSTALLER_REPO="https://github.com/dreamfactorysoftware/dfe-installer.git"
+DFE_INSTALLER_DIR="dfe-installer"
+
+## Server settings
+LOCAL_IP=0.0.0.0
+LOCAL_PORT=8000
+PUBLIC_IP=127.0.0.1
+PUBLIC_PORT=8000
+
+## Get ec2 ip from the metadata
+[ -f /etc/ec2_version ] && PUBLIC_IP=`curl http://169.254.169.254/latest/meta-data/public-ipv4`
+
+## Make an url
+PUBLIC_URL="http://${PUBLIC_IP}:${PUBLIC_PORT}"
 
 ################################################################################
 # Colors
@@ -165,21 +179,39 @@ if [ "${APT_BIN}" = "" ]; then
 fi
 
 ## Yes I can!
+sectionHeader " ${B1}DreamFactory Enterprise(tm)${B2} Debian Installer v${VERSION}"
+
 _info "Updating system packages..."
 apt-get -qq update >>${LOG_FILE} 2>&1
 
 _info "Upgrading system packages..."
 apt-get -y --quiet upgrade >>${LOG_FILE} 2>&1
 
-_info "Installing Git, PHP, and Puppet"
-apt-get -y --quiet install git puppet php >>${LOG_FILE} 2>&1
+_info "Installing Git, PHP, and Puppet..."
+apt-get -y --quiet install git puppet php5 >>${LOG_FILE} 2>&1
 
-_info "Starting installation..."
+_info "Retrieving full installation utility..."
+_rv=`git clone ${DFE_INSTALLER_REPO} ${DFE_INSTALLER_DIR} >>${LOG_FILE} 2>&1`
+
+if [ ${_rv} -ne 0 ]; then
+    _error "Error pulling installation utility from repository. Check log in \"${LOG_FILE}\" for more info."
+    exit 3
+fi
+
+echo
+
+_info "Starting configuration web utility. Please go to ${PUBLIC_URL} in your browser."
+_info "When you're finished, press <Control-C> to continue..."
+cd ${DFE_INSTALLER_DIR}
+php -S ${LOCAL_IP}:${LOCAL_PORT} -t public/ >>${LOG_FILE} 2>&1
+
+_info "Beginning installation..."
 _rv=`./install.sh ${DFE_UPDATE} >>${LOG_FILE} 2>&1`
 
 if [ ${_rv} -ne 0 ]; then
     _error "Install script did not complete successfully. Check log in \"${LOG_FILE}\" for more info."
-    exit 3
+    exit 4
 fi
 
-_info "Installation complete"
+cd
+_info "Installation complete. Full output of the installation is available in \"${LOG_FILE}\""
