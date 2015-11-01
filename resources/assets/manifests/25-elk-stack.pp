@@ -21,7 +21,7 @@ class bootstrap {
 }
 
 ##  ELK stack installer
-class elk {
+class elk( $root ) {
   file { ["/opt/sites", "/opt/sites/kibana", "/opt/sites/test"]:
     ensure  => directory,
     owner   => $www_user,
@@ -88,5 +88,5 @@ class elk {
 }
 
 class { elk:
-
+  root => $pwd,
 }
