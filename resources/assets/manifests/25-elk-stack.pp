@@ -9,15 +9,11 @@ notify { 'announce-thyself':
   message => '[DFE] The Mighty ELK',
 }
 
-class bootstrap {
+Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
-  File { owner => 0, group => 0, mode => 0644 }
-
-  # ensure local apt cache index is up to date before beginning
-  exec { 'apt-get update':
-    command => '/usr/bin/apt-get update'
-  }
-
+# ensure local apt cache index is up to date before beginning
+exec { 'apt-get update':
+  command => '/usr/bin/apt-get update'
 }
 
 ##  ELK stack installer
@@ -31,9 +27,8 @@ class elk( $root ) {
   }
 
   exec { "install-java8":
-    cwd     => $root,
     command => "add-apt-repository -y ppa:webupd8team/java && sudo apt-get update && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -y install oracle-java8-installer",
-    require => Class["bootstrap"]
+    cwd     => $root,
   }
 
   exec { "install-elasticsearch":
