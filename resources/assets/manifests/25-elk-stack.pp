@@ -9,6 +9,8 @@ notify { 'announce-thyself':
   message => '[DFE] The Mighty ELK',
 }
 
+File { owner => 0, group => 0, mode => 0644, }
+
 Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
 # ensure local apt cache index is up to date before beginning
