@@ -18,7 +18,7 @@ exec { 'apt-get update':
 
 ##  ELK stack installer
 class elk( $root ) {
-  file { ["/opt/sites", "/opt/sites/kibana", "/opt/sites/test", "/opt/sites/_releases", "/opt/sites/_releases/kibana"]:
+  file { ["/opt/sites", "/opt/sites/test", "/opt/sites/_releases", "/opt/sites/_releases/kibana"]:
     ensure  => directory,
     owner   => $www_user,
     group   => $group,
