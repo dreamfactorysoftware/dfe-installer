@@ -86,3 +86,7 @@ class elk {
   }
 
 }
+
+class { elk:
+
+}
