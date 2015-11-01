@@ -37,23 +37,13 @@ class elk( $root ) {
     cwd     => $root,
   }
 
-  # custom configuration
-  file{ '/etc/elasticsearch/elasticsearch.yml' :
-    ensure  => present,
-    source  => "$PWD/resources/assets/etc/elasticsearch.yml",
-    require => Exec["install-elasticsearch"]
-  }
-
   # restart elasticsearch service
   service { "elasticsearch":
     ensure  => running,
-    require => [Exec['install-elasticsearch'], File['/etc/elasticsearch/elasticsearch.yml']],
-  }
-
-  exec { "install kopf":
-    cwd     => "/home/$user",
-    command => "sudo /usr/share/elasticsearch/bin/plugin -install lmenezes/elasticsearch-kopf",
-    require => Exec['install-elasticsearch']
+    require => [
+      Exec['install-elasticsearch'],
+      File['/etc/elasticsearch/elasticsearch.yml'],
+    ],
   }
 
   exec { "download-kibana4":
