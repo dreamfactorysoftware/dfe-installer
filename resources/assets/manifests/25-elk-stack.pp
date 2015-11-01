@@ -31,6 +31,7 @@ class elk( $root ) {
   }
 
   exec { "install-java8":
+    cwd     => $root,
     command => "add-apt-repository -y ppa:webupd8team/java && sudo apt-get update && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -y install oracle-java8-installer",
     require => Class["bootstrap"]
   }
@@ -38,6 +39,7 @@ class elk( $root ) {
   exec { "install-elasticsearch":
     unless  => 'service elasticsearch status',
     command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http: //packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -yq install elasticsearch",
+    cwd     => $root,
   }
 
   # custom configuration
