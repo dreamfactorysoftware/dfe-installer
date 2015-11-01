@@ -42,7 +42,7 @@ class elk( $root ) {
     ensure  => running,
     require => [
       Exec['install-elasticsearch'],
-      File['/etc/elasticsearch/elasticsearch.yml'],
+      #File['/etc/elasticsearch/elasticsearch.yml'],
     ],
   }
 
