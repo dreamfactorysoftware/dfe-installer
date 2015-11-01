@@ -18,7 +18,7 @@ exec { 'apt-get update':
 
 ##  ELK stack installer
 class elk( $root ) {
-  file { ["/opt/sites", "/opt/sites/kibana", "/opt/sites/test"]:
+  file { ["/opt/sites", "/opt/sites/kibana", "/opt/sites/test", "/opt/sites/_releases", "/opt/sites/_releases/kibana"]:
     ensure  => directory,
     owner   => $www_user,
     group   => $group,
@@ -57,16 +57,20 @@ class elk( $root ) {
   }
 
   exec { "download-kibana4":
-    cwd     => "/opt/sites/kibana",
+    cwd     => "/opt/sites/_releases/kibana",
     command => "wget https://download.elastic.co/kibana/kibana/kibana-4.2.0-linux-x64.tar.gz",
-    creates => "/opt/sites/kibana/kibana-4.2.0-linux-x64.tar.gz",
+    creates => "/opt/sites/_releases/kibana/kibana-4.2.0-linux-x64.tar.gz",
   }
 
   exec { "install-kibana4":
     # unless => 'service logstash status',
-    cwd     => "/opt/sites/kibana",
-    command => "tar xvfz kibana-4.2.0-linux-x64.tar.gz && mv /opt/sites/kibana/kibana*64/* /opt/sites/kibana",
+    cwd     => "/opt/sites/_releases/kibana",
+    command => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
     require => Exec["download-kibana4"],
+  }->
+  file { "/opt/sites/kibana":
+    ensure => link,
+    target => "/opt/sites/_releases/kibana/kibana-4.2.0-linux-x64",
   }
 
   exec { "download-logstash":
