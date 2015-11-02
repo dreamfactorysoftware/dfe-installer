@@ -85,6 +85,8 @@ class elk( $root ) {
   exec { "install-kibana4":
     # unless => 'service logstash status',
     cwd     => "/opt/sites/_releases/kibana",
+    user    => $www_user,
+    group   => $group,
     command => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
     require => Exec["download-kibana4"],
   }->
