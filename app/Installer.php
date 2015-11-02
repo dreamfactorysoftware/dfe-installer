@@ -67,6 +67,8 @@ class Installer
         'mount_point'    => '/data',
         'storage_path'   => '/storage',
         'log_path'       => '/data/logs',
+        'dc_host'        => 'localhost',
+        'dc_port'        => 12202,
         'requirements'   => [],
     ];
 
