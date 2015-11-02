@@ -103,9 +103,10 @@ class elk( $root ) {
     ensure  => file,
     content => $_logstashConfig,
   }->
-  exec { "install-logstash":
+  exec { "restart-logstash":
     cwd     => "/etc/logstash",
     command => "/etc/init.d/logstash restart",
+    cwd     => $root,
   }
 
 
