@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.10 2015-10-29 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.11 2015-11-01 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.10
+VERSION=1.1.11
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/assets/manifests
 ENV_FILE=./storage/.env-install
@@ -113,6 +113,7 @@ export FACTER_RUN_USER=${USER}
 export FACTER_LOG_USER=ubuntu
 export FACTER_STATIC_ZONE_NAME=local
 export FACTER_INSTALL_HOSTNAME=`/bin/hostname`
+export FACTER_VENDOR_ID=dfe
 
 ## Needs to match DB name in dfe_local.schema.sql
 export FACTER_DB_NAME=dfe_local
@@ -149,7 +150,8 @@ export FACTER_INSTANCE_BRANCH=master
 
 ## Blanks filled in by .env-install
 export FACTER_ADMIN_EMAIL FACTER_ADMIN_PWD
-export FACTER_MOUNT_POINT FACTER_DOMAIN FACTER_GH_USER FACTER_GH_PWD
+export FACTER_MOUNT_POINT FACTER_DOMAIN
+export FACTER_DC_HOST FACTER_DC_PORT FACTER_DC_INDEX_TYPE FACTER_ES_CLUSTER
 
 ## Rotate log
 #[ -f "${LOG_FILE}" ] && mv "${LOG_FILE}" "${LOG_FILE}.1"
@@ -173,11 +175,11 @@ export FACTER_STORAGE_USER=${FACTER_USER}
 export FACTER_STORAGE_PATH=${FACTER_MOUNT_POINT}/${FACTER_STORAGE_PATH}
 export FACTER_TRASH_PATH=${FACTER_MOUNT_POINT}/trash
 export FACTER_SSL_CERT_STUB=$(echo ${FACTER_DOMAIN} | tr '.' '-')
+export FACTER_DC_INDEX_TYPE="cluster-${FACTER_VENDOR_ID}"
 
 ## Repositories from which to pull
-export FACTER_GITHUB_USER_INFO=${FACTER_GH_USER}\:${FACTER_GH_PWD}\@
-export FACTER_CONSOLE_REPO="https://${FACTER_GITHUB_USER_INFO}github.com/dreamfactorysoftware/dfe-console.git"
-export FACTER_DASHBOARD_REPO="https://${FACTER_GITHUB_USER_INFO}github.com/dreamfactorysoftware/dfe-dashboard.git"
+export FACTER_CONSOLE_REPO="https://github.com/dreamfactorysoftware/dfe-console.git"
+export FACTER_DASHBOARD_REPO="https://github.com/dreamfactorysoftware/dfe-dashboard.git"
 export FACTER_INSTANCE_REPO="https://github.com/dreamfactorysoftware/dreamfactory.git"
 
 ## Mail
