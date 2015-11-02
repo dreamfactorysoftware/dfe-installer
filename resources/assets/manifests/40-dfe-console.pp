@@ -46,6 +46,8 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
       "DFE_HOSTED_BASE_PATH"                       => $storage_path,
       "DFE_SNAPSHOT_TRASH_PATH"                    => $trash_path,
       "DFE_CONSOLE_API_URL"                        => $_consoleApiUrl,
+      "DFE_AUDIT_HOST"                             => $dc_host,
+      "DFE_AUDIT_PORT"                             => $dc_port,
     }
   }
 

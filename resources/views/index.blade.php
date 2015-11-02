@@ -102,16 +102,16 @@
                 </div>
                 <div class="col-md-6">
                     <fieldset>
-                        <legend>GitHub Credentials</legend>
+                        <legend>Data Collection</legend>
                         <div class="form-group">
-                            <label for="gh-user">User Name (not email)</label>
-                            <input required type="text" class="form-control" id="gh-user" name="gh-user"
-                                   placeholder="username" value="{{ $gh_user }}">
+                            <label for="dc-host">Host Name</label>
+                            <input required type="text" class="form-control" id="dc-host" name="dc-host"
+                                   placeholder="localhost" value="{{ $dc_host }}">
                         </div>
                         <div class="form-group">
-                            <label for="gh-pwd">Password</label>
-                            <input required type="password" class="form-control" id="gh-pwd" name="gh-pwd"
-                                   placeholder="secret" value="{{ $gh_pwd }}">
+                            <label for="dc-port">Port</label>
+                            <input required type="text" class="form-control" id="dc-port" name="dc-port"
+                                   placeholder="12202" value="{{ $dc_port }}">
                         </div>
                     </fieldset>
                 </div>
