@@ -104,7 +104,6 @@ class elk( $root ) {
     content => $_logstashConfig,
   }->
   exec { "restart-logstash":
-    cwd     => "/etc/logstash",
     command => "/etc/init.d/logstash restart",
     cwd     => $root,
   }
