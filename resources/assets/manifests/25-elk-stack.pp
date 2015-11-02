@@ -18,6 +18,34 @@ exec { 'apt-get update':
   command => '/usr/bin/apt-get update'
 }
 
+$_logstashConfig = "input {
+  gelf {
+    type => \"$dc_index_type\"
+    port => $dc_port
+  }
+}
+
+filter {
+  if [content] != \"\" {
+    if [type] == \"$dc_index_type\" {
+       json {
+         source => \"content\"
+         target => \"payload\"
+         remove_field => [ \"__dfUI\" ]
+       }
+    }
+  }
+}
+
+output {
+  elasticsearch {
+    host => \"$dc_host\"
+    cluster => \"$es_cluster\"
+    protocol => \"http\"
+  }
+}
+"
+
 ##  ELK stack installer
 class elk( $root ) {
   file { ["/opt/sites", "/opt/sites/test", "/opt/sites/_releases", "/opt/sites/_releases/kibana"]:
@@ -65,32 +93,21 @@ class elk( $root ) {
     target => "/opt/sites/_releases/kibana/kibana-4.2.0-linux-x64",
   }
 
-  exec { "download-logstash":
-    cwd     => "/var/cache/apt/archives",
-    command => "wget https://download.elastic.co/logstash/logstash/packages/debian/logstash_2.0.0-1_all.deb",
-    creates => "/var/cache/apt/archives/logstash_2.0.0-1_all.deb",
-  }
-
   exec { "install-logstash":
     unless  => 'service logstash status',
-    cwd     => "/var/cache/apt/archives",
-    command => "dpkg -i logstash_2.0.0-1_all.deb && update-rc.d logstash defaults 95 10 && /etc/init.d/logstash restart",
-    require => Exec["download-logstash"]
-  }
-
-  ##  Cluster configuration
+    command => "echo 'deb http://packages.elastic.co/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -yq install logstash",
+    cwd     => $root,
+  }->
+    ##  Cluster configuration
   file { '/etc/logstash/conf.d/100-dfe-cluster.conf':
     ensure  => file,
-    content => epp(
-      "$pwd/resources/assets/etc/logstash/conf.d/100-dfe-cluster.conf.epp",
-      {
-        'dc_port'       => $dc_port,
-        'dc_index_type' => $dc_index_type,
-        'es_cluster'    => $es_cluster
-      }
-    ),
-    require => Exec["install-logstash"],
+    content => $_logstashConfig,
+  }->
+  exec { "install-logstash":
+    cwd     => "/etc/logstash",
+    command => "/etc/init.d/logstash restart",
   }
+
 
 }
 
