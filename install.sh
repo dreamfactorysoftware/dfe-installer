@@ -147,6 +147,7 @@ export FACTER_DB_NAME=dfe_local
 export FACTER_CONSOLE_BRANCH=develop
 export FACTER_DASHBOARD_BRANCH=develop
 export FACTER_INSTANCE_BRANCH=master
+export FACTER_ES_CLUSTER=elasticsearch
 
 ## Blanks filled in by .env-install
 export FACTER_ADMIN_EMAIL FACTER_ADMIN_PWD

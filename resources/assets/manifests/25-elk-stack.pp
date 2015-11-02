@@ -13,26 +13,6 @@ File { owner => 0, group => 0, mode => 0644, }
 
 Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
-$_logstashConfig = "input {
-  gelf {
-    type => \"$dc_index_type\"
-    port => $dc_port
-  }
-}
-
-filter {
-  if [content] != \"\" {
-    if [type] == \"$dc_index_type\" {
-       json {
-         source => \"content\"
-         target => \"payload\"
-         remove_field => [ \"__dfUI\" ]
-       }
-    }
-  }
-}
-"
-
 # ensure local apt cache index is up to date before beginning
 exec { 'apt-get update':
   command => '/usr/bin/apt-get update'
@@ -99,11 +79,19 @@ class elk( $root ) {
   }
 
   ##  Cluster configuration
-  file { "/etc/logstash/conf.d/10-dfe-cluster.conf":
-    ensure  => present,
-    content => $_logstashConfig,
-    require => Exec["install-logstash"]
+  file { '/etc/logstash/conf.d/100-dfe-cluster.conf':
+    ensure  => file,
+    content => epp(
+      "$pwd/resources/assets/etc/logstash/conf.d/100-dfe-cluster.conf.epp",
+      {
+        'dc_port'       => $dc_port,
+        'dc_index_type' => $dc_index_type,
+        'es_cluster'    => $es_cluster
+      }
+    ),
+    require => Exec["install-logstash"],
   }
+
 }
 
 class { elk:
