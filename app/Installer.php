@@ -134,6 +134,8 @@ class Installer
         //  Remove CSRF token
         array_forget($formData, '_token');
 
+        logger('Form data=' . print_r($formData, true));
+
         foreach ($formData as $_key => $_value) {
             $_value = trim($_value);
             $_cleanKey = trim(str_replace('-', '_', $_key));
