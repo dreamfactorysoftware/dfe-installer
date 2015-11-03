@@ -16,9 +16,9 @@ if ( false == str2bool($dfe_update)) {
   ## Classes
   ##------------------------------------------------------------------------------
 
-  class { "apt":
+  class { 'apt':
     update => {
-      frequency => "always"
+      frequency => 'daily'
     }
   }
 

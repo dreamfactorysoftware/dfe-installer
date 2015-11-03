@@ -13,6 +13,11 @@ File { owner => 0, group => 0, mode => 0644, }
 
 Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
+# ensure local apt cache index is up to date before beginning
+exec { 'apt-get update':
+  command => '/usr/bin/apt-get update'
+}
+
 $_logstashConfig = "input {
   gelf {
     type => \"$dc_index_type\"
@@ -31,12 +36,15 @@ filter {
     }
   }
 }
-"
 
-# ensure local apt cache index is up to date before beginning
-exec { 'apt-get update':
-  command => '/usr/bin/apt-get update'
+output {
+  elasticsearch {
+    host => \"$dc_host\"
+    cluster => \"$es_cluster\"
+    protocol => \"http\"
+  }
 }
+"
 
 ##  ELK stack installer
 class elk( $root ) {
@@ -77,6 +85,8 @@ class elk( $root ) {
   exec { "install-kibana4":
     # unless => 'service logstash status',
     cwd     => "/opt/sites/_releases/kibana",
+    user    => $www_user,
+    group   => $group,
     command => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
     require => Exec["download-kibana4"],
   }->
@@ -85,25 +95,25 @@ class elk( $root ) {
     target => "/opt/sites/_releases/kibana/kibana-4.2.0-linux-x64",
   }
 
-  exec { "download-logstash":
-    cwd     => "/var/cache/apt/archives",
-    command => "wget https://download.elastic.co/logstash/logstash/packages/debian/logstash_2.0.0-1_all.deb",
-    creates => "/var/cache/apt/archives/logstash_2.0.0-1_all.deb",
-  }
-
   exec { "install-logstash":
     unless  => 'service logstash status',
-    cwd     => "/var/cache/apt/archives",
-    command => "dpkg -i logstash_2.0.0-1_all.deb && update-rc.d logstash defaults 95 10 && /etc/init.d/logstash restart",
-    require => Exec["download-logstash"]
+    command => "echo 'deb http://packages.elastic.co/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -yq install logstash",
+    cwd     => $root,
+  }->
+    ##  Cluster configuration
+  file { '/etc/logstash/conf.d/100-dfe-cluster.conf':
+    ensure  => file,
+    content => $_logstashConfig,
+  }
+  
+  exec { "restart-logstash":
+    onlyif  => 'service logstash status',
+    command => "service logstash restart",
+    cwd     => $root,
+    require => Exec['install-logstash'],
   }
 
-  ##  Cluster configuration
-  file { "/etc/logstash/conf.d/10-dfe-cluster.conf":
-    ensure  => present,
-    content => $_logstashConfig,
-    require => Exec["install-logstash"]
-  }
+
 }
 
 class { elk:
