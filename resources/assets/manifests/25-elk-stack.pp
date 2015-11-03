@@ -119,13 +119,12 @@ class elk( $root ) {
   }
 
   exec { "install-logstash":
-    # unless => 'service logstash status',
+    unless  => 'service logstash status',
     cwd     => "$root/_releases/logstash",
     user    => $www_user,
     group   => $group,
     command => "dpkg -i logstash_2.0.0-1_all.deb",
     require => Exec['download-logstash'],
-    unless  => 'service logstash status',
   }
 
   # restart logstash service
@@ -146,6 +145,9 @@ class elk( $root ) {
 
 }
 
-class { elk:
-  root => '/opt/elk',
+##  Install ELK stack if requested
+if ( true == str2bool($dc_install_elk) ) {
+  class { elk:
+    root => '/opt/elk',
+  }
 }

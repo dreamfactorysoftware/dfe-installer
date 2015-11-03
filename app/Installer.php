@@ -70,7 +70,7 @@ class Installer
         'dc_host'        => 'localhost',
         'dc_port'        => 12202,
         'dc_es_cluster'  => 'elasticsearch',
-        'dc_install_elk' => false,
+        'dc_install_elk' => true,
         'requirements'   => [],
     ];
 
@@ -146,6 +146,10 @@ class Installer
 
                 case 'mount_point':
                     $_mountPoint = $_value = rtrim($_value, DIRECTORY_SEPARATOR);
+                    break;
+
+                case 'dc_install_elk':
+                    $_value = !empty($_value);
                     break;
             }
 
