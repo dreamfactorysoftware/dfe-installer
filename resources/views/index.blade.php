@@ -104,12 +104,20 @@
                     <fieldset>
                         <legend>Data Collection</legend>
                         <div class="form-group">
-                            <label for="dc-host">Host Name</label>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="dc-install-elk" name="dc-install-elk" type="checkbox" value="">Use existing ELK system?
+                                    <span class="help-block">If left unchecked, an ELK stack will be created on this system.</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="dc-host">ELK Server Host Name</label>
                             <input required type="text" class="form-control" id="dc-host" name="dc-host"
                                    placeholder="localhost" value="{{ $dc_host }}">
                         </div>
                         <div class="form-group">
-                            <label for="dc-port">Port</label>
+                            <label for="dc-port">ELK Server Port</label>
                             <input required type="text" class="form-control" id="dc-port" name="dc-port"
                                    placeholder="12202" value="{{ $dc_port }}">
                         </div>
