@@ -122,22 +122,21 @@ class elk( $root ) {
     cwd     => "$root/_releases/logstash",
     user    => $www_user,
     group   => $group,
-    command => "sudo dpkg -i logstash_2.0.0-1_all.deb",
+    command => "sudo /usr/bin/dpkg -i logstash_2.0.0-1_all.deb",
     require => Exec['download-logstash'],
-  }
-
-  # restart logstash service
-  service { "logstash":
-    ensure  => running,
-    require => Exec['install-logstash'],
   }
 
   ##  Cluster configuration
   file { '/etc/logstash/conf.d/100-dfe-cluster.conf':
     ensure  => file,
     content => $_logstashConfig,
-    notify  => Service['logstash'],
     require => Exec['install-logstash'],
+  }
+
+  # restart logstash service
+  service { "logstash":
+    ensure  => running,
+    require => File['/etc/logstash/conf.d/100-dfe-cluster.conf'],
   }
 
 }
