@@ -59,7 +59,7 @@ class elk( $root ) {
 
   file { [
     $root,
-    "$_installRoot/_releases",
+    "$root/_releases",
     "$root/_releases/kibana",
     "$root/_releases/logstash",
   ]:
@@ -101,7 +101,6 @@ class elk( $root ) {
   }
 
   exec { "install-kibana4":
-    # unless => 'service logstash status',
     cwd     => "$root/_releases/kibana",
     user    => $www_user,
     group   => $group,
@@ -121,7 +120,7 @@ class elk( $root ) {
   }
 
   exec { "install-logstash":
-    unless  => 'service logstash status',
+    #unless  => 'service logstash status',
     cwd     => "$root/_releases/logstash",
     user    => $www_user,
     group   => $group,
