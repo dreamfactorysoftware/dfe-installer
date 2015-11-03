@@ -134,7 +134,7 @@ class Installer
         //  Remove CSRF token
         array_forget($formData, '_token');
 
-        $formData['dc-es-exists'] = array_key_exists('dc-es-exists', $_cleanData) ? 'true' : 'false';
+        $formData['dc-es-exists'] = array_key_exists('dc-es-exists', $formData) ? 'true' : 'false';
 
         foreach ($formData as $_key => $_value) {
             $_value = trim($_value);
