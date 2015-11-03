@@ -137,7 +137,7 @@ class elk( $root ) {
     ensure  => file,
     content => $_logstashConfig,
     notify  => Service['logstash'],
-    require => Service['logstash'],
+    require => Exec['install-logstash'],
   }
 
 }
