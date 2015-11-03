@@ -81,5 +81,5 @@ table > td span.label {
 }
 
 fieldset > legend + p {
-    margin-bottom: 5px;
+    margin-top: -15px;
 }
