@@ -70,7 +70,7 @@ class Installer
         'dc_host'        => 'localhost',
         'dc_port'        => 12202,
         'dc_es_cluster'  => 'elasticsearch',
-        'dc_install_elk' => true,
+        'dc_es_exists'   => false,
         'requirements'   => [],
     ];
 
@@ -134,7 +134,7 @@ class Installer
         //  Remove CSRF token
         array_forget($formData, '_token');
 
-        logger('Form data=' . print_r($formData, true));
+        $formData['dc-es-exists'] = array_key_exists('dc-es-exists', $_cleanData) ? 'true' : 'false';
 
         foreach ($formData as $_key => $_value) {
             $_value = trim($_value);
@@ -148,10 +148,6 @@ class Installer
 
                 case 'mount_point':
                     $_mountPoint = $_value = rtrim($_value, DIRECTORY_SEPARATOR);
-                    break;
-
-                case 'dc_install_elk':
-                    $_value = !empty($_value) ? 'true' : 'false';
                     break;
             }
 
