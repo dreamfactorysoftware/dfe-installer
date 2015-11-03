@@ -149,12 +149,12 @@ class Installer
                     break;
 
                 case 'dc_install_elk':
-                    $_value = (1 == $_value ? 'true' : 'false');
+                    $_value = !empty($_value) ? 'true' : 'false';
                     break;
             }
 
             //  Dump non-empties into the source file
-            if (!empty($_value) && $_cleanKey == 'dc_install_elk') {
+            if (!empty($_value)) {
                 $_facterData['export FACTER_' . strtoupper($_cleanKey)] = $_value;
             }
 

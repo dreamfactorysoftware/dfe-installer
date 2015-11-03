@@ -107,7 +107,7 @@
                         <div class="form-group">
                             <div class="checkbox">
                                 <label>
-                                    <input id="dc-install-elk" name="dc-install-elk" type="checkbox" value="1" {{ $dc_install_elk ? 'checked' : '' }}>Use existing ELK system?
+                                    <input id="dc-install-elk" name="dc-install-elk" type="checkbox" value="true" {{ !$dc_install_elk ? 'checked' : '' }}>Use existing ELK system?
                                     <span class="help-block">If left unchecked, an ELK stack will be created on this system.</span>
                                 </label>
                             </div>
