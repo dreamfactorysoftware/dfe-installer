@@ -70,25 +70,27 @@ class elk( $root ) {
     recurse => true,
   }
 
-  ##  Java
-  exec { "install-java8":
-    command => "add-apt-repository -y ppa:webupd8team/java && sudo apt-get update && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -y install oracle-java8-installer",
-    cwd     => $root,
-  }
+  if ( $dc_es_exists ) {
+    ##  Java
+    exec { "install-java8":
+      command => "add-apt-repository -y ppa:webupd8team/java && sudo apt-get update && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -y install oracle-java8-installer",
+      cwd     => $root,
+    }
 
-  ##  Elasticsearch
-  exec { "install-elasticsearch":
-    unless  => 'service elasticsearch status',
-    command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -yq install elasticsearch",
-    cwd     => $root,
-  }
+    ##  Elasticsearch
+    exec { "install-elasticsearch":
+      unless  => 'service elasticsearch status',
+      command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -yq install elasticsearch",
+      cwd     => $root,
+    }
 
-  # restart elasticsearch service
-  service { "elasticsearch":
-    ensure  => running,
-    require => [
-      Exec['install-elasticsearch'],
-    ],
+    # restart elasticsearch service
+    service { "elasticsearch":
+      ensure  => running,
+      require => [
+        Exec['install-elasticsearch'],
+      ],
+    }
   }
 
   ##  Kibana
@@ -146,8 +148,6 @@ class elk( $root ) {
 }
 
 ##  Install ELK stack if requested
-if ( true == str2bool($dc_install_elk) ) {
-  class { elk:
-    root => '/opt/elk',
-  }
+class { elk:
+  root => '/opt/elk',
 }
