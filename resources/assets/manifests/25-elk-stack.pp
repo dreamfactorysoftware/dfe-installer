@@ -87,9 +87,7 @@ class elk( $root ) {
     # restart elasticsearch service
     service { "elasticsearch":
       ensure  => running,
-      require => [
-        Exec['install-elasticsearch'],
-      ],
+      require => Exec['install-elasticsearch'],
     }
   }
 
@@ -120,28 +118,26 @@ class elk( $root ) {
   }
 
   exec { "install-logstash":
-    #unless  => 'service logstash status',
+    unless  => 'service logstash status',
     cwd     => "$root/_releases/logstash",
     user    => $www_user,
     group   => $group,
-    command => "dpkg -i logstash_2.0.0-1_all.deb",
+    command => "sudo dpkg -i logstash_2.0.0-1_all.deb",
     require => Exec['download-logstash'],
   }
 
   # restart logstash service
   service { "logstash":
     ensure  => running,
-    require => [
-      Exec['install-logstash'],
-    ],
+    require => Exec['install-logstash'],
   }
 
   ##  Cluster configuration
   file { '/etc/logstash/conf.d/100-dfe-cluster.conf':
     ensure  => file,
     content => $_logstashConfig,
-    require => Exec['install-logstash'],
     notify  => Service['logstash'],
+    require => Service['logstash'],
   }
 
 }
