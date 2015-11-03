@@ -107,10 +107,15 @@
                         <div class="form-group">
                             <div class="checkbox">
                                 <label>
-                                    <input id="dc-install-elk" name="dc-install-elk" type="checkbox" value="">Use existing ELK system?
+                                    <input id="dc-install-elk" name="dc-install-elk" type="checkbox" value="1" @if($dc_install_elk)checked@endif }}>Use existing ELK system?
                                     <span class="help-block">If left unchecked, an ELK stack will be created on this system.</span>
                                 </label>
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="dc-es-cluster">Elasticsearch Cluster</label>
+                            <input required type="text" class="form-control" id="dc-es-cluster" name="dc-es-cluster"
+                                   placeholder="elasticsearch" value="{{ $dc_es_cluster }}">
                         </div>
                         <div class="form-group">
                             <label for="dc-host">ELK Server Host Name</label>

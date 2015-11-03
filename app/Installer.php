@@ -69,6 +69,8 @@ class Installer
         'log_path'       => '/data/logs',
         'dc_host'        => 'localhost',
         'dc_port'        => 12202,
+        'dc_es_cluster'  => 'elasticsearch',
+        'dc_install_elk' => true,
         'requirements'   => [],
     ];
 
