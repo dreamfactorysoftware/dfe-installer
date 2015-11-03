@@ -80,3 +80,6 @@ table > td span.label {
     color:          #dddddd;
 }
 
+fieldset > legend + p {
+    margin-bottom: 5px;
+}
