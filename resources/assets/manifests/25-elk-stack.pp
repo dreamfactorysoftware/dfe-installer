@@ -104,10 +104,13 @@ class elk( $root ) {
   file { '/etc/logstash/conf.d/100-dfe-cluster.conf':
     ensure  => file,
     content => $_logstashConfig,
-  }->
+  }
+  
   exec { "restart-logstash":
-    command => "/etc/init.d/logstash restart",
+    onlyif  => 'service logstash status',
+    command => "service logstash restart",
     cwd     => $root,
+    require => Exec['install-logstash'],
   }
 
 
