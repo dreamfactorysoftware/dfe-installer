@@ -88,7 +88,7 @@
                 <div class="col-md-6">
                     <fieldset>
                         <legend>Console <strong>Root</strong> Credentials</legend>
-                        <p>These credentials are used to create the first administrative user for the DreamFactory Enterprise&trade; Console</p>
+                        <p class="text-muted">These credentials are used to create the first administrative user for the DreamFactory Enterprise&trade; Console</p>
                         <div class="form-group">
                             <label for="admin-email">Email Address</label>
                             <input required type="email" class="form-control" id="admin-email" name="admin-email"
