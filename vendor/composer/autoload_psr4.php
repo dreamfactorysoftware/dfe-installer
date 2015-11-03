@@ -31,6 +31,7 @@ return array(
     'DreamFactory\\Library\\Utility\\' => array($vendorDir . '/dreamfactory/php-utils/src'),
     'DreamFactory\\Enterprise\\Installer\\' => array($baseDir . '/app'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
+    'Doctrine\\Common\\Cache\\' => array($vendorDir . '/doctrine/cache/lib/Doctrine/Common/Cache'),
     'ClassPreloader\\' => array($vendorDir . '/classpreloader/classpreloader/src'),
     'Barryvdh\\LaravelIdeHelper\\' => array($vendorDir . '/barryvdh/laravel-ide-helper/src'),
 );
