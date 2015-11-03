@@ -70,7 +70,7 @@ class Installer
         'dc_host'        => 'localhost',
         'dc_port'        => 12202,
         'dc_es_cluster'  => 'elasticsearch',
-        'dc_install_elk' => true,
+        'dc_install_elk' => false,
         'requirements'   => [],
     ];
 
