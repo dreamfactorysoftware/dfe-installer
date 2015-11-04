@@ -52,26 +52,28 @@ class Installer
      * @type array
      */
     protected $defaults = [
-        'user'           => 'dfadmin',
-        'group'          => 'dfadmin',
-        'storage_group'  => 'dfadmin',
-        'www_user'       => 'www-data',
-        'www_group'      => 'www-data',
-        'admin_email'    => null,
-        'admin_pwd'      => null,
+        'user' => 'dfadmin',
+        'group' => 'dfadmin',
+        'storage_group' => 'dfadmin',
+        'www_user' => 'www-data',
+        'www_group' => 'www-data',
+        'admin_email' => null,
+        'admin_pwd' => null,
         'mysql_root_pwd' => null,
-        'vendor_id'      => 'dfe',
-        'domain'         => null,
-        'gh_user'        => null,
-        'gh_pwd'         => null,
-        'mount_point'    => '/data',
-        'storage_path'   => '/storage',
-        'log_path'       => '/data/logs',
-        'dc_host'        => 'localhost',
-        'dc_port'        => 12202,
-        'dc_es_cluster'  => 'elasticsearch',
-        'dc_es_exists'   => false,
-        'requirements'   => [],
+        'vendor_id' => 'dfe',
+        'domain' => null,
+        'gh_user' => null,
+        'gh_pwd' => null,
+        'mount_point' => '/data',
+        'storage_path' => '/storage',
+        'log_path' => '/data/logs',
+        'dc_host' => 'localhost',
+        'dc_port' => 12202,
+        'dc_es_cluster' => 'elasticsearch',
+        'dc_es_exists' => false,
+        'gh_token' => null,
+        'token_name' => null,
+        'requirements' => [],
     ];
 
     //******************************************************************************
@@ -85,6 +87,7 @@ class Installer
 
         $this->outputFile = storage_path() . DIRECTORY_SEPARATOR . self::OUTPUT_FILE_NAME;
         $this->jsonFile = storage_path() . DIRECTORY_SEPARATOR . self::JSON_FILE_NAME;
+        $this->defaults['token_name'] = 'dfe-installer-on-' . getHostByName(getHostName()) . '-' . date('YmdHis');
 
         logger('Output files set to:');
         logger(' > shell source file ' . $this->outputFile);
@@ -105,7 +108,7 @@ class Installer
             }
         }
 
-        $this->getRequiredPackages();
+//        $this->getRequiredPackages();
     }
 
     /**
@@ -231,9 +234,9 @@ class Installer
             }
 
             $_requirements[$_name] = [
-                'name'        => $_name,
+                'name' => $_name,
                 'has-package' => $_hasPackage,
-                'status'      => $_hasPackage ? 'text-success' : 'text-danger',
+                'status' => $_hasPackage ? 'text-success' : 'text-danger',
             ];
         }
 

@@ -81,7 +81,8 @@ alias dir='ls -ahl'
 alias lvcc='sudo rm -rf /tmp/.df-* /var/www/console/storage/bootstrap/cache/* /var/www/dashboard/bootstrap/cache/* /var/www/launchpad/bootstrap/cache/*'
 alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service php5-fpm start ; sudo service nginx start'
 "
-  }->
+  }
+
   host { "localhost":
     ensure       => present,
     ip           => "127.0.0.1",
@@ -101,5 +102,13 @@ alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service 
     owner  => $user,
     group  => $group,
     mode   => 2775,
-  }
+  }->
+  file { "/home/$user/.composer/auth.json":
+    ensure => file,
+    owner  => $user,
+    group  => $group,
+    mode   => 0640,
+    content => "{\"github-oauth\": {\"github.com\": \"$gh_token\"}}",
+  }->
+
 }
