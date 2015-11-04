@@ -104,11 +104,11 @@ alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service 
     mode   => 2775,
   }->
   file { "/home/$user/.composer/auth.json":
-    ensure => file,
-    owner  => $user,
-    group  => $group,
-    mode   => 0640,
+    ensure  => file,
+    owner   => $user,
+    group   => $group,
+    mode    => 0640,
     content => "{\"github-oauth\": {\"github.com\": \"$gh_token\"}}",
-  }->
+  }
 
 }
