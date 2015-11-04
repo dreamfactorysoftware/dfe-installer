@@ -118,8 +118,10 @@
                         <legend>GitHub Token</legend>
                         <p class="text-muted">To avoid GitHub API Rating Limit issues during installation, please create
                             a personal access token on GitHub and enter it below. Click the link below to do this:<br/>
-                            <a href="https://github.com/settings/tokens/new?scopes=repo&description={{ $token_name }}"
-                               target="_blank">https://github.com/settings/tokens/new?scopes=repo&description={{ $token_name }}</a>
+                            <small>
+                                <a href="https://github.com/settings/tokens/new?scopes=repo&description={{ $token_name }}"
+                                   target="_blank">https://github.com/settings/tokens/new?scopes=repo&description={{ $token_name }}</a>
+                            </small>
                         </p>
 
                         <div class="form-group">
