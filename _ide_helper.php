@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.1.22 (LTS) on 2015-11-03.
+ * Generated for Laravel 5.1.23 (LTS) on 2015-11-04.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -6625,15 +6625,28 @@ namespace {
     class Lang extends \Illuminate\Support\Facades\Lang{
         
         /**
-         * Determine if a translation exists.
+         * Determine if a translation exists for a given locale.
          *
          * @param string $key
          * @param string $locale
          * @return bool 
          * @static 
          */
-        public static function has($key, $locale = null){
-            return \Illuminate\Translation\Translator::has($key, $locale);
+        public static function hasForLocale($key, $locale = null){
+            return \Illuminate\Translation\Translator::hasForLocale($key, $locale);
+        }
+        
+        /**
+         * Determine if a translation exists.
+         *
+         * @param string $key
+         * @param string $locale
+         * @param bool $fallback
+         * @return bool 
+         * @static 
+         */
+        public static function has($key, $locale = null, $fallback = true){
+            return \Illuminate\Translation\Translator::has($key, $locale, $fallback);
         }
         
         /**
@@ -6642,11 +6655,12 @@ namespace {
          * @param string $key
          * @param array $replace
          * @param string $locale
+         * @param bool $fallback
          * @return string 
          * @static 
          */
-        public static function get($key, $replace = array(), $locale = null){
-            return \Illuminate\Translation\Translator::get($key, $replace, $locale);
+        public static function get($key, $replace = array(), $locale = null, $fallback = true){
+            return \Illuminate\Translation\Translator::get($key, $replace, $locale, $fallback);
         }
         
         /**

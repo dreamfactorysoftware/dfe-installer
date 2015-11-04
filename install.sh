@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.13 2015-11-01 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.14 2015-11-03 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.13
+VERSION=1.1.14
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/assets/manifests
 ENV_FILE=./storage/.env-install
@@ -147,12 +147,11 @@ export FACTER_DB_NAME=dfe_local
 export FACTER_CONSOLE_BRANCH=develop
 export FACTER_DASHBOARD_BRANCH=develop
 export FACTER_INSTANCE_BRANCH=master
-export FACTER_ES_CLUSTER=elasticsearch
 
 ## Blanks filled in by .env-install
 export FACTER_ADMIN_EMAIL FACTER_ADMIN_PWD
 export FACTER_MOUNT_POINT FACTER_DOMAIN
-export FACTER_DC_HOST FACTER_DC_PORT FACTER_DC_INDEX_TYPE FACTER_ES_CLUSTER
+export FACTER_DC_HOST FACTER_DC_PORT FACTER_DC_INDEX_TYPE FACTER_DC_ES_CLUSTER FACTER_DC_ES_EXISTS
 
 ## Rotate log
 #[ -f "${LOG_FILE}" ] && mv "${LOG_FILE}" "${LOG_FILE}.1"

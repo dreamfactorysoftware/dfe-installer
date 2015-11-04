@@ -88,6 +88,7 @@
                 <div class="col-md-6">
                     <fieldset>
                         <legend>Console <strong>Root</strong> Credentials</legend>
+                        <p class="text-muted">These credentials are used to create the first administrative user for the DreamFactory Enterprise&trade; Console</p>
                         <div class="form-group">
                             <label for="admin-email">Email Address</label>
                             <input required type="email" class="form-control" id="admin-email" name="admin-email"
@@ -104,12 +105,25 @@
                     <fieldset>
                         <legend>Data Collection</legend>
                         <div class="form-group">
-                            <label for="dc-host">Host Name</label>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="dc-es-exists" name="dc-es-exists" type="checkbox" value="" {{ $dc_es_exists ? 'checked' : '' }}>Use existing ELK system?
+                                    <span class="help-block">If left unchecked, an ELK stack will be created on this system.</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="dc-es-cluster">Elasticsearch Cluster</label>
+                            <input required type="text" class="form-control" id="dc-es-cluster" name="dc-es-cluster"
+                                   placeholder="elasticsearch" value="{{ $dc_es_cluster }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="dc-host">ELK Server Host Name</label>
                             <input required type="text" class="form-control" id="dc-host" name="dc-host"
                                    placeholder="localhost" value="{{ $dc_host }}">
                         </div>
                         <div class="form-group">
-                            <label for="dc-port">Port</label>
+                            <label for="dc-port">ELK Server Port</label>
                             <input required type="text" class="form-control" id="dc-port" name="dc-port"
                                    placeholder="12202" value="{{ $dc_port }}">
                         </div>

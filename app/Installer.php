@@ -69,6 +69,8 @@ class Installer
         'log_path'       => '/data/logs',
         'dc_host'        => 'localhost',
         'dc_port'        => 12202,
+        'dc_es_cluster'  => 'elasticsearch',
+        'dc_es_exists'   => false,
         'requirements'   => [],
     ];
 
@@ -131,6 +133,8 @@ class Installer
 
         //  Remove CSRF token
         array_forget($formData, '_token');
+
+        $formData['dc-es-exists'] = array_key_exists('dc-es-exists', $formData) ? 'true' : 'false';
 
         foreach ($formData as $_key => $_value) {
             $_value = trim($_value);
