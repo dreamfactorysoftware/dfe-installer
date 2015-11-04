@@ -193,7 +193,7 @@ class { laravelDirectories:
   group => $group,
 }->
 exec { 'composer-update':
-  command     => "$composer_bin update --quiet --no-interaction --no-dev",
+  command     => "$composer_bin update --quiet --no-interaction --prefer-source",
   user        => $user,
   provider    => shell,
   cwd         => $instance_root,
