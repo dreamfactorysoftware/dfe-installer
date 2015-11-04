@@ -87,7 +87,7 @@ class Installer
 
         $this->outputFile = storage_path() . DIRECTORY_SEPARATOR . self::OUTPUT_FILE_NAME;
         $this->jsonFile = storage_path() . DIRECTORY_SEPARATOR . self::JSON_FILE_NAME;
-        $this->defaults['token_name'] = 'dfe-installer-on-' . getHostByName(getHostName()) . '-' . date('YmdHis');
+        $this->defaults['token_name'] = 'dfe-installer-on-' . gethostname() . '-' . date('YmdHis');
 
         logger('Output files set to:');
         logger(' > shell source file ' . $this->outputFile);
