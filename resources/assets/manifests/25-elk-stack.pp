@@ -73,6 +73,7 @@ class installElasticsearch( $root ) {
     # restart elasticsearch service
     service { "elasticsearch":
       ensure  => running,
+      enable  => true,
       require => Exec['install-elasticsearch'],
     }
   }
@@ -87,17 +88,21 @@ class installLogstash( $root ) {
     unless  => 'service logstash status',
     command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -yq install logstash",
     cwd     => $root,
-  }->
-    ##  Cluster configuration
-  file { '/etc/logstash/conf.d/100-dfe-cluster.conf':
-    ensure  => file,
-    content => $_logstashConfig,
   }
 
   # restart logstash service
   service { "logstash":
     ensure  => running,
+    enable  => true,
     require => Exec['install-logstash'],
+  }
+
+  ##  Cluster configuration
+  file { '/etc/logstash/conf.d/100-dfe-cluster.conf':
+    ensure  => file,
+    content => $_logstashConfig,
+    require => Exec['install-logstash'],
+    notify  => Service['logstash'],
   }
 
 }
