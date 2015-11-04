@@ -31,7 +31,7 @@ filter {
 output {
   elasticsearch {
     host => \"$dc_host\"
-    cluster => \"$es_cluster\"
+    cluster => \"$dc_es_cluster\"
     protocol => \"http\"
   }
 }
