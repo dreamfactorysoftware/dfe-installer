@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.15 2015-11-04 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.16 2015-11-04 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.15
+VERSION=1.1.16
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/assets/manifests
 ENV_FILE=./storage/.env-install
@@ -123,6 +123,7 @@ export FACTER_DB_DRIVER=mysql
 export FACTER_DOC_ROOT_BASE_PATH=/var/www
 export FACTER_SERVER_CONFIG_PATH="${FACTER_DOC_ROOT_BASE_PATH}/launchpad/server/config"
 export FACTER_RELEASE_PATH="${FACTER_DOC_ROOT_BASE_PATH}/_releases"
+export FACTER_ELK_STACK_ROOT=/opt/elk
 
 export FACTER_CONSOLE_ROOT="${FACTER_DOC_ROOT_BASE_PATH}/console"
 export FACTER_DASHBOARD_ROOT="${FACTER_DOC_ROOT_BASE_PATH}/dashboard"

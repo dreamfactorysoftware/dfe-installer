@@ -107,41 +107,25 @@ class installLogstash( $root ) {
 
 }
 
-##  ELK stack installer
-class elk( $root ) {
+## Download and install Kibana
+class installKibana( $root ) {
 
-  file { [
-    $root,
-    "$root/_releases",
-    "$root/_releases/kibana",
-    "$root/_releases/logstash",
-  ]:
-    ensure  => directory,
-    owner   => $www_user,
-    group   => $group,
-    mode    => 2755,
-    recurse => true,
-  }
+  ##
+  ##  Kibana (v4.2.x not available on PPA as of 2015-11-03 hence the tarball)
+  ##
 
-
-  class { installElasticsearch:
-    root => $root,
-  }->
-  class { installLogstash:
-    root => $root,
-  }->
-    ##  Kibana
-  exec { "download-kibana4":
+  exec { "download-kibana":
     cwd     => "$root/_releases/kibana",
     command => "wget https://download.elastic.co/kibana/kibana/kibana-4.2.0-linux-x64.tar.gz",
     creates => "$root/_releases/kibana/kibana-4.2.0-linux-x64.tar.gz",
   }
-  exec { "install-kibana4":
+
+  exec { "install-kibana":
     cwd     => "$root/_releases/kibana",
     user    => $www_user,
     group   => $group,
     command => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
-    require => Exec["download-kibana4"],
+    require => Exec["download-kibana"],
   }->
   file { "$root/kibana":
     ensure => link,
@@ -150,7 +134,34 @@ class elk( $root ) {
 
 }
 
+##  ELK stack installer
+class elk( $root ) {
+
+  file { [
+    $root,
+    "$root/_releases",
+    "$root/_releases/kibana",
+  ]:
+    ensure  => directory,
+    owner   => $www_user,
+    group   => $group,
+    mode    => 2755,
+    recurse => true,
+  }
+
+  class { installElasticsearch:
+    root => $root,
+  }->
+  class { installLogstash:
+    root => $root,
+  }->
+  class { installKibana:
+    root => $root,
+  }
+
+}
+
 ##  Install ELK stack if requested
 class { elk:
-  root => '/opt/elk',
+  root => $elk_stack_root,
 }

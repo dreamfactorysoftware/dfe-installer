@@ -79,6 +79,66 @@
                 </div>
                 <div class="col-md-6">
                     <fieldset>
+                        <legend>MySQL <strong>Root</strong> Password</legend>
+                        <p class="text-muted">This installer creates a local MySQL database. This password will be the
+                            <strong>root</strong> password for that database.</p>
+
+                        <div class="form-group">
+                            <label for="mysql-root-pwd">MySQL Root Password</label>
+                            <input required type="password" class="form-control" id="mysql-root-pwd"
+                                   name="mysql-root-pwd"
+                                   placeholder="secret" value="{{ $mysql_root_pwd }}">
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <fieldset>
+                        <legend>GitHub Token</legend>
+                        <p class="text-muted">To avoid GitHub API Rating Limit issues during installation, please create
+                            a personal access token on GitHub and enter it below. Click the link below to do this:<br/>
+                            <small>
+                                <a href="https://github.com/settings/tokens/new?scopes=repo&description={{ $token_name }}"
+                                   target="_blank">https://github.com/settings/tokens/new?scopes=repo&description={{ $token_name }}</a>
+                            </small>
+                        </p>
+
+                        <div class="form-group">
+                            <label for="gh-token">OAuth Token</label>
+                            <input required type="password" class="form-control" id="gh-token"
+                                   name="gh-token"
+                                   placeholder="token" value="{{ $gh_token }}">
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="col-md-6">
+                    <fieldset>
+                        <legend>DNS</legend>
+                        <p class="text-muted">This is the zone and domain of this cluster. This will be the subdomain of
+                            all instances provisioned on this cluster.</p>
+
+                        <div class="form-group">
+                            <label for="vendor-id">Subdomain/Zone</label>
+                            <input required type="text" class="form-control" id="vendor-id" name="vendor-id"
+                                   placeholder="zone"
+                                   value="{{ $vendor_id }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="domain">Top-level Domain</label>
+                            <input required type="text" class="form-control" id="domain" name="domain"
+                                   placeholder="yourdomain.com"
+                                   value="{{ $domain }}">
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 col-sm-8 col-xs-12">
+                    <fieldset>
                         <legend>Data Storage</legend>
                         <p class="text-muted">DFE uses a single directory, or mount point, to house its provisioned
                             storage. This can be a local disk or mount point. The defaults are adequate.</p>
@@ -110,66 +170,6 @@
                         </div>
                     </fieldset>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <fieldset>
-                        <legend>GitHub Token</legend>
-                        <p class="text-muted">To avoid GitHub API Rating Limit issues during installation, please create
-                            a personal access token on GitHub and enter it below. Click the link below to do this:<br/>
-                            <small>
-                                <a href="https://github.com/settings/tokens/new?scopes=repo&description={{ $token_name }}"
-                                   target="_blank">https://github.com/settings/tokens/new?scopes=repo&description={{ $token_name }}</a>
-                            </small>
-                        </p>
-
-                        <div class="form-group">
-                            <label for="gh-token">OAuth Token</label>
-                            <input required type="password" class="form-control" id="gh-token"
-                                   name="gh-token"
-                                   placeholder="token" value="{{ $gh_token }}">
-                        </div>
-                    </fieldset>
-                </div>
-
-                <div class="col-md-6">
-                    <fieldset>
-                        <legend>MySQL <strong>Root</strong> Password</legend>
-                        <p class="text-muted">This installer creates a local MySQL database. This password will be the
-                            <strong>root</strong> password for that database.</p>
-
-                        <div class="form-group">
-                            <label for="mysql-root-pwd">MySQL Root Password</label>
-                            <input required type="password" class="form-control" id="mysql-root-pwd"
-                                   name="mysql-root-pwd"
-                                   placeholder="secret" value="{{ $mysql_root_pwd }}">
-                        </div>
-                    </fieldset>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 col-sm-8 col-xs-12">
-                    <fieldset>
-                        <legend>DNS</legend>
-                        <p class="text-muted">This is the zone and domain of this cluster. This will be the subdomain of
-                            all instances provisioned on this cluster.</p>
-
-                        <div class="form-group">
-                            <label for="vendor-id">Subdomain/Zone</label>
-                            <input required type="text" class="form-control" id="vendor-id" name="vendor-id"
-                                   placeholder="zone"
-                                   value="{{ $vendor_id }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="domain">Top-level Domain</label>
-                            <input required type="text" class="form-control" id="domain" name="domain"
-                                   placeholder="yourdomain.com"
-                                   value="{{ $domain }}">
-                        </div>
-                    </fieldset>
-                </div>
 
                 <div class="col-md-6 col-sm-8 col-xs-12">
                     <fieldset>
@@ -183,7 +183,8 @@
                             <div class="checkbox">
                                 <label>
                                     <input id="dc-es-exists" name="dc-es-exists" type="checkbox"
-                                           value="" {{ $dc_es_exists ? 'checked' : '' }}>Use existing ELK stack?
+                                           value="" {{ true === $dc_es_exists ? 'checked="checked"' : null }}>Use
+                                    existing ELK stack?
                                     <span class="help-block">If left unchecked, an ELK stack will be created on this system.</span>
                                 </label>
                             </div>
@@ -191,17 +192,20 @@
                         <div class="form-group">
                             <label for="dc-es-cluster">Elasticsearch Cluster</label>
                             <input required type="text" class="form-control" id="dc-es-cluster" name="dc-es-cluster"
-                                   placeholder="elasticsearch" value="{{ $dc_es_cluster }}">
+                                   placeholder="elasticsearch"
+                                   value="{{ $dc_es_cluster }}" {{ false === $dc_es_exists ? 'disabled="disabled"' : null }}>
                         </div>
                         <div class="form-group">
                             <label for="dc-host">Elasticsearch Server Host Name</label>
                             <input required type="text" class="form-control" id="dc-host" name="dc-host"
-                                   placeholder="localhost" value="{{ $dc_host }}">
+                                   placeholder="localhost"
+                                   value="{{ $dc_host }}" {{ false === $dc_es_exists ? 'disabled="disabled"' : null }}>
                         </div>
                         <div class="form-group">
                             <label for="dc-port">Elasticsearch Server Port</label>
                             <input required type="text" class="form-control" id="dc-port" name="dc-port"
-                                   placeholder="12202" value="{{ $dc_port }}">
+                                   placeholder="12202"
+                                   value="{{ $dc_port }}" {{ false === $dc_es_exists ? 'disabled="disabled"' : null }}>
                         </div>
                     </fieldset>
                 </div>
@@ -214,4 +218,30 @@
             </div>
         </form>
     </section>
+
+    <script>
+        jQuery(function ($) {
+            var $_checkbox = $('#dc-es-exists'), $_dcHost = $('#dc-host'), $_domain = $('#domain'), $_zone = $('#vendor-id');
+            var _lastHost = $_dcHost.val();
+
+            //  Set the reporting host name the same as the console if we are installing ELK
+            $('#vendor-id, #domain').on('change', function (e) {
+                if (!$_checkbox.prop('checked')) {
+                    if (_lastHost == $_dcHost.val()) {
+                        $_dcHost.val(_lastHost = '{{ $console_host_name }}.' + $_zone.val() + '.' + $_domain.val());
+                    }
+                }
+            });
+
+            //  Enable/disable ES entries if we are not installing ELK
+            $_checkbox.on('change', function (e) {
+                if (this.prop('checked')) {
+                    $('#dc-es-cluster, #dc-host, #dc-port').removeAttr('disabled').removeClass('disabled').removeAttr('required');
+                    $_dcHost.val('');
+                } else {
+                    $('#dc-es-cluster, #dc-host, #dc-port').attr('disabled', 'disabled').prop('required', true);
+                }
+            });
+        });
+    </script>
 @stop
