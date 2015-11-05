@@ -52,28 +52,32 @@ class Installer
      * @type array
      */
     protected $defaults = [
-        'user' => 'dfadmin',
-        'group' => 'dfadmin',
-        'storage_group' => 'dfadmin',
-        'www_user' => 'www-data',
-        'www_group' => 'www-data',
-        'admin_email' => null,
-        'admin_pwd' => null,
-        'mysql_root_pwd' => null,
-        'vendor_id' => 'dfe',
-        'domain' => null,
-        'gh_user' => null,
-        'gh_pwd' => null,
-        'mount_point' => '/data',
-        'storage_path' => '/storage',
-        'log_path' => '/data/logs',
-        'dc_host' => 'localhost',
-        'dc_port' => 12202,
-        'dc_es_cluster' => 'elasticsearch',
-        'dc_es_exists' => false,
-        'gh_token' => null,
-        'token_name' => null,
-        'requirements' => [],
+        'user'                => 'dfadmin',
+        'group'               => 'dfadmin',
+        'storage_group'       => 'dfadmin',
+        'www_user'            => 'www-data',
+        'www_group'           => 'www-data',
+        'admin_email'         => null,
+        'admin_pwd'           => null,
+        'mysql_root_pwd'      => null,
+        'vendor_id'           => 'dfe',
+        'domain'              => null,
+        'gh_user'             => null,
+        'gh_pwd'              => null,
+        'mount_point'         => '/data',
+        'storage_path'        => '/storage',
+        'log_path'            => '/data/logs',
+        'dc_host'             => 'localhost',
+        'dc_port'             => 12202,
+        'dc_client_host'      => null,
+        'dc_client_port'      => 5601,
+        'dc_es_cluster'       => 'elasticsearch',
+        'dc_es_exists'        => false,
+        'gh_token'            => null,
+        'token_name'          => null,
+        'console_host_name'   => 'console',
+        'dashboard_host_name' => 'dashboard',
+        'requirements'        => [],
     ];
 
     //******************************************************************************
@@ -107,7 +111,6 @@ class Installer
                 logger('No prior values found to seed page. Defaults: ' . print_r($this->defaults, true));
             }
         }
-
 //        $this->getRequiredPackages();
     }
 
@@ -137,8 +140,23 @@ class Installer
         //  Remove CSRF token
         array_forget($formData, '_token');
 
+        //  Add in things that don't exist in form...
         $formData['dc-es-exists'] = array_key_exists('dc-es-exists', $formData) ? 'true' : 'false';
+        $formData['dc-es-cluster'] = array_get($formData, 'dc-es-cluster', $this->defaults['dc_es_cluster']);
+        $formData['dc-port'] = array_get($formData, 'dc-port', $this->defaults['dc_port']);
+        $formData['dc-client-port'] = array_get($formData, 'dc-client-port', $this->defaults['dc_client_port']);
 
+        //  Check for non-existent ELK
+        if (empty(array_get($formData, 'dc-host'))) {
+            $formData['dc-host'] = implode('.',
+                [
+                    $this->defaults['console_host_name'],
+                    trim(array_get($formData, 'vendor-id')),
+                    trim(array_get($formData, 'domain')),
+                ]);
+        }
+
+        //  Clean up the keys for factering
         foreach ($formData as $_key => $_value) {
             $_value = trim($_value);
             $_cleanKey = trim(str_replace('-', '_', $_key));
@@ -151,6 +169,11 @@ class Installer
 
                 case 'mount_point':
                     $_mountPoint = $_value = rtrim($_value, DIRECTORY_SEPARATOR);
+                    break;
+
+                case 'dc_host':
+                    //  Copy DC host to DC client host
+                    $_facterData['export FACTER_DC_CLIENT_HOST'] = $_value;
                     break;
             }
 
@@ -193,13 +216,15 @@ class Installer
         }
 
         //  Fix up fact data
-        $_facts = ['#!/bin/sh', PHP_EOL];
+        $_facts = [];
         foreach ($this->facterData as $_key => $_value) {
             $_facts[] = $_key . '=' . $_value;
         }
 
         //  Write out source file
-        if (false === file_put_contents($this->outputFile, implode(PHP_EOL, $_facts))) {
+        if (false === file_put_contents($this->outputFile,
+                '#!/bin/sh' . PHP_EOL . PHP_EOL . implode(PHP_EOL, $_facts) . PHP_EOL . PHP_EOL)
+        ) {
             throw new FileSystemException('Unable to write output file "' . $this->outputFile . '"');
         }
 
@@ -234,9 +259,9 @@ class Installer
             }
 
             $_requirements[$_name] = [
-                'name' => $_name,
+                'name'        => $_name,
                 'has-package' => $_hasPackage,
-                'status' => $_hasPackage ? 'text-success' : 'text-danger',
+                'status'      => $_hasPackage ? 'text-success' : 'text-danger',
             ];
         }
 
