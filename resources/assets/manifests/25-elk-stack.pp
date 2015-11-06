@@ -68,23 +68,25 @@ end script
 class installElasticsearch( $root ) {
   ##  Only install if requested
   if ( false == str2bool($dc_es_exists) ) {
-    ##  Java
-    exec { "install-java8":
-      command => "add-apt-repository -y ppa:webupd8team/java && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -qq update && sudo apt-get -y install oracle-java8-installer",
-      cwd     => $root,
-    }
+    if ( false == str2bool($dfe_update) ) {
+      ##  Java
+      exec { "install-java8":
+        command => "add-apt-repository -y ppa:webupd8team/java && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -qq update && sudo apt-get -y install oracle-java8-installer",
+        cwd     => $root,
+      }
 
-    ##  Elasticsearch
-    exec { "install-elasticsearch":
-      unless  => 'service elasticsearch status',
-      command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
-      cwd     => $root,
-      require => Exec['install-java8'],
-    }->
-    file_line { 'elasticsearch-force-ipv4':
-      path   => '/etc/default/elasticsearch',
-      line   => 'ES_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
-      match  => ".*ES_JAVA_OPTS.*",
+      ##  Elasticsearch
+      exec { "install-elasticsearch":
+        unless  => 'service elasticsearch status',
+        command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
+        cwd     => $root,
+        require => Exec['install-java8'],
+      }->
+      file_line { 'elasticsearch-force-ipv4':
+        path   => '/etc/default/elasticsearch',
+        line   => 'ES_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
+        match  => ".*ES_JAVA_OPTS.*",
+      }
     }
   }
 
@@ -98,11 +100,13 @@ class installElasticsearch( $root ) {
 
 ##  Logstash installer
 class installLogstash( $root ) {
-  ##  Logstash
-  exec { "install-logstash":
-    unless  => 'service logstash status',
-    command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
-    cwd     => $root,
+  if ( false == str2bool($dfe_update) ) {
+    ##  Logstash
+    exec { "install-logstash":
+      unless  => 'service logstash status',
+      command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
+      cwd     => $root,
+    }
   }
 
   # logstash service
