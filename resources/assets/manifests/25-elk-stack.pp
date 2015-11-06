@@ -13,6 +13,15 @@ Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 ## Variables
 ##------------------------------------------------------------------------------
 
+$_esConfig ="ES_USER=\"elasticsearch\"
+ES_GROUP=\"elasticsearch\"
+ES_MIN_MEM=\"256m\"
+ES_MAX_MEM=\"2g\"
+ES_JAVA_OPTS=\"-Djava.net.preferIPv4Stack=true\"
+
+export ES_MIN_MEM ES_MAX_MEM
+"
+
 $_logstashConfig = "input {
   gelf {
     type => \"${dc_index_type}\"
@@ -88,17 +97,20 @@ class installElasticsearch( $root ) {
         command => "cd /usr/share/elasticsearch/bin; sudo ./plugin install royrusso/elasticsearch-HQ",
         cwd     => $root,
         require => Exec['install-elasticsearch'],
-      }->
-      file_line { 'elasticsearch-force-ipv4':
-        path    => '/etc/default/elasticsearch',
-        line    => 'ES_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
-        match   => ".*ES_JAVA_OPTS.*",
       }
 
       # elasticsearch service
       service { "elasticsearch":
         ensure  => running,
         enable  => true,
+        require => Exec['install-elasticsearch'],
+      }
+
+      ##  ES configuration
+      file { '/etc/default/elasticsearch':
+        ensure  => file,
+        content => $_esConfig,
+        notify  => Service['elasticsearch'],
         require => Exec['install-elasticsearch-plugins'],
       }
     }
