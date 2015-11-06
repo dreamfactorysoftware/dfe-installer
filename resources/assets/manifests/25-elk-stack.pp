@@ -82,23 +82,25 @@ class installElasticsearch( $root ) {
         cwd     => $root,
         require => Exec['install-java8'],
       }->
+      file_line { 'elasticsearch-force-ipv4':
+        path   => '/etc/default/elasticsearch',
+        line   => 'ES_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
+        match  => ".*ES_JAVA_OPTS.*",
+      }
+
       exec { "install-elasticsearch-plugins":
-        command => "sudo ./plugin install royrusso/elasticsearch-HQ",
-        cwd     => '/usr/share/elasticsearch/bin',
+        user    => root,
+        command => "cd /usr/share/elasticsearch/bin; sudo ./plugin install royrusso/elasticsearch-HQ",
+        cwd     => $root,
+        require => Exec['install-elasticsearch'],
       }
 
       # elasticsearch service
       service { "elasticsearch":
         ensure  => running,
         enable  => true,
-        require => Exec['install-elasticsearch'],
+        require => Exec['install-elasticsearch-plugins'],
       }
-    }
-
-    file_line { 'elasticsearch-force-ipv4':
-      path   => '/etc/default/elasticsearch',
-      line   => 'ES_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
-      match  => ".*ES_JAVA_OPTS.*",
     }
   }
 }
