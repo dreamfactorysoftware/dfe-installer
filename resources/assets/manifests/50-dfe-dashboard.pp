@@ -204,11 +204,6 @@ exec { "composer-update":
 class { setupApp:
   root => $dashboard_root,
 }->
-class { laravelDirectories:
-  root  => $dashboard_root,
-  owner => $www_user,
-  group => $group,
-}->
 class { checkPermissions:
   root => $dashboard_root,
 }
