@@ -131,11 +131,12 @@ class installKibana( $root ) {
   }
 
   exec { "install-kibana":
-    cwd     => "$root/_releases/kibana",
-    user    => $www_user,
-    group   => $group,
-    command => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
-    require => Exec["download-kibana"],
+    cwd      => "$root/_releases/kibana",
+    user     => $www_user,
+    group    => $group,
+    command  => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
+    loglevel => error,
+    require  => Exec["download-kibana"],
   }->
   file { "$root/kibana":
     ensure => link,
@@ -186,6 +187,6 @@ class elk( $root ) {
 
 ##  Install ELK stack if requested
 class { elk:
-  root => $elk_stack_root,
+  root   => $elk_stack_root,
   notify => Service['kibana']
 }
