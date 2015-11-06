@@ -6,8 +6,6 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] Configuring PHP runtime and web server', }
-stage { 'pre': before => Stage['main'], }
-stage { 'post': after => Stage['main'], }
 
 ##------------------------------------------------------------------------------
 ## Variables

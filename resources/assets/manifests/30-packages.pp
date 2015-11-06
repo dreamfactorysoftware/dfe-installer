@@ -7,7 +7,6 @@
 
 notify { 'announce-thyself': message => '[DFE] Updating system packages', }
 stage { 'pre': before => Stage['main'], }
-stage { 'post': after => Stage['main'], }
 
 ##------------------------------------------------------------------------------
 ## Variables
@@ -98,7 +97,6 @@ exec { 'update-exim-config':
 
 ## Install/update Composer
 exec { 'install-composer':
-  stage   => 'post',
   command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
   creates => $composer_bin,
   require => Package['curl']

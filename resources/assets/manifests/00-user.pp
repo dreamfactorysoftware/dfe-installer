@@ -7,7 +7,6 @@
 
 notify { 'announce-thyself': message => '[DFE] Creating required users and groups', }
 stage { 'pre': before => Stage['main'], }
-stage { 'post': after => Stage['main'], }
 
 ############
 ## Classes
@@ -116,7 +115,6 @@ alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service 
   }
 
   class { configureGitAuth:
-    stage   => 'post',
     root    => "/home/$user",
     token   => $token,
     require => User[$user],

@@ -6,20 +6,10 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] Install/update database software', }
-stage { 'pre': before => Stage['main'], }
-stage { 'post': after => Stage['main'], }
 
 ##------------------------------------------------------------------------------
 ## Classes
 ##------------------------------------------------------------------------------
-
-##  Keep up-to-date
-class { 'apt':
-  stage  => 'pre',
-  update => {
-    frequency => 'daily',
-  },
-}
 
 ##  Creates a database once the server is installed
 class createDatabase {

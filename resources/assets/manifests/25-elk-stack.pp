@@ -6,8 +6,6 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] The Mighty ELK', }
-stage { 'pre': before => Stage['main'], }
-stage { 'post': after => Stage['main'], }
 File { owner => 0, group => 0, mode => '0644', }
 Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 

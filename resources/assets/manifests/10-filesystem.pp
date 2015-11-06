@@ -6,8 +6,6 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] Creating required directory structure(s)', }
-stage { 'pre': before => Stage['main'], }
-stage { 'post': after => Stage['main'], }
 
 ############
 ## Classes

@@ -6,8 +6,6 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] Install/update instance software', }
-stage { 'pre': before => Stage['main'], }
-stage { 'post': after => Stage['main'], }
 
 ##------------------------------------------------------------------------------
 ## Classes
