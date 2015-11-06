@@ -166,13 +166,13 @@ class createEnvFile( $root, $source = ".env-dist" ) {
 ##------------------------------------------------------------------------------
 
 vcsrepo { "$dashboard_release/$dashboard_branch":
-  ensure   => latest,
+  ensure   => present,
   provider => git,
   source   => $dashboard_repo,
   user     => $user,
   owner    => $user,
   group    => $www_group,
-  branch   => $dashboard_branch,
+  revision => $dashboard_branch,
 }->
 file { $dashboard_root:
   ensure => link,
