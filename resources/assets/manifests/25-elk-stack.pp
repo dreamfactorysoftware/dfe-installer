@@ -105,6 +105,11 @@ class installLogstash( $root ) {
     unless  => 'service logstash status',
     command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
     cwd     => $root,
+  }->
+  file_line { 'logstash-force-ipv4':
+    path   => '/etc/default/logstash',
+    line   => 'LS_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
+    match  => ".*LS_JAVA_OPTS.*",
   }
 
   # logstash service
