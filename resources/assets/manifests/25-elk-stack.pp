@@ -132,7 +132,6 @@ class installKibana( $root ) {
     user     => $www_user,
     group    => $group,
     command  => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
-    loglevel => err,
     require  => Exec["download-kibana"],
   }->
   file { "$root/kibana":
@@ -147,10 +146,11 @@ class installKibana( $root ) {
     require => Exec['install-kibana'],
   }->
     ##  Kibana service
-  service { 'kibana':
-    ensure  => running,
-    enable  => true,
-    require => Exec['install-kibana'],
+  exec { 'restart-kibana':
+    user        => root,
+    command     => 'sudo service kibana restart',
+    cwd         => $root,
+    environment => ["HOME=/home/${user}"]
   }
 }
 
@@ -176,8 +176,7 @@ class elk( $root ) {
     root => $root,
   }->
   class { installKibana:
-    root     => $root,
-    loglevel => warning,
+    root => $root,
   }
 
 }
@@ -185,5 +184,5 @@ class elk( $root ) {
 ##  Install ELK stack if requested
 class { elk:
   root   => $elk_stack_root,
-  notify => Service['elasticsearch', 'logstash', 'kibana'],
+  notify => Service['elasticsearch', 'logstash'],
 }
