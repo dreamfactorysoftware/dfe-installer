@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: update.sh,v 1.1.21 2015-11-05 dweiner/jablan $
+# @(#)$Id: update.sh,v 1.1.22 2015-11-05 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
