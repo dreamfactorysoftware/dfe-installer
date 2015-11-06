@@ -69,7 +69,7 @@ class Installer
         'log_path'            => '/data/logs',
         'dc_host'             => 'localhost',
         'dc_port'             => 12202,
-        'dc_es_port'          => 5601,
+        'dc_es_port'          => 9200,
         'dc_client_host'      => null,
         'dc_client_port'      => 5601,
         'dc_es_cluster'       => 'elasticsearch',
