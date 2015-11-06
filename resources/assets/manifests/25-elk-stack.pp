@@ -13,6 +13,21 @@ Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 ## Variables
 ##------------------------------------------------------------------------------
 
+if true == str2bool($dfe_update)  {
+  $_kibanaCommand = 'restart'
+} else {
+  $_kibanaCommand = 'start'
+}
+
+$_esConfig ="ES_USER=\"elasticsearch\"
+ES_GROUP=\"elasticsearch\"
+ES_MIN_MEM=\"256m\"
+ES_MAX_MEM=\"2g\"
+ES_JAVA_OPTS=\"-Djava.net.preferIPv4Stack=true\"
+
+export ES_MIN_MEM ES_MAX_MEM
+"
+
 $_logstashConfig = "input {
   gelf {
     type => \"${dc_index_type}\"
@@ -68,37 +83,34 @@ end script
 class installElasticsearch( $root ) {
   ##  Only install if requested
   if ( false == str2bool($dc_es_exists) ) {
-    if ( false == str2bool($dfe_update) ) {
-      ##  Java
-      exec { "install-java8":
-        command => "add-apt-repository -y ppa:webupd8team/java && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -qq update && sudo apt-get -y install oracle-java8-installer",
-        cwd     => $root,
-      }
-
-      ##  Elasticsearch
-      exec { "install-elasticsearch":
-        unless  => 'service elasticsearch status',
-        command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
-        cwd     => $root,
-        require => Exec['install-java8'],
-      }->
-      exec { "install-elasticsearch-plugins":
-        command => "sudo ./plugin install royrusso/elasticsearch-HQ",
-        cwd     => '/usr/share/elasticsearch/bin',
-      }
-
-      # elasticsearch service
-      service { "elasticsearch":
-        ensure  => running,
-        enable  => true,
-        require => Exec['install-elasticsearch'],
-      }
+    ##  Java
+    exec { "install-java8":
+      command => "add-apt-repository -y ppa:webupd8team/java && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -qq update && sudo apt-get -y install oracle-java8-installer",
+      cwd     => $root,
     }
 
-    file_line { 'elasticsearch-force-ipv4':
-      path   => '/etc/default/elasticsearch',
-      line   => 'ES_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
-      match  => ".*ES_JAVA_OPTS.*",
+    ##  Elasticsearch
+    exec { "install-elasticsearch":
+      unless  => 'service elasticsearch status',
+      command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
+      cwd     => $root,
+      require => Exec['install-java8'],
+    }->
+    file { '/etc/default/elasticsearch':
+      ensure  => file,
+      content => $_esConfig,
+    }->
+    exec { "install-elasticsearch-plugins":
+      user    => root,
+      command => "sudo /usr/share/elasticsearch/bin/plugin install royrusso/elasticsearch-HQ",
+      cwd     => '/usr/share/elasticsearch/bin',
+    }
+
+    # elasticsearch service
+    service { "elasticsearch":
+      ensure  => running,
+      enable  => true,
+      require => Exec['install-elasticsearch'],
     }
   }
 }
@@ -165,9 +177,9 @@ class installKibana( $root ) {
   }->
     ##  Kibana service
   exec { 'restart-kibana':
-    command     => 'sudo service kibana restart',
+    unless      => 'service kibana status',
+    command     => "sudo service kibana $_kibanaCommand",
     cwd         => $root,
-    environment => ["HOME=/home/${user}"]
   }
 }
 
