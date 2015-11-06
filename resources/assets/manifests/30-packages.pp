@@ -5,59 +5,71 @@
 # Installs all required packages
 ################################################################################
 
-notify { 'announce-thyself':
-  message => '[DFE] Updating system packages',
-}
+notify { 'announce-thyself': message => '[DFE] Updating system packages', }
+Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
+stage { 'pre': before => Stage['main'], }
 
-$_basePackages = [
-  'nginx-extras',
-  'php5',
-  'php5-fpm',
-  'php5-mysql',
-  'php5-redis',
-  'php5-pgsql',
-  'php5-mongo',
-  'php5-ldap',
-  'php5-memcached',
-  'php5-sqlite',
-  'php5-dev',
-  'php5-mcrypt',
-  'php5-curl',
-  'php5-mssql',
-  'mongodb',
-  'zip',
-  'memcached',
-  'redis-server',
-  'git',
-  'openssl',
-  'curl',
-  'sqlite3',
-]
+##------------------------------------------------------------------------------
+## Classes
+##------------------------------------------------------------------------------
 
-$_removePackages = [
-  "apache2",
-  "apache2-bin",
-  "apache2-data",
-  "libapache2-mod-php5",
-]
+class updatePackages {
+  $_basePackages = [
+    'nginx-extras',
+    'php5',
+    'php5-fpm',
+    'php5-mysql',
+    'php5-redis',
+    'php5-pgsql',
+    'php5-mongo',
+    'php5-ldap',
+    'php5-memcached',
+    'php5-sqlite',
+    'php5-dev',
+    'php5-mcrypt',
+    'php5-curl',
+    'php5-mssql',
+    'mongodb',
+    'zip',
+    'memcached',
+    'redis-server',
+    'git',
+    'openssl',
+    'curl',
+    'sqlite3',
+  ]
 
-## If SMTP is local, then install postfix
-if ($smtp_host == "localhost") or ($smtp_host == "127.0.0.1") or ($smtp_host == "127.0.1.1") {
-  $_requiredPackages = union($_basePackages, [$preferred_mail_package])
-} else {
-  $_requiredPackages = $_basePackages
+  $_removePackages = [
+    "apache2",
+    "apache2-bin",
+    "apache2-data",
+    "libapache2-mod-php5",
+  ]
+
+  ## If SMTP is local, then install postfix
+  if ($smtp_host == "localhost") or ($smtp_host == "127.0.0.1") or ($smtp_host == "127.0.1.1") {
+    $_requiredPackages = union($_basePackages, [$preferred_mail_package])
+  } else {
+    $_requiredPackages = $_basePackages
+  }
+
+  package { $_requiredPackages:
+    ensure  => latest
+  }->
+  package { $_removePackages:
+    ensure  => absent
+  }
 }
 
 ##------------------------------------------------------------------------------
 ## Logic
 ##------------------------------------------------------------------------------
 
-package { $_requiredPackages:
-  ensure  => latest
-}->
-package { $_removePackages:
-  ensure => absent
-}->
+## Make this go first
+class { updatePackages:
+  stage => 'pre',
+}
+
 exec { 'enable-mcrypt-settings':
   command  => "$php_enmod_bin mcrypt",
   provider => posix
@@ -87,9 +99,10 @@ file_line { 'update-exim-other-host':
 exec { 'update-exim-config':
   command  => '/usr/sbin/update-exim4.conf',
   provider => posix,
-}->
+}
+
+## Install/update Composer
 exec { 'install-composer':
-  ## Install/update Composer
   command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
   creates => $composer_bin,
   require => Package['curl']

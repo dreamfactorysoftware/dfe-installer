@@ -5,9 +5,8 @@
 # Install dreamfactory/dfe-dashboard
 ################################################################################
 
-notify { 'announce-thyself':
-  message => '[DFE] Install/update dashboard software',
-}
+notify { 'announce-thyself': message => '[DFE] Install/update dashboard software', }
+Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
 ############
 ## Classes
@@ -16,7 +15,6 @@ notify { 'announce-thyself':
 ## A class that creates the directories required for a Laravel 5+ application.
 ## Permissions are set accordingly.
 class laravelDirectories( $root, $owner, $group, $mode = 2775 ) {
-
   file { [
     "$root/bootstrap",
   ]:
@@ -34,7 +32,7 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775 ) {
     "$root/storage/logs",
   ]:
     ensure => directory,
-    owner  => $www_user,
+    owner  => $owner,
     group  => $group,
     mode   => $mode,
   }
@@ -45,16 +43,13 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775 ) {
       command         => "rm -f $root/bootstrap/cache/services.json",
       user            => root,
       onlyif          => "test -f $root/bootstrap/cache/services.json",
-      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
     }->
     exec { "remove-compiled-classes":
       command         => "rm -f $root/bootstrap/cache/compiled.php",
       user            => root,
       onlyif          => "test -f $root/bootstrap/cache/compiled.php",
-      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
     }
   }
-
 }
 
 ## Defines the dashboard .env settings. Relies on FACTER_* data
@@ -95,14 +90,11 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
   }
 
   ## Update the .env file
-  if ( false == str2bool($dfe_update) ) {
-    create_ini_settings($_settings, $_env)
-  }
+  create_ini_settings($_settings, $_env)
 }
 
 ## Setup the app / composer update
 class setupApp( $root ) {
-
   if ( false == str2bool($dfe_update) ) {
     exec { "generate-app-key":
       command     => "$artisan key:generate",
@@ -110,84 +102,48 @@ class setupApp( $root ) {
       provider    => shell,
       cwd         => $root,
       environment => ["HOME=/home/$user"]
-    }->
-    exec { "append-api-keys":
-      command         => "cat $console_root/database/dfe/dashboard.env >> $root/.env",
-      user            => root,
-      onlyif          => "test -f $console_root/database/dfe/dashboard.env",
-      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
     }
   }
-
 }
 
-## Check file permissions
-class checkPermissions( $root ) {
-
+## Checks directory/file permissions
+class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
+  exec { 'chown-and-pwn':
+    user            => root,
+    command         => "chown -R ${www_user}:${group} ${root}/storage/ ${root}/bootstrap/cache/",
+    cwd             => $root,
+    environment     => ["HOME=/home/${user}"]
+  }->
   exec { 'chmod-storage':
-    command     => "find $root/storage -type d -exec chmod 2775 {} \\;",
-    provider    => shell,
-    cwd         => $root,
-    environment => ["HOME=/home/$user"]
+    user            => root,
+    command         => "find ${root}/storage -type d -exec chmod ${dir_mode} {} \\;",
+    onlyif          => "test -d ${root}/storage",
+    cwd             => $root,
+    environment     => ["HOME=/home/${user}"]
   }->
   exec { 'chmod-storage-files':
-    command     => "find $root/storage -type f -exec chmod 0664 {} \\;",
-    provider    => shell,
-    cwd         => $root,
-    environment => ["HOME=/home/$user"]
-  }->
-  exec { 'chmod-temp-df-log':
-    command         => "find /tmp/.df-log -type d -exec chmod 2775 {} \\;",
-    provider        => shell,
-    cwd             => $root,
-    onlyif          => "test -d /tmp/.df-log",
-    environment     => ["HOME=/home/$user"]
-  }->
-  exec { 'chmod-temp-df-cache':
-    command         => "find /tmp/.df-cache -type d -exec chmod 2775 {} \\;",
-    provider        => shell,
-    cwd             => $root,
-    onlyif          => "test -d /tmp/.df-cache",
-    environment     => ["HOME=/home/$user"]
-  }->
-  exec { 'chmod-temp-df-log-files':
-    command         => "find /tmp/.df-log -type f -exec chmod 0664 {} \\;",
-    provider        => shell,
-    cwd             => $root,
-    onlyif          => "test -d /tmp/.df-log",
-    environment     => ["HOME=/home/$user"]
-  }->
-  exec { 'chmod-temp-df-cache-files':
-    command         => "find /tmp/.df-cache -type f -exec chmod 0664 {} \\;",
-    provider        => shell,
-    cwd             => $root,
-    onlyif          => "test -d /tmp/.df-cache",
-    environment     => ["HOME=/home/$user"]
-  }->
-  exec { "check-cached-services":
-    command         => "chmod 0664 $root/bootstrap/cache/services.json && chown $www_user:$group $root/bootstrap/cache/services.json",
     user            => root,
-    onlyif          => "test -f $root/bootstrap/cache/services.json",
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+    command         => "find ${root}/storage -type f -exec chmod ${file_mode} {} \\;",
+    onlyif          => "test -d ${root}/storage",
+    cwd             => $root,
+    environment     => ["HOME=/home/${user}"]
   }->
-  exec { "check-compiled-classes":
-    command         => "chmod 0664 $root/bootstrap/cache/compiled.php && chown $www_user:$group $root/bootstrap/cache/compiled.php",
+  exec { "check-bootstrap-cache":
     user            => root,
-    onlyif          => "test -f $root/bootstrap/cache/compiled.php",
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+    command         => "chmod ${file_mode} ${root}/bootstrap/cache/* && chown ${www_user}:${group} ${root}/bootstrap/cache/*",
+    onlyif          => "test -f ${root}/bootstrap/cache/compiled.php",
+    cwd             => $root,
   }->
   exec { "check-storage-log-file":
-    command         => "chmod 0664 $root/storage/logs/laravel.log && chown $www_user:$group $root/storage/logs/laravel.log",
     user            => root,
+    command         => "chmod ${file_mode} ${root}/storage/logs/*.log && chown ${www_user}:${group} ${root}/storage/logs/*.log",
     onlyif          => "test -f $root/storage/logs/laravel.log",
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+    cwd             => $root,
   }
-
 }
 
 ##  Create an environment file
 class createEnvFile( $root, $source = ".env-dist" ) {
-
   ##  On new installs only
   if ( false == str2bool($dfe_update) ) {
     file { "${root}/.env":
@@ -196,9 +152,13 @@ class createEnvFile( $root, $source = ".env-dist" ) {
       group  => $www_group,
       mode   => 0640,
       source => "${root}/${source}",
+    }->
+    exec { "append-api-keys":
+      command         => "cat $console_root/database/dfe/dashboard.env >> $root/.env",
+      user            => $user,
+      onlyif          => "test -f $console_root/database/dfe/dashboard.env",
     }
   }
-
 }
 
 ##------------------------------------------------------------------------------
@@ -234,7 +194,7 @@ class { laravelDirectories:
   group => $group,
 }->
 exec { "composer-update":
-  command     => "$composer_bin update --quiet --no-interaction",
+  command     => "$composer_bin update",
   user        => $user,
   provider    => shell,
   cwd         => $dashboard_root,
