@@ -90,15 +90,14 @@ class installElasticsearch( $root ) {
       cwd     => $root,
       require => Exec['install-java8'],
     }->
-    exec { "install-elasticsearch-plugins":
-      user    => root,
-      command => "cd /usr/share/elasticsearch/bin; sudo ./plugin install royrusso/elasticsearch-HQ",
-      cwd     => '/usr/share/elasticsearch/bin',
-    }->
     file { '/etc/default/elasticsearch':
       ensure  => file,
       content => $_esConfig,
-      notify  => Service['elasticsearch'],
+    }->
+    exec { "install-elasticsearch-plugins":
+      user    => root,
+      command => "sudo /usr/share/elasticsearch/bin/plugin install royrusso/elasticsearch-HQ",
+      cwd     => '/usr/share/elasticsearch/bin',
     }
 
     # elasticsearch service
