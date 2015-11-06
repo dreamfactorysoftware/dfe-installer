@@ -68,26 +68,38 @@ end script
 class installElasticsearch( $root ) {
   ##  Only install if requested
   if ( false == str2bool($dc_es_exists) ) {
-    ##  Java
-    exec { "install-java8":
-      command => "add-apt-repository -y ppa:webupd8team/java && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -qq update && sudo apt-get -y install oracle-java8-installer",
-      cwd     => $root,
+    if ( false == str2bool($dfe_update) ) {
+      ##  Java
+      exec { "install-java8":
+        command => "add-apt-repository -y ppa:webupd8team/java && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -qq update && sudo apt-get -y install oracle-java8-installer",
+        cwd     => $root,
+      }
+
+      ##  Elasticsearch
+      exec { "install-elasticsearch":
+        unless  => 'service elasticsearch status',
+        command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
+        cwd     => $root,
+        require => Exec['install-java8'],
+      }->
+      exec { "install-elasticsearch-plugins":
+        command => "sudo ./plugin install royrusso/elasticsearch-HQ",
+        cwd     => '/usr/share/elasticsearch/bin',
+      }
+
+      # elasticsearch service
+      service { "elasticsearch":
+        ensure  => running,
+        enable  => true,
+        require => Exec['install-elasticsearch'],
+      }
     }
 
-    ##  Elasticsearch
-    exec { "install-elasticsearch":
-      unless  => 'service elasticsearch status',
-      command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
-      cwd     => $root,
-      require => Exec['install-java8'],
+    file_line { 'elasticsearch-force-ipv4':
+      path   => '/etc/default/elasticsearch',
+      line   => 'ES_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
+      match  => ".*ES_JAVA_OPTS.*",
     }
-  }
-
-  # elasticsearch service
-  service { "elasticsearch":
-    ensure  => running,
-    enable  => true,
-    require => Exec['install-elasticsearch'],
   }
 }
 
@@ -98,6 +110,11 @@ class installLogstash( $root ) {
     unless  => 'service logstash status',
     command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
     cwd     => $root,
+  }->
+  file_line { 'logstash-force-ipv4':
+    path   => '/etc/default/logstash',
+    line   => 'LS_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
+    match  => ".*LS_JAVA_OPTS.*",
   }
 
   # logstash service
@@ -128,12 +145,12 @@ class installKibana( $root ) {
   }
 
   exec { "install-kibana":
-    cwd      => "$root/_releases/kibana",
-    user     => $www_user,
-    group    => $group,
-    command  => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
-    loglevel => err,
-    require  => Exec["download-kibana"],
+    user        => $www_user,
+    group       => $group,
+    cwd         => "$root/_releases/kibana",
+    command     => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
+    environment => ["HOME=/home/${user}"],
+    require     => Exec["download-kibana"],
   }->
   file { "$root/kibana":
     ensure => link,
@@ -147,16 +164,15 @@ class installKibana( $root ) {
     require => Exec['install-kibana'],
   }->
     ##  Kibana service
-  service { 'kibana':
-    ensure  => running,
-    enable  => true,
-    require => Exec['install-kibana'],
+  exec { 'restart-kibana':
+    command     => 'sudo service kibana restart',
+    cwd         => $root,
+    environment => ["HOME=/home/${user}"]
   }
 }
 
 ##  ELK stack installer
 class elk( $root ) {
-
   file { [
     $root,
     "$root/_releases",
@@ -166,9 +182,7 @@ class elk( $root ) {
     owner   => $www_user,
     group   => $group,
     mode    => 2755,
-    recurse => true,
-  }
-
+  }->
   class { installElasticsearch:
     root => $root,
   }->
@@ -176,14 +190,12 @@ class elk( $root ) {
     root => $root,
   }->
   class { installKibana:
-    root     => $root,
-    loglevel => warning,
+    root => $root,
   }
-
 }
 
 ##  Install ELK stack if requested
 class { elk:
   root   => $elk_stack_root,
-  notify => Service['elasticsearch', 'logstash', 'kibana'],
+  notify => Service['logstash'],
 }
