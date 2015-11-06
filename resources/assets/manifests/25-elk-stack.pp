@@ -33,13 +33,8 @@ filter {
 }
 
 output {
-  elasticsearch {
-    hosts => [
-      \"${dc_host}:${dc_es_port}\"
-    ],
-    cluster => \"${dc_es_cluster}\"
-    protocol => \"http\"
-  }
+    elasticsearch { hosts => [\"${dc_host}:${dc_es_port}\"] }
+    stdout { codec => rubydebug }
 }
 "
 
@@ -190,9 +185,5 @@ class elk( $root ) {
 ##  Install ELK stack if requested
 class { elk:
   root   => $elk_stack_root,
-  notify => Service[
-    'elasticsearch',
-    'logstash',
-    'kibana',
-  ],
+  notify => Service['elasticsearch', 'logstash', 'kibana'],
 }
