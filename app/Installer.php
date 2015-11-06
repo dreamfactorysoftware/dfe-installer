@@ -180,7 +180,7 @@ class Installer
             }
 
             //  Dump non-empties into the source file
-            if (!empty($_value)) {
+            if (null !== $_value) {
                 $_facterData['export FACTER_' . strtoupper($_cleanKey)] = $_value;
             }
 
