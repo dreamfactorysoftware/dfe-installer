@@ -6,6 +6,7 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] Install/update database software', }
+Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
 ##------------------------------------------------------------------------------
 ## Classes

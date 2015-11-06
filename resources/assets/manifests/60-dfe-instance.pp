@@ -6,6 +6,7 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] Install/update instance software', }
+Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
 ##------------------------------------------------------------------------------
 ## Classes
@@ -47,13 +48,11 @@ class laravelDirectories( $root, $owner, $group, $mode = '2775') {
       command         => "rm -f $root/bootstrap/cache/services.json",
       user            => root,
       onlyif          => "test -f $root/bootstrap/cache/services.json",
-      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
     }->
     exec { "remove-compiled-classes":
       command         => "rm -f $root/bootstrap/cache/compiled.php",
       user            => root,
       onlyif          => "test -f $root/bootstrap/cache/compiled.php",
-      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
     }
   }
 }
@@ -115,14 +114,12 @@ class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
     command         => "chmod ${file_mode} ${root}/bootstrap/cache/* && chown ${www_user}:${group} ${root}/bootstrap/cache/*",
     onlyif          => "test -f ${root}/bootstrap/cache/compiled.php",
     cwd             => $root,
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
   }->
   exec { "check-storage-log-file":
     user            => root,
     command         => "chmod ${file_mode} ${root}/storage/logs/*.log && chown ${www_user}:${group} ${root}/storage/logs/*.log",
     onlyif          => "test -f $root/storage/logs/laravel.log",
     cwd             => $root,
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
   }
 
   ##  instance logs and cache
@@ -131,21 +128,16 @@ class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
     command         => "chown -R ${www_user}:${group} /tmp/.df-log",
     onlyif          => "test -d /tmp/.df-log",
     cwd             => $root,
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
   }->
   exec { 'chmod-temp-df-log':
     command         => "find /tmp/.df-log -type d -exec chmod ${dir_mode} {} \\;",
-    provider        => shell,
     cwd             => $root,
     onlyif          => "test -d /tmp/.df-log",
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
   }->
   exec { 'chmod-temp-df-log-files':
     command         => "find /tmp/.df-log -type f -exec chmod ${file_mode} {} \\;",
-    provider        => shell,
     cwd             => $root,
     onlyif          => "test -d /tmp/.df-log",
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
   }
 
   exec { 'chown-and-pwn-tmp-cache':
@@ -153,21 +145,16 @@ class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
     command         => "chown -R ${www_user}:${group} /tmp/.df-cache",
     onlyif          => "test -d /tmp/.df-cache",
     cwd             => $root,
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
   }->
   exec { 'chmod-temp-df-cache':
     command         => "find /tmp/.df-cache -type d -exec chmod ${dir_mode} {} \\;",
-    provider        => shell,
     cwd             => $root,
     onlyif          => "test -d /tmp/.df-cache",
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
   }->
   exec { 'chmod-temp-df-cache-files':
     command         => "find /tmp/.df-cache -type f -exec chmod ${file_mode} {} \\;",
-    provider        => shell,
     cwd             => $root,
     onlyif          => "test -d /tmp/.df-cache",
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
   }
 }
 

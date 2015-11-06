@@ -12,6 +12,8 @@ stage { 'pre': before => Stage['main'], }
 ## Classes
 ############
 
+Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
+
 ## Create and seed $root/.gitconfig and git auth for composer
 class configureGitAuth( $root, $token ) {
   file { [

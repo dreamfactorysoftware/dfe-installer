@@ -6,6 +6,7 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] Updating system packages', }
+Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 stage { 'pre': before => Stage['main'], }
 
 ##------------------------------------------------------------------------------

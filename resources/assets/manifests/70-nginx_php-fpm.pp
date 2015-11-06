@@ -6,6 +6,7 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] Configuring PHP runtime and web server', }
+Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
 ##------------------------------------------------------------------------------
 ## Variables

@@ -6,6 +6,7 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] Install/update dashboard software', }
+Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
 ############
 ## Classes
@@ -42,13 +43,11 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775 ) {
       command         => "rm -f $root/bootstrap/cache/services.json",
       user            => root,
       onlyif          => "test -f $root/bootstrap/cache/services.json",
-      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
     }->
     exec { "remove-compiled-classes":
       command         => "rm -f $root/bootstrap/cache/compiled.php",
       user            => root,
       onlyif          => "test -f $root/bootstrap/cache/compiled.php",
-      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
     }
   }
 }
@@ -134,14 +133,12 @@ class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
     command         => "chmod ${file_mode} ${root}/bootstrap/cache/* && chown ${www_user}:${group} ${root}/bootstrap/cache/*",
     onlyif          => "test -f ${root}/bootstrap/cache/compiled.php",
     cwd             => $root,
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
   }->
   exec { "check-storage-log-file":
     user            => root,
     command         => "chmod ${file_mode} ${root}/storage/logs/*.log && chown ${www_user}:${group} ${root}/storage/logs/*.log",
     onlyif          => "test -f $root/storage/logs/laravel.log",
     cwd             => $root,
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
   }
 }
 
@@ -160,7 +157,6 @@ class createEnvFile( $root, $source = ".env-dist" ) {
       command         => "cat $console_root/database/dfe/dashboard.env >> $root/.env",
       user            => $user,
       onlyif          => "test -f $console_root/database/dfe/dashboard.env",
-      path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
     }
   }
 }
