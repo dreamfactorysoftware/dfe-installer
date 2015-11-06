@@ -172,8 +172,7 @@ class elk( $root ) {
     group   => $group,
     mode    => 2755,
     recurse => true,
-  }
-
+  }->
   class { installElasticsearch:
     root => $root,
   }->
