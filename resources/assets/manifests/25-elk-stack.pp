@@ -135,7 +135,7 @@ class installKibana( $root ) {
     user     => $www_user,
     group    => $group,
     command  => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
-    loglevel => error,
+    loglevel => err,
     require  => Exec["download-kibana"],
   }->
   file { "$root/kibana":
