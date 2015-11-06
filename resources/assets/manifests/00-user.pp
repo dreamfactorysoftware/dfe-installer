@@ -58,14 +58,12 @@ alias cmpu='composer update'
 alias lvcc='sudo rm -rf /tmp/.df-cache/ /var/www/console/storage/bootstrap/cache/* /var/www/dashboard/bootstrap/cache/* /var/www/launchpad/bootstrap/cache/*'
 alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service php5-fpm start ; sudo service nginx start'
 "
-    }
-
+    }->
     file { "$root/.ssh":
       ensure  => directory,
       owner   => $user,
       group   => $group,
       mode    => '700',
-      require => User[$user],
     }->
     file { "$root/.ssh/authorized_keys":
       ensure => file,
@@ -73,12 +71,10 @@ alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service 
       group  => $group,
       mode   => '400',
       source => "/home/${log_user}/.ssh/authorized_keys",
-    }
-
+    }->
     file_line { 'add-user-to-sudoers':
       path    => '/etc/sudoers',
       line    => "$user  ALL=(ALL) NOPASSWD:ALL",
-      require => User[$user],
     }
   }
 }
