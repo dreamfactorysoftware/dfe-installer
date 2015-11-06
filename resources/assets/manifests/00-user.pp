@@ -7,12 +7,11 @@
 
 notify { 'announce-thyself': message => '[DFE] Creating required users and groups', }
 stage { 'pre': before => Stage['main'], }
+Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
 ############
 ## Classes
 ############
-
-Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
 ##  Updates /etc/hosts
 class updateHostsFile( $hostname, $ip = '127.0.1.1' ) {
@@ -122,16 +121,15 @@ class { 'apt':
 }
 
 ##  Update the hosts file
-class { updateHostsFile:
+class { "updateHostsFile":
   hostname => $install_hostname,
 }
 
 ## Create user and git auth
-class { createAdminUser:
+class { "createAdminUser":
   root  => "/home/$user",
 }->
-class { configureGitAuth:
+class { "configureGitAuth":
   root    => "/home/$user",
   token   => $gh_token,
-  require => User[$user],
 }
