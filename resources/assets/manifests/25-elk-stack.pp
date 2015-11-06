@@ -81,11 +81,6 @@ class installElasticsearch( $root ) {
         command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
         cwd     => $root,
         require => Exec['install-java8'],
-      }->
-      file_line { 'elasticsearch-force-ipv4':
-        path   => '/etc/default/elasticsearch',
-        line   => 'ES_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
-        match  => ".*ES_JAVA_OPTS.*",
       }
 
       exec { "install-elasticsearch-plugins":
@@ -93,6 +88,11 @@ class installElasticsearch( $root ) {
         command => "cd /usr/share/elasticsearch/bin; sudo ./plugin install royrusso/elasticsearch-HQ",
         cwd     => $root,
         require => Exec['install-elasticsearch'],
+      }->
+      file_line { 'elasticsearch-force-ipv4':
+        path    => '/etc/default/elasticsearch',
+        line    => 'ES_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
+        match   => ".*ES_JAVA_OPTS.*",
       }
 
       # elasticsearch service
