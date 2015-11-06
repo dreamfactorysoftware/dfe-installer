@@ -14,31 +14,6 @@ stage { 'pre': before => Stage['main'], }
 
 Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
-## Create and seed $root/.gitconfig and git auth for composer
-class configureGitAuth( $root, $token ) {
-  file { [
-    $root,
-    "$root/.composer",
-  ]:
-    ensure => directory,
-    owner  => $user,
-    group  => $group,
-  }->
-  file { "$root/.gitconfig":
-    ensure => present,
-    owner  => $user,
-    group  => $group,
-    source => "$pwd/resources/assets/git/gitconfig",
-  }->
-  file { "$root/.composer/auth.json":
-    ensure  => file,
-    owner   => $user,
-    group   => $group,
-    mode    => '640',
-    content => "{\"github-oauth\": {\"github.com\": \"$token\"}}",
-  }
-}
-
 ##  Updates /etc/hosts
 class updateHostsFile( $hostname, $ip = '127.0.1.1' ) {
   ## The host aliases we want
@@ -63,7 +38,7 @@ class updateHostsFile( $hostname, $ip = '127.0.1.1' ) {
 }
 
 ##  Create the DFE admin user
-class createAdminUser( $root, $token ) {
+class createAdminUser( $root ) {
   ## Only new installations get a user
   if ( false == str2bool($dfe_update) ) {
     user { $user:
@@ -107,11 +82,30 @@ alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service 
       require => User[$user],
     }
   }
+}
 
-  class { configureGitAuth:
-    root    => "/home/$user",
-    token   => $token,
-    require => User[$user],
+## Create and seed $root/.gitconfig and git auth for composer
+class configureGitAuth( $root, $token ) {
+  file { [
+    $root,
+    "$root/.composer",
+  ]:
+    ensure => directory,
+    owner  => $user,
+    group  => $group,
+  }->
+  file { "$root/.gitconfig":
+    ensure => present,
+    owner  => $user,
+    group  => $group,
+    source => "$pwd/resources/assets/git/gitconfig",
+  }->
+  file { "$root/.composer/auth.json":
+    ensure  => file,
+    owner   => $user,
+    group   => $group,
+    mode    => '640',
+    content => "{\"github-oauth\": {\"github.com\": \"$token\"}}",
   }
 }
 
@@ -135,5 +129,9 @@ class { updateHostsFile:
 ## Create user and git auth
 class { createAdminUser:
   root  => "/home/$user",
-  token => $gh_token,
+}->
+class { configureGitAuth:
+  root    => "/home/$user",
+  token   => $gh_token,
+  require => User[$user],
 }

@@ -186,11 +186,6 @@ class laravelDirectories( $root, $owner, $group, $mode = '2775') {
 
 ## Checks directory/file permissions
 class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
-  class { laravelDirectories:
-    root  => $console_root,
-    owner => $www_user,
-    group => $group,
-  }->
   exec { 'chown-and-pwn':
     user            => root,
     command         => "chown -R ${www_user}:${group} ${root}/storage/ ${root}/bootstrap/cache/",
@@ -281,6 +276,11 @@ exec { "composer-update":
 }->
 class { setupApp:
   root => $console_root,
+}->
+class { laravelDirectories:
+  root  => $console_root,
+  owner => $www_user,
+  group => $group,
 }->
 class { checkPermissions:
   root => $console_root,
