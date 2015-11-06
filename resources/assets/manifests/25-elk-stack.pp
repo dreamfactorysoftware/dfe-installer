@@ -140,11 +140,12 @@ class installKibana( $root ) {
   }
 
   exec { "install-kibana":
-    cwd      => "$root/_releases/kibana",
-    user     => $www_user,
-    group    => $group,
-    command  => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
-    require  => Exec["download-kibana"],
+    user        => $www_user,
+    group       => $group,
+    cwd         => "$root/_releases/kibana",
+    command     => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
+    environment => ["HOME=/home/${user}"],
+    require     => Exec["download-kibana"],
   }->
   file { "$root/kibana":
     ensure => link,
@@ -168,7 +169,6 @@ class installKibana( $root ) {
 
 ##  ELK stack installer
 class elk( $root ) {
-
   file { [
     $root,
     "$root/_releases",
@@ -178,7 +178,6 @@ class elk( $root ) {
     owner   => $www_user,
     group   => $group,
     mode    => 2755,
-    recurse => true,
   }->
   class { installElasticsearch:
     root => $root,
@@ -189,7 +188,6 @@ class elk( $root ) {
   class { installKibana:
     root => $root,
   }
-
 }
 
 ##  Install ELK stack if requested
