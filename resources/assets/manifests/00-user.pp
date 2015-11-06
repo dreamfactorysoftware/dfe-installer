@@ -40,6 +40,9 @@ class updateHostsFile( $hostname, $ip = '127.0.0.1' ) {
 class createAdminUser( $root, $token ) {
   ## Only new installations get a user
   if ( false == str2bool($dfe_update) ) {
+    group { $group:
+      ensure => present,
+    }->
     user { $user:
       ensure     => present,
       expiry     => absent,
