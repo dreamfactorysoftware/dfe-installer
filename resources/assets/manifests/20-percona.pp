@@ -12,6 +12,25 @@ Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 ## Classes
 ##------------------------------------------------------------------------------
 
+##  Keep up-to-date
+class { 'apt':
+  update => {
+    frequency => 'daily'
+  }
+}
+
+class { mysql::server:
+  root_password    => $mysql_root_pwd,
+  restart          => true,
+  package_name     => "percona-server-server-${percona_version}",
+  require          => Apt::Source["percona.trusty"],
+}
+
+class { mysql::client:
+  package_name => "percona-server-client-${percona_version}",
+  require      => Apt::Source["percona.trusty"],
+}
+
 ##  Creates a database once the server is installed
 class createDatabase {
   ## Install database on non updates
@@ -35,16 +54,21 @@ class createDatabase {
       require    => Mysql::Db[$db_name],
     }
   }
+
+  ## Ensure $user is in the mysql group
+  group { 'mysql':
+    ensure           => present,
+    members          => [$user],
+    require          => Apt::Source["percona.trusty"],
+  }
 }
 
 ##------------------------------------------------------------------------------
 ## Logic
 ##------------------------------------------------------------------------------
 
-exec { "apt-get-update":
-  user    => root,
-  command => "/usr/bin/apt-get -qq update",
-  cwd     => $root,
+exec { "apt-update":
+  command => "/usr/bin/apt-get update"
 }
 
 apt::source { "percona.trusty":
@@ -63,25 +87,6 @@ apt::source { "percona.trusty":
   notify   => Class['apt::update'],
 }
 
-class { mysql::server:
-  root_password    => $mysql_root_pwd,
-  restart          => true,
-  package_name     => "percona-server-server-${percona_version}",
-  require          => Apt::Source["percona.trusty"],
-}
-
-class { mysql::client:
-  package_name => "percona-server-client-${percona_version}",
-  require      => Apt::Source["percona.trusty"],
-}
-
 class { createDatabase:
   require => Apt::Source["percona.trusty"],
-}
-
-## Ensure $user is in the mysql group
-group { 'mysql':
-  ensure           => present,
-  members          => [$user],
-  require          => Apt::Source["percona.trusty"],
 }
