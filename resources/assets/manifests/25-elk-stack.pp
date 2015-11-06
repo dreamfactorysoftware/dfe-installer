@@ -13,6 +13,12 @@ Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 ## Variables
 ##------------------------------------------------------------------------------
 
+if true == str2bool($dfe_update)  {
+  $_kibanaCommand = 'restart'
+} else {
+  $_kibanaCommand = 'start'
+}
+
 $_esConfig ="ES_USER=\"elasticsearch\"
 ES_GROUP=\"elasticsearch\"
 ES_MIN_MEM=\"256m\"
@@ -171,9 +177,9 @@ class installKibana( $root ) {
   }->
     ##  Kibana service
   exec { 'restart-kibana':
-    command     => 'sudo service kibana restart',
+    unless      => 'service kibana status',
+    command     => "sudo service kibana $_kibanaCommand",
     cwd         => $root,
-    environment => ["HOME=/home/${user}"]
   }
 }
 
