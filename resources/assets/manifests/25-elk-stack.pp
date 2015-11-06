@@ -81,6 +81,10 @@ class installElasticsearch( $root ) {
         command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
         cwd     => $root,
         require => Exec['install-java8'],
+      }->
+      exec { "install-elasticsearch-plugins":
+        command => "sudo ./plugin install royrusso/elasticsearch-HQ",
+        cwd     => '/usr/share/elasticsearch/bin',
       }
 
       # elasticsearch service
@@ -161,7 +165,6 @@ class installKibana( $root ) {
   }->
     ##  Kibana service
   exec { 'restart-kibana':
-    user        => root,
     command     => 'sudo service kibana restart',
     cwd         => $root,
     environment => ["HOME=/home/${user}"]
