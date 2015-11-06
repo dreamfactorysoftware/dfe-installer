@@ -84,45 +84,27 @@ alias cmpu='composer update'
 alias lvcc='sudo rm -rf /tmp/.df-cache/ /var/www/console/storage/bootstrap/cache/* /var/www/dashboard/bootstrap/cache/* /var/www/launchpad/bootstrap/cache/*'
 alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service php5-fpm start ; sudo service nginx start'
 "
-    }->
+    }
+
     file { "$root/.ssh":
-      ensure => directory,
-      owner  => $user,
-      group  => $group,
-      mode   => '700',
+      ensure  => directory,
+      owner   => $user,
+      group   => $group,
+      mode    => '700',
+      require => User[$user],
     }->
-      #      ## Create private key for user
-      #    user_ssh_pubkey { "${user}/ssh-rsa@console.${vendor_id}.${domain}":
-      #      bits   => 4096,
-      #      target => "$root/.ssh/id_dsa",
-      #      type   => 'dsa',
-      #      user   => $user,
-      #    }->
     file { "$root/.ssh/authorized_keys":
       ensure => file,
       owner  => $user,
       group  => $group,
       mode   => '400',
       source => "/home/${log_user}/.ssh/authorized_keys",
-    }->
-    exec { 'add-public-rsa-key-to-authorized-keys':
-      user        => $user,
-      command     => "cat $root/.ssh/id_rsa.pub >> $root/.ssh/authorized_keys",
-      onlyif      => "test -f $root/.ssh/id_rsa.pub",
-      cwd         => $root,
-      environment => ["HOME=/home/$user"]
-    }->
-    exec { 'add-public-dss-key-to-authorized-keys':
-      user        => $user,
-      command     => "cat $root/.ssh/id_dsa.pub >> $root/.ssh/authorized_keys",
-      onlyif      => "test -f $root/.ssh/id_dsa.pub",
-      cwd         => $root,
-      environment => ["HOME=/home/$user"]
     }
 
     file_line { 'add-user-to-sudoers':
-      path => '/etc/sudoers',
-      line => "$user  ALL=(ALL) NOPASSWD:ALL",
+      path    => '/etc/sudoers',
+      line    => "$user  ALL=(ALL) NOPASSWD:ALL",
+      require => User[$user],
     }
   }
 
@@ -131,7 +113,6 @@ alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service 
     token   => $token,
     require => User[$user],
   }
-
 }
 
 ##------------------------------------------------------------------------------

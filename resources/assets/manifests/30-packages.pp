@@ -10,59 +10,64 @@ Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 stage { 'pre': before => Stage['main'], }
 
 ##------------------------------------------------------------------------------
-## Variables
+## Classes
 ##------------------------------------------------------------------------------
 
-$_basePackages = [
-  'nginx-extras',
-  'php5',
-  'php5-fpm',
-  'php5-mysql',
-  'php5-redis',
-  'php5-pgsql',
-  'php5-mongo',
-  'php5-ldap',
-  'php5-memcached',
-  'php5-sqlite',
-  'php5-dev',
-  'php5-mcrypt',
-  'php5-curl',
-  'php5-mssql',
-  'mongodb',
-  'zip',
-  'memcached',
-  'redis-server',
-  'git',
-  'openssl',
-  'curl',
-  'sqlite3',
-]
+class updatePackages {
+  $_basePackages = [
+    'nginx-extras',
+    'php5',
+    'php5-fpm',
+    'php5-mysql',
+    'php5-redis',
+    'php5-pgsql',
+    'php5-mongo',
+    'php5-ldap',
+    'php5-memcached',
+    'php5-sqlite',
+    'php5-dev',
+    'php5-mcrypt',
+    'php5-curl',
+    'php5-mssql',
+    'mongodb',
+    'zip',
+    'memcached',
+    'redis-server',
+    'git',
+    'openssl',
+    'curl',
+    'sqlite3',
+  ]
 
-$_removePackages = [
-  "apache2",
-  "apache2-bin",
-  "apache2-data",
-  "libapache2-mod-php5",
-]
+  $_removePackages = [
+    "apache2",
+    "apache2-bin",
+    "apache2-data",
+    "libapache2-mod-php5",
+  ]
 
-## If SMTP is local, then install postfix
-if ($smtp_host == "localhost") or ($smtp_host == "127.0.0.1") or ($smtp_host == "127.0.1.1") {
-  $_requiredPackages = union($_basePackages, [$preferred_mail_package])
-} else {
-  $_requiredPackages = $_basePackages
+  ## If SMTP is local, then install postfix
+  if ($smtp_host == "localhost") or ($smtp_host == "127.0.0.1") or ($smtp_host == "127.0.1.1") {
+    $_requiredPackages = union($_basePackages, [$preferred_mail_package])
+  } else {
+    $_requiredPackages = $_basePackages
+  }
+
+  package { $_requiredPackages:
+    ensure  => latest
+  }->
+  package { $_removePackages:
+    ensure  => absent
+  }
 }
 
 ##------------------------------------------------------------------------------
 ## Logic
 ##------------------------------------------------------------------------------
 
-package { $_requiredPackages:
-  stage   => 'pre',
-  ensure  => latest
-}->
-package { $_removePackages:
-  stage   => 'pre',
-  ensure  => absent
+## Make this go first
+class { updatePackages:
+  stage => 'pre',
 }
 
 exec { 'enable-mcrypt-settings':
