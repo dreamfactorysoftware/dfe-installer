@@ -5,16 +5,15 @@
 # Ensures the necessary directory structure is in place
 ################################################################################
 
-notify { 'announce-thyself':
-  message => '[DFE] Creating required directory structure(s)',
-}
+notify { 'announce-thyself': message => '[DFE] Creating required directory structure(s)', }
+stage { 'pre': before => Stage['main'], }
+stage { 'post': after => Stage['main'], }
 
 ############
 ## Classes
 ############
 
 class createRequiredDirectories {
-
   ## Create the root directories for the repos to be installed
   file { [
     $doc_root_base_path,
@@ -26,7 +25,7 @@ class createRequiredDirectories {
     ensure => directory,
     owner  => $user,
     group  => $www_group,
-    mode   => 2775,
+    mode   => '2775',
   }
 
   ## Create all directories under the $mount_point
@@ -42,13 +41,11 @@ class createRequiredDirectories {
     ensure  => directory,
     owner   => $www_user,
     group   => $group,
-    mode    => 2775,
+    mode    => '2775',
   }
-
 }
 
 class createRequiredFiles {
-
   file { [
     ## And our indicator files
     "$doc_root_base_path/.dfe-managed",
@@ -57,9 +54,8 @@ class createRequiredFiles {
     ensure => present,
     owner  => $www_user,
     group  => $group,
-    mode   => 0660,
+    mode   => '0660',
   }
-
 }
 
 ############
@@ -67,5 +63,9 @@ class createRequiredFiles {
 ############
 
 ## Creates the directories & files
-class { createRequiredDirectories: }
-class { createRequiredFiles: }
+class {
+  createRequiredDirectories:
+}->
+class {
+  createRequiredFiles:
+}

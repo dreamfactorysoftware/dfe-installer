@@ -5,9 +5,9 @@
 # Install dreamfactory/dfe-console
 ################################################################################
 
-notify { 'announce-thyself':
-  message => '[DFE] Install/update console software',
-}
+notify { 'announce-thyself': message => '[DFE] Install/update console software', }
+stage { 'pre': before => Stage['main'], }
+stage { 'post': after => Stage['main'], }
 
 ############
 ## Classes
@@ -53,16 +53,13 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
     }
   }
 
-  ## Update the .env file on new install only
-  if ( false == str2bool($dfe_update) ) {
-    create_ini_settings($_settings, $_env)
-  }
+  ## Update the .env file
+  create_ini_settings($_settings, $_env)
 }
 
+##  Initial set up
 class setupApp( $root ) {
-
   if ( false == str2bool($dfe_update) ) {
-
     exec { "generate-app-key":
       command     => "$artisan key:generate",
       user        => $user,
@@ -93,13 +90,11 @@ class setupApp( $root ) {
     class { createInitialCluster:
       root => $root,
     }
-
   }
-
 }
 
+##  Creates the initial default cluster
 class createInitialCluster( $root ) {
-
   ##  Only on new installs
   if ( false == str2bool($dfe_update) ) {
     exec { "create-web-server":
@@ -151,11 +146,9 @@ class createInitialCluster( $root ) {
       environment => ["HOME=/home/$user"]
     }
   }
-
 }
 
 class laravelDirectories( $root, $owner, $group, $mode = 2775) {
-
   file { [
     "$root/bootstrap",
   ]:
@@ -193,48 +186,48 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
       path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
     }
   }
-
 }
 
 ## Checks directory/file permissions
-class checkPermissions( $root ) {
-
+class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
+  exec { 'chown-and-pwn':
+    user            => root,
+    command         => "chown -R ${www_user}:${group} ${root}/storage/ ${root}/bootstrap/cache/",
+    cwd             => $root,
+    environment     => ["HOME=/home/${user}"]
+  }->
   exec { 'chmod-storage':
-    command     => "find $root/storage -type d -exec chmod 2775 {} \\;",
-    provider    => shell,
-    cwd         => $root,
-    environment => ["HOME=/home/$user"]
+    user            => root,
+    command         => "find ${root}/storage -type d -exec chmod ${dir_mode} {} \\;",
+    onlyif          => "test -d ${root}/storage",
+    cwd             => $root,
+    environment     => ["HOME=/home/${user}"]
   }->
   exec { 'chmod-storage-files':
-    command     => "find $root/storage -type f -exec chmod 0664 {} \\;",
-    provider    => shell,
-    cwd         => $root,
-    environment => ["HOME=/home/$user"]
-  }->
-  exec { "check-cached-services":
-    command         => "chmod 0664 $root/bootstrap/cache/services.json && chown $www_user:$group $root/bootstrap/cache/services.json",
     user            => root,
-    onlyif          => "test -f $root/bootstrap/cache/services.json",
-    path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+    command         => "find ${root}/storage -type f -exec chmod ${file_mode} {} \\;",
+    onlyif          => "test -d ${root}/storage",
+    cwd             => $root,
+    environment     => ["HOME=/home/${user}"]
   }->
-  exec { "check-compiled-classes":
-    command         => "chmod 0664 $root/bootstrap/cache/compiled.php && chown $www_user:$group $root/bootstrap/cache/compiled.php",
+  exec { "check-bootstrap-cache":
     user            => root,
-    onlyif          => "test -f $root/bootstrap/cache/compiled.php",
+    command         => "chmod ${file_mode} ${root}/bootstrap/cache/* && chown ${www_user}:${group} ${root}/bootstrap/cache/*",
+    onlyif          => "test -f ${root}/bootstrap/cache/compiled.php",
+    cwd             => $root,
     path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
   }->
   exec { "check-storage-log-file":
-    command         => "chmod 0664 $root/storage/logs/laravel.log && chown $www_user:$group $root/storage/logs/laravel.log",
     user            => root,
+    command         => "chmod ${file_mode} ${root}/storage/logs/*.log && chown ${www_user}:${group} ${root}/storage/logs/*.log",
     onlyif          => "test -f $root/storage/logs/laravel.log",
+    cwd             => $root,
     path            => ['/usr/bin','/usr/sbin','/bin','/sbin'],
   }
-
 }
 
 ##  Create an environment file
 class createEnvFile( $root, $source = ".env-dist" ) {
-
   ##  On new installs only
   if ( false == str2bool($dfe_update) ) {
     file { "${root}/.env":
@@ -245,25 +238,20 @@ class createEnvFile( $root, $source = ".env-dist" ) {
       source => "${root}/${source}",
     }
   }
-
 }
 
 ############
 ## Logic
 ############
 
-##------------------------------------------------------------------------------
-## Check out the repo, update composer, change file permissions...
-##------------------------------------------------------------------------------
-
 vcsrepo { "$console_release/$console_branch":
-  ensure   => present,
+  ensure   => latest,
   provider => git,
   source   => $console_repo,
   user     => $user,
   owner    => $user,
   group    => $www_group,
-  revision => $console_branch,
+  branch   => $console_branch,
 }->
 file { $console_root:
   ensure => link,
@@ -285,7 +273,7 @@ class { laravelDirectories:
   group => $group,
 }->
 exec { "composer-update":
-  command     => "$composer_bin update --quiet --no-interaction",
+  command     => "$composer_bin update",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,

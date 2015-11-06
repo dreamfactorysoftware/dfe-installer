@@ -5,6 +5,12 @@
 # Installs MySQL/Percona server
 ################################################################################
 
+notify { 'announce-thyself': message => '[DFE] The Mighty ELK', }
+stage { 'pre': before => Stage['main'], }
+stage { 'post': after => Stage['main'], }
+File { owner => 0, group => 0, mode => '0644', }
+Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
+
 ##------------------------------------------------------------------------------
 ## Variables
 ##------------------------------------------------------------------------------
@@ -37,60 +43,69 @@ output {
 }
 "
 
+$_kibanaConfig = "# kibana.conf - log viewer
+description \"Kibana logstash viewer\"
+
+start on virtual-filesystems
+stop on runlevel [06]
+
+respawn
+respawn limit 5 30
+limit nofile 65550 65550
+
+# Environment
+env HOME=${elk_stack_root}/kibana
+chdir ${elk_stack_root}/kibana
+setuid ${www_user}
+setgid ${group}
+console log
+
+# Run Kibana, which is in ${elk_stack_root}/kibana
+script
+    bin/kibana
+end script
+"
+
 ##------------------------------------------------------------------------------
-## Defaults
+## Classes
 ##------------------------------------------------------------------------------
-
-notify { 'announce-thyself':
-  message => '[DFE] The Mighty ELK',
-}
-
-File { owner => 0, group => 0, mode => 0644, }
-
-Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
-
-# ensure local apt cache index is up to date before beginning
-exec { 'apt-get update':
-  command => '/usr/bin/apt-get update'
-}
 
 class installElasticsearch( $root ) {
-
   ##  Only install if requested
   if ( false == str2bool($dc_es_exists) ) {
     ##  Java
     exec { "install-java8":
-      command => "add-apt-repository -y ppa:webupd8team/java && sudo apt-get update && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -y install oracle-java8-installer",
-      cwd     => $root,
-    }->
-      ##  Elasticsearch
-    exec { "install-elasticsearch":
-      unless  => 'service elasticsearch status',
-      command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -yq install elasticsearch",
+      command => "add-apt-repository -y ppa:webupd8team/java && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -qq update && sudo apt-get -y install oracle-java8-installer",
       cwd     => $root,
     }
 
-    # restart elasticsearch service
-    service { "elasticsearch":
-      ensure  => running,
-      enable  => true,
-      require => Exec['install-elasticsearch'],
+    ##  Elasticsearch
+    exec { "install-elasticsearch":
+      unless  => 'service elasticsearch status',
+      command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
+      cwd     => $root,
+      require => Exec['install-java8'],
     }
   }
 
+  # elasticsearch service
+  service { "elasticsearch":
+    ensure  => running,
+    enable  => true,
+    require => Exec['install-elasticsearch'],
+  }
 }
 
 ##  Logstash installer
 class installLogstash( $root ) {
-
   ##  Logstash
   exec { "install-logstash":
     unless  => 'service logstash status',
-    command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -yq install logstash",
+    command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
     cwd     => $root,
   }
 
-  # restart logstash service
+  # logstash service
   service { "logstash":
     ensure  => running,
     enable  => true,
@@ -101,19 +116,16 @@ class installLogstash( $root ) {
   file { '/etc/logstash/conf.d/100-dfe-cluster.conf':
     ensure  => file,
     content => $_logstashConfig,
-    require => Exec['install-logstash'],
     notify  => Service['logstash'],
+    require => Exec['install-logstash'],
   }
-
 }
 
 ## Download and install Kibana
 class installKibana( $root ) {
-
   ##
   ##  Kibana (v4.2.x not available on PPA as of 2015-11-03 hence the tarball)
   ##
-
   exec { "download-kibana":
     cwd     => "$root/_releases/kibana",
     command => "wget https://download.elastic.co/kibana/kibana/kibana-4.2.0-linux-x64.tar.gz",
@@ -132,6 +144,18 @@ class installKibana( $root ) {
     target => "$root/_releases/kibana/kibana-4.2.0-linux-x64",
   }
 
+  ##  Create a service definition
+  file { '/etc/init/kibana.conf':
+    ensure  => file,
+    content => $_kibanaConfig,
+    require => Exec['install-kibana'],
+  }->
+    ##  Kibana service
+  service { 'kibana':
+    ensure  => running,
+    enable  => true,
+    require => Exec['install-kibana'],
+  }
 }
 
 ##  ELK stack installer
@@ -156,7 +180,8 @@ class elk( $root ) {
     root => $root,
   }->
   class { installKibana:
-    root => $root,
+    root     => $root,
+    loglevel => warning,
   }
 
 }
@@ -164,4 +189,5 @@ class elk( $root ) {
 ##  Install ELK stack if requested
 class { elk:
   root => $elk_stack_root,
+  notify => Service['kibana']
 }

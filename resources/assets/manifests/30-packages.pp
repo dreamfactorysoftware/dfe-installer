@@ -5,9 +5,13 @@
 # Installs all required packages
 ################################################################################
 
-notify { 'announce-thyself':
-  message => '[DFE] Updating system packages',
-}
+notify { 'announce-thyself': message => '[DFE] Updating system packages', }
+stage { 'pre': before => Stage['main'], }
+stage { 'post': after => Stage['main'], }
+
+##------------------------------------------------------------------------------
+## Variables
+##------------------------------------------------------------------------------
 
 $_basePackages = [
   'nginx-extras',
@@ -53,11 +57,14 @@ if ($smtp_host == "localhost") or ($smtp_host == "127.0.0.1") or ($smtp_host == 
 ##------------------------------------------------------------------------------
 
 package { $_requiredPackages:
+  stage   => 'pre',
   ensure  => latest
 }->
 package { $_removePackages:
-  ensure => absent
-}->
+  stage   => 'pre',
+  ensure  => absent
+}
+
 exec { 'enable-mcrypt-settings':
   command  => "$php_enmod_bin mcrypt",
   provider => posix
@@ -87,9 +94,11 @@ file_line { 'update-exim-other-host':
 exec { 'update-exim-config':
   command  => '/usr/sbin/update-exim4.conf',
   provider => posix,
-}->
+}
+
+## Install/update Composer
 exec { 'install-composer':
-  ## Install/update Composer
+  stage   => 'post',
   command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
   creates => $composer_bin,
   require => Package['curl']

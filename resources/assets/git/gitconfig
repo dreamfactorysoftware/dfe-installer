@@ -1,5 +1,5 @@
 [user]
-	name = DreamFactory Administrator
-	email = ops@dreamfactory.com
+	name = DFE Admin
+	email = dfadmin@dreamfactory.com
 [push]
 	default = simple
