@@ -87,13 +87,13 @@ class installElasticsearch( $root ) {
         line   => 'ES_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
         match  => ".*ES_JAVA_OPTS.*",
       }
-    }
 
-    # elasticsearch service
-    service { "elasticsearch":
-      ensure  => running,
-      enable  => true,
-      require => Exec['install-elasticsearch'],
+      # elasticsearch service
+      service { "elasticsearch":
+        ensure  => running,
+        enable  => true,
+        require => Exec['install-elasticsearch'],
+      }
     }
   }
 }
