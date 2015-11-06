@@ -88,13 +88,13 @@ class installElasticsearch( $root ) {
         match  => ".*ES_JAVA_OPTS.*",
       }
     }
-  }
 
-  # elasticsearch service
-  service { "elasticsearch":
-    ensure  => running,
-    enable  => true,
-    require => Exec['install-elasticsearch'],
+    # elasticsearch service
+    service { "elasticsearch":
+      ensure  => running,
+      enable  => true,
+      require => Exec['install-elasticsearch'],
+    }
   }
 }
 
@@ -190,5 +190,5 @@ class elk( $root ) {
 ##  Install ELK stack if requested
 class { elk:
   root   => $elk_stack_root,
-  notify => Service['elasticsearch', 'logstash'],
+  notify => Service['logstash'],
 }
