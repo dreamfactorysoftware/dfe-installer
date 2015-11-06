@@ -8,14 +8,10 @@
 notify { 'announce-thyself': message => '[DFE] Install/update database software', }
 Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
-##------------------------------------------------------------------------------
-## Classes
-##------------------------------------------------------------------------------
-
 ##  Keep up-to-date
 class { 'apt':
   update => {
-    frequency => 'daily'
+    frequency => 'always'
   }
 }
 
@@ -30,42 +26,6 @@ class { mysql::client:
   package_name => "percona-server-client-${percona_version}",
   require      => Apt::Source["percona.trusty"],
 }
-
-##  Creates a database once the server is installed
-class createDatabase {
-  ## Install database on non updates
-  if ( false == str2bool($dfe_update)) {
-    mysql::db { $db_name:
-      ensure     => present,
-      charset    => "utf8",
-      host       => $db_host,
-      user       => $db_user,
-      password   => $db_pwd,
-      sql        => "$pwd/resources/assets/sql/dfe_local.schema.sql",
-    }
-
-    ## Grant access to the DFE app user
-    mysql_grant { "${db_user}@${db_host}/*.*":
-      ensure     => present,
-      options    => ["GRANT"],
-      privileges => ["ALL"],
-      table      => "*.*",
-      user       => "${db_user}@${db_host}",
-      require    => Mysql::Db[$db_name],
-    }
-  }
-
-  ## Ensure $user is in the mysql group
-  group { 'mysql':
-    ensure           => present,
-    members          => [$user],
-    require          => Apt::Source["percona.trusty"],
-  }
-}
-
-##------------------------------------------------------------------------------
-## Logic
-##------------------------------------------------------------------------------
 
 exec { "apt-update":
   command => "/usr/bin/apt-get update"
@@ -84,9 +44,36 @@ apt::source { "percona.trusty":
     "src" => false,
     "deb" => true,
   },
-  notify   => Class['apt::update'],
+  notify   => Exec['apt-update'],
 }
 
-class { createDatabase:
-  require => Apt::Source["percona.trusty"],
+## Install database on non updates
+if ( false == str2bool($dfe_update)) {
+  mysql::db { $db_name:
+    ensure    => present,
+    charset   => "utf8",
+    host      => $db_host,
+    user      => $db_user,
+    password  => $db_pwd,
+    sql       => "$pwd/resources/assets/sql/dfe_local.schema.sql",
+    require   => Apt::Source["percona.trusty"],
+  }
+
+  ## Grant access to the DFE app user
+  mysql_grant { "${db_user}@${db_host}/*.*":
+    ensure     => present,
+    options    => ["GRANT"],
+    privileges => ["ALL"],
+    table      => "*.*",
+    user       => "${db_user}@${db_host}",
+    require    => Mysql::Db[$db_name],
+  }
 }
+
+## Ensure $user is in the mysql group
+group { 'mysql':
+  ensure    => present,
+  members   => [$user],
+  require   => Apt::Source["percona.trusty"],
+}
+
