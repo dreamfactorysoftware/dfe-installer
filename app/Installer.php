@@ -67,18 +67,18 @@ class Installer
         'mount_point'         => '/data',
         'storage_path'        => '/storage',
         'log_path'            => '/data/logs',
-        'dc_host'             => 'localhost',
-        'dc_port'             => 12202,
-        'dc_es_port'          => 5601,
-        'dc_client_host'      => null,
-        'dc_client_port'      => 5601,
-        'dc_es_cluster'       => 'elasticsearch',
-        'dc_es_exists'        => false,
         'gh_token'            => null,
         'token_name'          => null,
         'console_host_name'   => 'console',
         'dashboard_host_name' => 'dashboard',
         'requirements'        => [],
+        'dc_es_exists'        => false,
+        'dc_es_cluster'       => 'elasticsearch',
+        'dc_es_port'          => 9200,
+        'dc_host'             => 'localhost',
+        'dc_port'             => 12202,
+        'dc_client_host'      => null,
+        'dc_client_port'      => 5601,
     ];
 
     //******************************************************************************
@@ -144,11 +144,11 @@ class Installer
         //  Add in things that don't exist in form...
         $formData['dc-es-exists'] = array_key_exists('dc-es-exists', $formData) ? 'true' : 'false';
         $formData['dc-es-cluster'] = array_get($formData, 'dc-es-cluster', $this->defaults['dc_es_cluster']);
-        $formData['dc-port'] = array_get($formData, 'dc-port', $this->defaults['dc_port']);
         $formData['dc-es-port'] = array_get($formData, 'dc-es-port', $this->defaults['dc_es_port']);
+        $formData['dc-port'] = array_get($formData, 'dc-port', $this->defaults['dc_port']);
         $formData['dc-client-port'] = array_get($formData, 'dc-client-port', $this->defaults['dc_client_port']);
 
-        //  Check for non-existent ELK
+        //  Check for non-existent host name
         if (empty(array_get($formData, 'dc-host'))) {
             $formData['dc-host'] = implode('.',
                 [
@@ -180,7 +180,7 @@ class Installer
             }
 
             //  Dump non-empties into the source file
-            if (!empty($_value)) {
+            if (null !== $_value) {
                 $_facterData['export FACTER_' . strtoupper($_cleanKey)] = $_value;
             }
 
@@ -189,6 +189,8 @@ class Installer
 
             //  Save cleaned value, if any
             $formData[$_key] = $_value;
+
+            unset($_cleanKey, $_key, $_value);
         }
 
         //  If set have a storage and mount, construct a storage path

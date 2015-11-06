@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: deb-install.sh,v 1.1.17 2015-11-05 jablan $
+# @(#)$Id: deb-install.sh,v 1.1.18 2015-11-05 jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -10,7 +10,7 @@
 # Debian flavored easy install
 
 
-VERSION=1.1.17
+VERSION=1.1.18
 SYSTEM_TYPE=`uname -s`
 LOG_FILE=/tmp/dfe-deb-installer.log
 DFE_UPDATE=

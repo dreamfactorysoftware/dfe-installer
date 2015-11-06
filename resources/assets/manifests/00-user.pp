@@ -37,7 +37,7 @@ class updateHostsFile( $hostname, $ip = '127.0.1.1' ) {
 }
 
 ##  Create the DFE admin user
-class createAdminUser( $root ) {
+class createAdminUser( $root, $token ) {
   ## Only new installations get a user
   if ( false == str2bool($dfe_update) ) {
     user { $user:
@@ -58,14 +58,24 @@ alias cmpu='composer update'
 alias lvcc='sudo rm -rf /tmp/.df-cache/ /var/www/console/storage/bootstrap/cache/* /var/www/dashboard/bootstrap/cache/* /var/www/launchpad/bootstrap/cache/*'
 alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service php5-fpm start ; sudo service nginx start'
 "
-    }
-
+    }->
+    file { "$root/.composer":
+      ensure => directory,
+      owner  => $user,
+      group  => $group,
+    }->
+    file { "$root/.composer/auth.json":
+      ensure  => file,
+      owner   => $user,
+      group   => $group,
+      mode    => '640',
+      content => "{\"github-oauth\": {\"github.com\": \"$token\"}}",
+    }->
     file { "$root/.ssh":
       ensure  => directory,
       owner   => $user,
       group   => $group,
       mode    => '700',
-      require => User[$user],
     }->
     file { "$root/.ssh/authorized_keys":
       ensure => file,
@@ -73,38 +83,17 @@ alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service 
       group  => $group,
       mode   => '400',
       source => "/home/${log_user}/.ssh/authorized_keys",
-    }
-
+    }->
     file_line { 'add-user-to-sudoers':
       path    => '/etc/sudoers',
       line    => "$user  ALL=(ALL) NOPASSWD:ALL",
-      require => User[$user],
+    }->
+    file { "$root/.gitconfig":
+      ensure => present,
+      owner  => $user,
+      group  => $group,
+      source => "$pwd/resources/assets/git/gitconfig",
     }
-  }
-}
-
-## Create and seed $root/.gitconfig and git auth for composer
-class configureGitAuth( $root, $token ) {
-  file { [
-    $root,
-    "$root/.composer",
-  ]:
-    ensure => directory,
-    owner  => $user,
-    group  => $group,
-  }->
-  file { "$root/.gitconfig":
-    ensure => present,
-    owner  => $user,
-    group  => $group,
-    source => "$pwd/resources/assets/git/gitconfig",
-  }->
-  file { "$root/.composer/auth.json":
-    ensure  => file,
-    owner   => $user,
-    group   => $group,
-    mode    => '640',
-    content => "{\"github-oauth\": {\"github.com\": \"$token\"}}",
   }
 }
 
@@ -127,9 +116,6 @@ class { "updateHostsFile":
 
 ## Create user and git auth
 class { "createAdminUser":
-  root  => "/home/$user",
-}->
-class { "configureGitAuth":
   root    => "/home/$user",
   token   => $gh_token,
 }
