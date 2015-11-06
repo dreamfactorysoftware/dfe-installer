@@ -69,6 +69,7 @@ class Installer
         'log_path'            => '/data/logs',
         'dc_host'             => 'localhost',
         'dc_port'             => 12202,
+        'dc_es_port'          => 5601,
         'dc_client_host'      => null,
         'dc_client_port'      => 5601,
         'dc_es_cluster'       => 'elasticsearch',
@@ -144,6 +145,7 @@ class Installer
         $formData['dc-es-exists'] = array_key_exists('dc-es-exists', $formData) ? 'true' : 'false';
         $formData['dc-es-cluster'] = array_get($formData, 'dc-es-cluster', $this->defaults['dc_es_cluster']);
         $formData['dc-port'] = array_get($formData, 'dc-port', $this->defaults['dc_port']);
+        $formData['dc-es-port'] = array_get($formData, 'dc-es-port', $this->defaults['dc_es_port']);
         $formData['dc-client-port'] = array_get($formData, 'dc-client-port', $this->defaults['dc_client_port']);
 
         //  Check for non-existent ELK

@@ -15,14 +15,14 @@ Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
 $_logstashConfig = "input {
   gelf {
-    type => \"$dc_index_type\"
+    type => \"${dc_index_type}\"
     port => $dc_port
   }
 }
 
 filter {
   if [content] != \"\" {
-    if [type] == \"$dc_index_type\" {
+    if [type] == \"${dc_index_type}\" {
        json {
          source => \"content\"
          target => \"payload\"
@@ -34,8 +34,10 @@ filter {
 
 output {
   elasticsearch {
-    host => \"$dc_host\"
-    cluster => \"$dc_es_cluster\"
+    hosts => [
+      \"${dc_host}:${dc_es_port}\"
+    ],
+    cluster => \"${dc_es_cluster}\"
     protocol => \"http\"
   }
 }
@@ -188,5 +190,9 @@ class elk( $root ) {
 ##  Install ELK stack if requested
 class { elk:
   root   => $elk_stack_root,
-  notify => Service['kibana']
+  notify => Service[
+    'elasticsearch',
+    'logstash',
+    'kibana',
+  ],
 }
