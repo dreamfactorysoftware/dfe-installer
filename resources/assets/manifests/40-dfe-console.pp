@@ -146,7 +146,7 @@ class createInitialCluster( $root ) {
   }
 }
 
-class laravelDirectories( $root, $owner, $group, $mode = 2775) {
+class laravelDirectories( $root, $owner, $group, $mode = '2775') {
   file { [
     "$root/bootstrap",
   ]:
@@ -164,7 +164,7 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
     "$root/storage/logs",
   ]:
     ensure => directory,
-    owner  => $www_user,
+    owner  => $owner,
     group  => $group,
     mode   => $mode,
   }
@@ -186,6 +186,11 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775) {
 
 ## Checks directory/file permissions
 class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
+  class { laravelDirectories:
+    root  => $console_root,
+    owner => $www_user,
+    group => $group,
+  }->
   exec { 'chown-and-pwn':
     user            => root,
     command         => "chown -R ${www_user}:${group} ${root}/storage/ ${root}/bootstrap/cache/",
@@ -262,9 +267,9 @@ class { iniSettings:
   protocol => $default_protocol,
 }->
 class { laravelDirectories:
-  root  => $console_root,
-  owner => $www_user,
-  group => $group,
+  root    => $console_root,
+  owner   => $www_user,
+  group   => $group,
 }->
 exec { "composer-update":
   command     => "$composer_bin update",

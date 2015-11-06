@@ -23,6 +23,7 @@ class laravelDirectories( $root, $owner, $group, $mode = '2775') {
     mode   => $mode,
   }->
   file { [
+    "/tmp/.df-cache",
     "/tmp/.df-log",
     "$root/bootstrap/cache",
     "$root/storage",
@@ -37,7 +38,7 @@ class laravelDirectories( $root, $owner, $group, $mode = '2775') {
     "$root/storage/scripting",
   ]:
     ensure => directory,
-    owner  => $www_user,
+    owner  => $owner,
     group  => $group,
     mode   => $mode,
   }
@@ -89,6 +90,11 @@ class setupApp( $root ) {
 
 ## Checks directory/file permissions
 class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
+  class { laravelDirectories:
+    root  => $instance_root,
+    owner => $www_user,
+    group => $group,
+  }->
   exec { 'chown-and-pwn':
     user            => root,
     command         => "chown -R ${www_user}:${group} ${root}/storage/ ${root}/bootstrap/cache/",
