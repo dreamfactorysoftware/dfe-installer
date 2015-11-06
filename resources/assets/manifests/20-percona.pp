@@ -40,6 +40,12 @@ class createDatabase {
 ## Logic
 ##------------------------------------------------------------------------------
 
+exec { "apt-get-update":
+  user    => root,
+  command => "/usr/bin/apt-get -qq update",
+  cwd     => $root,
+}
+
 apt::source { "percona.trusty":
   comment  => "Repo for percona db server",
   location => "http://repo.percona.com/apt",
@@ -53,7 +59,7 @@ apt::source { "percona.trusty":
     "src" => false,
     "deb" => true,
   },
-  notify   => Exec["/usr/bin/apt-get -qq update"],
+  notify   => Class['apt::update'],
 }
 
 class { mysql::server:

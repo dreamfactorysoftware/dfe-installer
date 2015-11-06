@@ -103,10 +103,20 @@ alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service 
       mode   => '400',
       source => "/home/${log_user}/.ssh/authorized_keys",
     }->
-      #    exec { 'add-public-key-to-authorized-keys':
-      #      command  => "cat $root/.ssh/id_rsa.pub >> $root/.ssh/authorized_keys",
-      #      user     => $user,
-      #    }
+    exec { 'add-public-rsa-key-to-authorized-keys':
+      user        => $user,
+      command     => "cat $root/.ssh/id_rsa.pub >> $root/.ssh/authorized_keys",
+      onlyif      => "test -f $root/.ssh/id_rsa.pub",
+      cwd         => $root,
+      environment => ["HOME=/home/$user"]
+    }->
+    exec { 'add-public-dss-key-to-authorized-keys':
+      user        => $user,
+      command     => "cat $root/.ssh/id_dsa.pub >> $root/.ssh/authorized_keys",
+      onlyif      => "test -f $root/.ssh/id_dsa.pub",
+      cwd         => $root,
+      environment => ["HOME=/home/$user"]
+    }
 
     file_line { 'add-user-to-sudoers':
       path => '/etc/sudoers',
