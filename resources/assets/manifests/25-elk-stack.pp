@@ -100,13 +100,11 @@ class installElasticsearch( $root ) {
 
 ##  Logstash installer
 class installLogstash( $root ) {
-  if ( false == str2bool($dfe_update) ) {
-    ##  Logstash
-    exec { "install-logstash":
-      unless  => 'service logstash status',
-      command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
-      cwd     => $root,
-    }
+  ##  Logstash
+  exec { "install-logstash":
+    unless  => 'service logstash status',
+    command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
+    cwd     => $root,
   }
 
   # logstash service
