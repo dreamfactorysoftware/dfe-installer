@@ -63,6 +63,7 @@ class iniSettings( $root ) {
   $_env = { 'path' => "$root/.env", }
   $_settings = {
     '' => {
+      'APP_ENV'               => 'managed',
       'APP_LOG'               => 'single',
       'DB_DRIVER'             => 'mysql',
       'DF_INSTANCE_NAME'      => "instance-${vendor_id}",
