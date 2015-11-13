@@ -63,13 +63,14 @@ class iniSettings( $root ) {
   $_env = { 'path' => "$root/.env", }
   $_settings = {
     '' => {
-      'APP_ENV'               => 'managed',
-      'APP_LOG'               => 'single',
-      'DB_DRIVER'             => 'mysql',
-      'DF_INSTANCE_NAME'      => "instance-${vendor_id}",
-      'DF_MANAGED'            => 'true',
-      'DFE_AUDIT_HOST'        => $dc_host,
-      'DFE_AUDIT_PORT'        => $dc_port,
+      'APP_LOG'                   => 'single',
+      'DB_DRIVER'                 => 'mysql',
+      'DF_INSTANCE_NAME'          => "instance-${vendor_id}",
+      'DF_MANAGED'                => 'true',
+      'DF_MANAGED_LOG_PATH'       => "$log_path/instance",
+      'DF_MANAGED_CACHE_PATH'     => '/tmp/.df-cache',
+      'DFE_AUDIT_HOST'            => $dc_host,
+      'DFE_AUDIT_PORT'            => $dc_port,
     }
   }
 
