@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.22 2015-11-05 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.23 2015-11-16 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.22
+VERSION=1.1.23
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/assets/manifests
 ENV_FILE=./storage/.env-install
@@ -148,11 +148,12 @@ export FACTER_DB_HOST=localhost
 export FACTER_DB_NAME=dfe_local
 export FACTER_CONSOLE_BRANCH=develop
 export FACTER_DASHBOARD_BRANCH=develop
-export FACTER_INSTANCE_BRANCH=master
+export FACTER_INSTANCE_BRANCH=develop
+export FACTER_INSTANCE_CACHE_PATH=/tmp/.df-cache
 
 ## Blanks filled in by .env-install
 export FACTER_ADMIN_EMAIL FACTER_ADMIN_PWD FACTER_GH_TOKEN
-export FACTER_MOUNT_POINT FACTER_DOMAIN
+export FACTER_MOUNT_POINT FACTER_DOMAIN FACTER_LOG_PATH
 export FACTER_DC_HOST FACTER_DC_PORT FACTER_DC_INDEX_TYPE FACTER_DC_ES_CLUSTER FACTER_DC_ES_EXISTS
 
 ## Rotate log
@@ -176,6 +177,7 @@ _checkPuppetModules
 export FACTER_STORAGE_USER=${FACTER_USER}
 export FACTER_STORAGE_PATH=${FACTER_MOUNT_POINT}/${FACTER_STORAGE_PATH}
 export FACTER_TRASH_PATH=${FACTER_MOUNT_POINT}/trash
+export FACTER_INSTANCE_LOG_PATH=${FACTER_LOG_PATH}/instance
 export FACTER_SSL_CERT_STUB=$(echo ${FACTER_DOMAIN} | tr '.' '-')
 export FACTER_DC_INDEX_TYPE="cluster-${FACTER_VENDOR_ID}"
 
