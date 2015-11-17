@@ -23,8 +23,8 @@ class laravelDirectories( $root, $owner, $group, $mode = '2775') {
     mode   => $mode,
   }->
   file { [
-    "/tmp/.df-cache",
-    "/tmp/.df-log",
+    $instance_cache_path,
+    $instance_log_path,
     "$root/bootstrap/cache",
     "$root/storage",
     "$root/storage/app",
@@ -63,12 +63,14 @@ class iniSettings( $root ) {
   $_env = { 'path' => "$root/.env", }
   $_settings = {
     '' => {
-      'APP_LOG'               => 'single',
-      'DB_DRIVER'             => 'mysql',
-      'DF_INSTANCE_NAME'      => "instance-${vendor_id}",
-      'DF_MANAGED'            => 'true',
-      'DFE_AUDIT_HOST'        => $dc_host,
-      'DFE_AUDIT_PORT'        => $dc_port,
+      'APP_LOG'                   => 'single',
+      'DB_DRIVER'                 => 'mysql',
+      'DF_INSTANCE_NAME'          => "instance-${vendor_id}",
+      'DF_MANAGED'                => 'true',
+      'DF_MANAGED_LOG_PATH'       => $instance_log_path,
+      'DF_MANAGED_CACHE_PATH'     => $instance_cache_path,
+      'DFE_AUDIT_HOST'            => $dc_host,
+      'DFE_AUDIT_PORT'            => $dc_port,
     }
   }
 
@@ -126,36 +128,36 @@ class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
   ##  instance logs and cache
   exec { 'chown-and-pwn-tmp-log':
     user            => root,
-    command         => "chown -R ${www_user}:${group} /tmp/.df-log",
-    onlyif          => "test -d /tmp/.df-log",
+    command         => "chown -R ${www_user}:${group} ${instance_log_path}",
+    onlyif          => "test -d ${instance_log_path}",
     cwd             => $root,
   }->
   exec { 'chmod-temp-df-log':
-    command         => "find /tmp/.df-log -type d -exec chmod ${dir_mode} {} \\;",
+    command         => "find ${instance_log_path} -type d -exec chmod ${dir_mode} {} \\;",
     cwd             => $root,
-    onlyif          => "test -d /tmp/.df-log",
+    onlyif          => "test -d ${instance_log_path}",
   }->
   exec { 'chmod-temp-df-log-files':
-    command         => "find /tmp/.df-log -type f -exec chmod ${file_mode} {} \\;",
+    command         => "find ${instance_log_path} -type f -exec chmod ${file_mode} {} \\;",
     cwd             => $root,
-    onlyif          => "test -d /tmp/.df-log",
+    onlyif          => "test -d ${instance_log_path}",
   }
 
   exec { 'chown-and-pwn-tmp-cache':
     user            => root,
-    command         => "chown -R ${www_user}:${group} /tmp/.df-cache",
-    onlyif          => "test -d /tmp/.df-cache",
+    command         => "chown -R ${www_user}:${group} ${instance_cache_path}",
+    onlyif          => "test -d ${instance_cache_path}",
     cwd             => $root,
   }->
   exec { 'chmod-temp-df-cache':
-    command         => "find /tmp/.df-cache -type d -exec chmod ${dir_mode} {} \\;",
+    command         => "find ${instance_cache_path} -type d -exec chmod ${dir_mode} {} \\;",
     cwd             => $root,
-    onlyif          => "test -d /tmp/.df-cache",
+    onlyif          => "test -d ${instance_cache_path}",
   }->
   exec { 'chmod-temp-df-cache-files':
-    command         => "find /tmp/.df-cache -type f -exec chmod ${file_mode} {} \\;",
+    command         => "find ${instance_cache_path} -type f -exec chmod ${file_mode} {} \\;",
     cwd             => $root,
-    onlyif          => "test -d /tmp/.df-cache",
+    onlyif          => "test -d ${instance_cache_path}",
   }
 }
 

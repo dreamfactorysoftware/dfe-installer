@@ -52,56 +52,48 @@ $content_header = "##***********************************************************
 ##	limitations under the License.
 ##**************************************************************************"
 
+## Parameters template
+$fastcgi_include = "
+    #   DFE Parameters
+    fastcgi_param DFE_MANAGED \"1\";
+    fastcgi_param DFE_CLUSTER_ID \"cluster-${vendor_id}\";
+    fastcgi_param DFE_WEB_SERVER_ID \"web-${vendor_id}\";
+    fastcgi_param DFE_APP_SERVER_ID \"app-${vendor_id}\";
+    fastcgi_param DFE_DB_SERVER_ID \"db-${vendor_id}\";
+    fastcgi_param DFE_DNS_ZONE \"${vendor_id}\";
+    fastcgi_param DFE_DNS_DOMAIN \"${domain}\";
+    fastcgi_param DFE_DOMAIN \"${vendor_id}.${domain}\";
+    fastcgi_param DFE_DOMAIN_PROTOCOL \"$default_protocol\";
+"
+
 ## Template for instance
 $instance_content = "${content_header}
 
 ##**************************************************************************
-## Configures two separate servers for HTTP and HTTPS
+## Configures a single server for HTTP and HTTPS (if enabled)
 ##**************************************************************************
 
-# [instance].local:80
+# [instance].local:80[,443]
 server {
 	listen 80 default_server;
+  ${ssl_listen}
 
-	server_name $instance_hostname;
+	server_name ${instance_hostname};
 
 	# Doc root
-	root $instance_root/public;
+	root ${instance_root}/public;
 
 	# Change locations/names as you please
-	error_log $log_path/hosted/all.error.log;
-	access_log $log_path/hosted/\$http_host.access.log combined;
+	error_log ${log_path}/hosted/all.error.log;
+	access_log ${log_path}/hosted/\$http_host.access.log combined;
+
+  ${fastcgi_include}
+  ${ssl_include}
 
 	# Our DSP locations
 	include dfe-locations.conf;
 }"
 
-## SSL template for instance
-if ( $enable_ssl ) {
-  $instance_content = "${instance_content}
-
-# [instance].local:443
-server {
-	listen 443 ssl;
-
-	server_name $instance_hostname;
-
-	# Doc root
-	root $instance_root/public;
-
-	# Change locations/names as you please
-	error_log $log_path/hosted/all.error.log;
-	access_log $log_path/hosted/\$http_host.access.log combined;
-
-	# SSL config
-	# This way you can keep it locked down a little better
-	# or not. Just uncomment the directives and remove the include.
-	include conf.d/ssl/dfe-instance.conf;
-
-	# Our DSP locations
-	include dfe-locations.conf;
-}"
-}
 
 ## Console content
 $console_content = "${content_header}
@@ -112,16 +104,17 @@ $console_content = "${content_header}
 
 server {
   listen 80;
-  $ssl_listen
+  ${ssl_listen}
 
-  server_name $console_hostname console.local;
+  server_name ${console_hostname} console.local;
 
-  root $console_root/public;
+  root ${console_root}/public;
 
-  error_log $log_path/console/error.log;
-  access_log $log_path/console/access.log combined;
+  error_log ${log_path}/console/error.log;
+  access_log ${log_path}/console/access.log combined;
 
-  $ssl_include
+  ${fastcgi_include}
+  ${ssl_include}
 
   include dfe-locations.conf;
 }"
@@ -135,16 +128,17 @@ $dashboard_content = "${content_header}
 
 server {
   listen 80;
-  $ssl_listen
+  ${ssl_listen}
 
-  server_name $dashboard_hostname dashboard.local;
+  server_name ${dashboard_hostname} dashboard.local;
 
-  root $dashboard_root/public;
+  root ${dashboard_root}/public;
 
-  error_log $log_path/dashboard/error.log;
-  access_log $log_path/dashboard/access.log combined;
+  error_log ${log_path}/dashboard/error.log;
+  access_log ${log_path}/dashboard/access.log combined;
 
-  $ssl_include
+  ${fastcgi_include}
+  ${ssl_include}
 
   include dfe-locations.conf;
 }"

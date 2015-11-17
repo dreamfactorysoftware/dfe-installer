@@ -35,6 +35,7 @@ class createRequiredDirectories {
     "$log_path/console",
     "$log_path/dashboard",
     "$log_path/hosted",
+    "$log_path/instance",
   ]:
     ensure  => directory,
     owner   => $www_user,
