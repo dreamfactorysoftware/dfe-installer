@@ -242,7 +242,7 @@ class createEnvFile( $root, $source = ".env-dist" ) {
 ############
 
 vcsrepo { "$console_release/$console_branch":
-  ensure   => present,
+  ensure   => latest,
   provider => git,
   source   => $console_repo,
   user     => $user,

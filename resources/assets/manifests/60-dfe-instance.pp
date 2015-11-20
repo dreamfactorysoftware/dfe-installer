@@ -180,7 +180,7 @@ class createEnvFile( $root, $source = ".env-dist" ) {
 ##------------------------------------------------------------------------------
 
 vcsrepo { "$instance_release/$instance_branch":
-  ensure   => present,
+  ensure   => latest,
   provider => git,
   source   => $instance_repo,
   user     => $user,
