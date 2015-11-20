@@ -82,7 +82,7 @@ end script
 
 class installElasticsearch( $root ) {
   ##  Only install if requested
-  if ( false == str2bool($dfe_update) and false == str2bool($dc_es_exists) ) {
+  if ( false == str2bool($dc_es_exists) ) {
     ##  Java
     exec { "install-java8":
       command => "add-apt-repository -y ppa:webupd8team/java && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -qq update && sudo apt-get -y install oracle-java8-installer",
@@ -113,12 +113,10 @@ class installElasticsearch( $root ) {
       require => Exec['install-elasticsearch'],
     }
   }
-}
 
-##  Logstash installer
-class installLogstash( $root ) {
-  ##  Only install if requested
-  if ( false == str2bool($dfe_update) ) {
+
+  ##  Logstash installer
+  class installLogstash( $root ) {
     exec { "install-logstash":
       unless  => 'service logstash status',
       command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
@@ -145,12 +143,10 @@ class installLogstash( $root ) {
       require => Exec['install-logstash'],
     }
   }
-}
 
-## Download and install Kibana
-class installKibana( $root ) {
-  ##  Only install if requested
-  if ( false == str2bool($dfe_update) ) {
+
+  ## Download and install Kibana
+  class installKibana( $root ) {
     ##
     ##  Kibana (v4.2.x not available on PPA as of 2015-11-03 hence the tarball)
     ##
@@ -181,38 +177,39 @@ class installKibana( $root ) {
     }->
       ##  Kibana service
     exec { 'restart-kibana':
-      unless      => 'service kibana status',
+      unless      => "sudo service kibana status",
       command     => "sudo service kibana $_kibanaCommand",
       cwd         => $root,
     }
   }
-}
 
-##  ELK stack installer
-class elk( $root ) {
-  file { [
-    $root,
-    "$root/_releases",
-    "$root/_releases/kibana",
-  ]:
-    ensure  => directory,
-    owner   => $www_user,
-    group   => $group,
-    mode    => 2755,
-  }->
-  class { installElasticsearch:
-    root => $root,
-  }->
-  class { installLogstash:
-    root => $root,
-  }->
-  class { installKibana:
-    root => $root,
+  ##  ELK stack installer
+  class elk( $root ) {
+    file { [
+      $root,
+      "$root/_releases",
+      "$root/_releases/kibana",
+    ]:
+      ensure  => directory,
+      owner   => $www_user,
+      group   => $group,
+      mode    => 2755,
+    }->
+    class { installElasticsearch:
+      root => $root,
+    }->
+    class { installLogstash:
+      root => $root,
+    }->
+    class { installKibana:
+      root => $root,
+    }
   }
-}
 
-##  Install ELK stack if requested
-class { elk:
-  root   => $elk_stack_root,
-  notify => Service['logstash'],
-}
+  ##  Install ELK stack if requested
+  if ( false == str2bool($dfe_update) ) {
+    class { elk:
+      root   => $elk_stack_root,
+      notify => Service['logstash'],
+    }
+  }

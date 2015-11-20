@@ -252,6 +252,7 @@ if ( false == str2bool($dfe_update) ) {
     notify   => Service["php5-fpm", "nginx"],
   }->
   exec { "start-kibana-if-not-started":
-    command => "sudo service kibana restart",
+    cwd         => $root,
+    command     => "sudo service kibana restart",
   }
 }
