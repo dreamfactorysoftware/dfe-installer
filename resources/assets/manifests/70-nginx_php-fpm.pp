@@ -22,6 +22,7 @@ $key_name = "$pwd/SSL/$key_file"
 $instance_hostname = "*.${vendor_id}.${domain}"
 $console_hostname = "console.${vendor_id}.${domain}"
 $dashboard_hostname = "dashboard.${vendor_id}.${domain}"
+$download_hostname = "download.${vendor_id}.${domain}"
 
 ## Set up SSL template parts
 $ssl_include = $enable_ssl ? {
@@ -130,7 +131,7 @@ server {
   listen 80;
   ${ssl_listen}
 
-  server_name ${dashboard_hostname} dashboard.local;
+  server_name ${dashboard_hostname} ${download_hostname} dashboard.local;
 
   root ${dashboard_root}/public;
 
@@ -249,5 +250,8 @@ if ( false == str2bool($dfe_update) ) {
     command  => "$php_enmod_bin dreamfactory",
     provider => posix,
     notify   => Service["php5-fpm", "nginx"],
+  }->
+  exec { "start-kibana-if-not-started":
+    command => "sudo service kibana restart",
   }
 }

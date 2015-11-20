@@ -115,6 +115,7 @@ export FACTER_STATIC_ZONE_NAME=local
 export FACTER_INSTALL_HOSTNAME=`/bin/hostname`
 export FACTER_VENDOR_ID=dfe
 export FACTER_DC_ES_PORT=9200
+export FACTER_SUPPORT_EMAIL_ADDRESS=support@dreamfactory.com
 
 ## Needs to match DB name in dfe_local.schema.sql
 export FACTER_DB_NAME=dfe_local
