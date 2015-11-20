@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.23 2015-11-16 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.24 2015-11-16 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.23
+VERSION=1.1.24
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/assets/manifests
 ENV_FILE=./storage/.env-install
@@ -73,7 +73,7 @@ _checkPuppetModules() {
     INSTALLED_MODULES=$(puppet module list)
     local _count=0
 
-    for module in puppetlabs-stdlib puppetlabs-vcsrepo puppetlabs-mysql puppetlabs-apt puppetlabs-inifile wcooley-user_ssh_pubkey
+    for module in puppetlabs-stdlib puppetlabs-vcsrepo puppetlabs-mysql puppetlabs-apt puppetlabs-inifile wcooley-user_ssh_pubkey dhoppe-postfix
     do
         if [[ ${INSTALLED_MODULES} != *"${module}"* ]]; then
             puppet module install ${module} >/dev/null
@@ -115,6 +115,7 @@ export FACTER_STATIC_ZONE_NAME=local
 export FACTER_INSTALL_HOSTNAME=`/bin/hostname`
 export FACTER_VENDOR_ID=dfe
 export FACTER_DC_ES_PORT=9200
+export FACTER_SUPPORT_EMAIL_ADDRESS=support@dreamfactory.com
 
 ## Needs to match DB name in dfe_local.schema.sql
 export FACTER_DB_NAME=dfe_local

@@ -103,11 +103,10 @@ CREATE TABLE `environment_t` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `ux_environment_environment_id` (`environment_id_text`))
   ENGINE = InnoDB
-  AUTO_INCREMENT = 3
   DEFAULT CHARSET = utf8;
 
 /********************************************************************************
-* Cluster Metrics: metrics_t
+* Metrics & Telemetry: metrics_t / telemetry_t
 ********************************************************************************/
 
 DROP TABLE IF EXISTS `metrics_t`;
@@ -120,6 +119,22 @@ CREATE TABLE `metrics_t` (
   `create_date`       DATETIME                NOT NULL,
   `lmod_date`         TIMESTAMP               NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`))
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  COLLATE = utf8_unicode_ci;
+
+CREATE TABLE `telemetry_t` (
+  `id`               BIGINT(20) UNSIGNED     NOT NULL AUTO_INCREMENT,
+  `provider_id_text` VARCHAR(255)
+                     COLLATE utf8_unicode_ci NOT NULL,
+  `gather_date`      DATETIME                NOT NULL,
+  `data_text`        MEDIUMTEXT
+                     COLLATE utf8_unicode_ci NOT NULL,
+  `create_date`      DATETIME                NOT NULL,
+  `lmod_date`        TIMESTAMP               NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `ix_telemetry_provider_id` (`provider_id_text`),
+  KEY `ix_telemetry_gather_date` (`gather_date`))
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -963,19 +978,6 @@ FOR EACH ROW BEGIN
                               WHERE `server_t`.`id` = old.id;
 END */$$
 
-DELIMITER ;
-
-/********************************************************************************
-*
-* Restore variables to original settings
-*
-********************************************************************************/
-
-SET SQL_MODE = @OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS = @OLD_UNIQUE_CHECKS;
-SET SQL_NOTES = @OLD_SQL_NOTES;
-
 /********************************************************************************
 * DreamFactory Enterprise(tm) Console/Dashboard Install/Setup Data
 * Copyright (c) 2012-infinity DreamFactory Software, Inc. All Rights Reserved
@@ -985,8 +987,8 @@ SET SQL_NOTES = @OLD_SQL_NOTES;
 * The supported environments
 ********************************************************************************/
 
-INSERT INTO `environment_t` (`id`, `user_id`, `environment_id_text`, `create_date`, `lmod_date`)
-VALUES (1, NULL, 'Development', NOW(), NOW()), (2, NULL, 'Production', NOW(), NOW());
+INSERT INTO `environment_t` (`user_id`, `environment_id_text`, `create_date`, `lmod_date`)
+VALUES (NULL, 'Development', NOW(), NOW()), (NULL, 'Production', NOW(), NOW());
 
 /********************************************************************************
 * The default local mount
@@ -1074,3 +1076,4 @@ VALUES
     NULL,
     NULL,
     'ebs', NOW(), NOW());
+

@@ -3421,62 +3421,6 @@
         ]
     },
     {
-        "name": "dreamfactory/php-utils",
-        "version": "1.1.8",
-        "version_normalized": "1.1.8.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/dreamfactorysoftware/php-utils.git",
-            "reference": "e67e9a711ac8fa80416d63db7e193b140486436e"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/dreamfactorysoftware/php-utils/zipball/e67e9a711ac8fa80416d63db7e193b140486436e",
-            "reference": "e67e9a711ac8fa80416d63db7e193b140486436e",
-            "shasum": ""
-        },
-        "require": {
-            "symfony/dependency-injection": "*",
-            "symfony/http-foundation": "*"
-        },
-        "require-dev": {
-            "laravel/framework": "5.1.*",
-            "phpunit/phpunit": "@stable"
-        },
-        "time": "2015-11-11 23:16:52",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-develop": "1.1.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "DreamFactory\\Library\\Utility\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "Apache-2.0"
-        ],
-        "authors": [
-            {
-                "name": "Jerry Ablan",
-                "email": "jerryablan@dreamfactory.com"
-            }
-        ],
-        "description": "A library of helper classes for PHP",
-        "homepage": "https://www.dreamfactory.com/",
-        "keywords": [
-            "console",
-            "dreamfactory",
-            "laravel",
-            "symfony",
-            "utility"
-        ]
-    },
-    {
         "name": "psy/psysh",
         "version": "v0.6.1",
         "version_normalized": "0.6.1.0",
@@ -3735,6 +3679,62 @@
         "keywords": [
             "framework",
             "laravel"
+        ]
+    },
+    {
+        "name": "dreamfactory/php-utils",
+        "version": "1.1.9",
+        "version_normalized": "1.1.9.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/dreamfactorysoftware/php-utils.git",
+            "reference": "1a560b6625f0aa1475ac7b3107322c6bda0a7814"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/dreamfactorysoftware/php-utils/zipball/1a560b6625f0aa1475ac7b3107322c6bda0a7814",
+            "reference": "1a560b6625f0aa1475ac7b3107322c6bda0a7814",
+            "shasum": ""
+        },
+        "require": {
+            "symfony/dependency-injection": "*",
+            "symfony/http-foundation": "*"
+        },
+        "require-dev": {
+            "laravel/framework": "5.1.*",
+            "phpunit/phpunit": "@stable"
+        },
+        "time": "2015-11-20 00:16:46",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-develop": "1.1.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "DreamFactory\\Library\\Utility\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Jerry Ablan",
+                "email": "jerryablan@dreamfactory.com"
+            }
+        ],
+        "description": "A library of helper classes for PHP",
+        "homepage": "https://www.dreamfactory.com/",
+        "keywords": [
+            "console",
+            "dreamfactory",
+            "laravel",
+            "symfony",
+            "utility"
         ]
     }
 ]

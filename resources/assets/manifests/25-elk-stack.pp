@@ -117,7 +117,6 @@ class installElasticsearch( $root ) {
 
 ##  Logstash installer
 class installLogstash( $root ) {
-  ##  Logstash
   exec { "install-logstash":
     unless  => 'service logstash status',
     command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
@@ -144,6 +143,7 @@ class installLogstash( $root ) {
     require => Exec['install-logstash'],
   }
 }
+
 
 ## Download and install Kibana
 class installKibana( $root ) {
@@ -177,7 +177,7 @@ class installKibana( $root ) {
   }->
     ##  Kibana service
   exec { 'restart-kibana':
-    unless      => 'service kibana status',
+    unless      => "sudo service kibana status",
     command     => "sudo service kibana $_kibanaCommand",
     cwd         => $root,
   }
@@ -207,7 +207,9 @@ class elk( $root ) {
 }
 
 ##  Install ELK stack if requested
-class { elk:
-  root   => $elk_stack_root,
-  notify => Service['logstash'],
+if ( false == str2bool($dfe_update) ) {
+  class { elk:
+    root   => $elk_stack_root,
+    notify => Service['logstash'],
+  }
 }

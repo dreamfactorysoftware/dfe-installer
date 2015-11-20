@@ -17,6 +17,7 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
   ## Define our stuff
   $_env = { "path" => "$root/.env", }
   $_consoleUrl = "$protocol://console.${zone}.${domain}"
+  $_dashboardUrl = "$protocol://dashboard.${zone}.${domain}"
   $_consoleApiUrl = "$_consoleUrl/api/v1/ops"
   $_settings = {
     "" => {
@@ -44,6 +45,8 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
       "MAIL_PASSWORD"                                     => $mail_password,
       "DFE_HOSTED_BASE_PATH"                              => $storage_path,
       "DFE_SNAPSHOT_TRASH_PATH"                           => $trash_path,
+      "DFE_DASHBOARD_URL"                                 => $_dashboardUrl,
+      "DFE_SUPPORT_EMAIL_ADDRESS"                         => $support_email_address,
       "DFE_CONSOLE_API_URL"                               => $_consoleApiUrl,
       "DFE_AUDIT_HOST"                                    => $dc_host,
       "DFE_AUDIT_PORT"                                    => $dc_port,
@@ -239,7 +242,7 @@ class createEnvFile( $root, $source = ".env-dist" ) {
 ############
 
 vcsrepo { "$console_release/$console_branch":
-  ensure   => present,
+  ensure   => latest,
   provider => git,
   source   => $console_repo,
   user     => $user,
