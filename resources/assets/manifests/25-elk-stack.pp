@@ -82,7 +82,7 @@ end script
 
 class installElasticsearch( $root ) {
   ##  Only install if requested
-  if ( false == str2bool($dc_es_exists) ) {
+  if ( false == str2bool($dfe_update) and false == str2bool($dc_es_exists) ) {
     ##  Java
     exec { "install-java8":
       command => "add-apt-repository -y ppa:webupd8team/java && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -qq update && sudo apt-get -y install oracle-java8-installer",
@@ -117,69 +117,74 @@ class installElasticsearch( $root ) {
 
 ##  Logstash installer
 class installLogstash( $root ) {
-  ##  Logstash
-  exec { "install-logstash":
-    unless  => 'service logstash status',
-    command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
-    cwd     => $root,
-  }->
-  file_line { 'logstash-force-ipv4':
-    path   => '/etc/default/logstash',
-    line   => 'LS_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
-    match  => ".*LS_JAVA_OPTS.*",
-  }
+  ##  Only install if requested
+  if ( false == str2bool($dfe_update) ) {
+    exec { "install-logstash":
+      unless  => 'service logstash status',
+      command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
+      cwd     => $root,
+    }->
+    file_line { 'logstash-force-ipv4':
+      path   => '/etc/default/logstash',
+      line   => 'LS_JAVA_OPTS="-Djava.net.preferIPv4Stack=true"',
+      match  => ".*LS_JAVA_OPTS.*",
+    }
 
-  # logstash service
-  service { "logstash":
-    ensure  => running,
-    enable  => true,
-    require => Exec['install-logstash'],
-  }
+    # logstash service
+    service { "logstash":
+      ensure  => running,
+      enable  => true,
+      require => Exec['install-logstash'],
+    }
 
-  ##  Cluster configuration
-  file { '/etc/logstash/conf.d/100-dfe-cluster.conf':
-    ensure  => file,
-    content => $_logstashConfig,
-    notify  => Service['logstash'],
-    require => Exec['install-logstash'],
+    ##  Cluster configuration
+    file { '/etc/logstash/conf.d/100-dfe-cluster.conf':
+      ensure  => file,
+      content => $_logstashConfig,
+      notify  => Service['logstash'],
+      require => Exec['install-logstash'],
+    }
   }
 }
 
 ## Download and install Kibana
 class installKibana( $root ) {
-  ##
-  ##  Kibana (v4.2.x not available on PPA as of 2015-11-03 hence the tarball)
-  ##
-  exec { "download-kibana":
-    cwd     => "$root/_releases/kibana",
-    command => "wget https://download.elastic.co/kibana/kibana/kibana-4.2.0-linux-x64.tar.gz",
-    creates => "$root/_releases/kibana/kibana-4.2.0-linux-x64.tar.gz",
-  }
+  ##  Only install if requested
+  if ( false == str2bool($dfe_update) ) {
+    ##
+    ##  Kibana (v4.2.x not available on PPA as of 2015-11-03 hence the tarball)
+    ##
+    exec { "download-kibana":
+      cwd     => "$root/_releases/kibana",
+      command => "wget https://download.elastic.co/kibana/kibana/kibana-4.2.0-linux-x64.tar.gz",
+      creates => "$root/_releases/kibana/kibana-4.2.0-linux-x64.tar.gz",
+    }
 
-  exec { "install-kibana":
-    user        => $www_user,
-    group       => $group,
-    cwd         => "$root/_releases/kibana",
-    command     => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
-    environment => ["HOME=/home/${user}"],
-    require     => Exec["download-kibana"],
-  }->
-  file { "$root/kibana":
-    ensure => link,
-    target => "$root/_releases/kibana/kibana-4.2.0-linux-x64",
-  }
+    exec { "install-kibana":
+      user        => $www_user,
+      group       => $group,
+      cwd         => "$root/_releases/kibana",
+      command     => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
+      environment => ["HOME=/home/${user}"],
+      require     => Exec["download-kibana"],
+    }->
+    file { "$root/kibana":
+      ensure => link,
+      target => "$root/_releases/kibana/kibana-4.2.0-linux-x64",
+    }
 
-  ##  Create a service definition
-  file { '/etc/init/kibana.conf':
-    ensure  => file,
-    content => $_kibanaConfig,
-    require => Exec['install-kibana'],
-  }->
-    ##  Kibana service
-  exec { 'restart-kibana':
-    unless      => 'service kibana status',
-    command     => "sudo service kibana $_kibanaCommand",
-    cwd         => $root,
+    ##  Create a service definition
+    file { '/etc/init/kibana.conf':
+      ensure  => file,
+      content => $_kibanaConfig,
+      require => Exec['install-kibana'],
+    }->
+      ##  Kibana service
+    exec { 'restart-kibana':
+      unless      => 'service kibana status',
+      command     => "sudo service kibana $_kibanaCommand",
+      cwd         => $root,
+    }
   }
 }
 

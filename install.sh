@@ -73,7 +73,7 @@ _checkPuppetModules() {
     INSTALLED_MODULES=$(puppet module list)
     local _count=0
 
-    for module in puppetlabs-stdlib puppetlabs-vcsrepo puppetlabs-mysql puppetlabs-apt puppetlabs-inifile wcooley-user_ssh_pubkey
+    for module in puppetlabs-stdlib puppetlabs-vcsrepo puppetlabs-mysql puppetlabs-apt puppetlabs-inifile wcooley-user_ssh_pubkey dhoppe-postfix
     do
         if [[ ${INSTALLED_MODULES} != *"${module}"* ]]; then
             puppet module install ${module} >/dev/null
