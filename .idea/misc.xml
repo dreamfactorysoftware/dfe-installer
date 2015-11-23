@@ -22,7 +22,7 @@
   </component>
   <component name="PuppetProjectConfiguration">
     <environmentSettings>
-      <PuppetEnvironmentSettings currentEnvironmentName="develop">
+      <PuppetEnvironmentSettings currentEnvironmentName="release/1.1.31">
         <environmentSet>
           <Environment name="production" modulepath="/etc/puppet/modules:/usr/share/puppet/modules:/opt/puppet/share/puppet/modules" />
           <Environment name="master" modulepath="/etc/puppet/modules:/usr/share/puppet/modules:/opt/puppet/share/puppet/modules" />
@@ -32,6 +32,7 @@
           <Environment name="release/1.1.16" modulepath="/etc/puppet/modules:/usr/share/puppet/modules:/opt/puppet/share/puppet/modules" />
           <Environment name="release/1.1.21" modulepath="/etc/puppet/modules:/usr/share/puppet/modules:/opt/puppet/share/puppet/modules" />
           <Environment name="release/1.1.25" modulepath="/etc/puppet/modules:/usr/share/puppet/modules:/opt/puppet/share/puppet/modules" />
+          <Environment name="release/1.1.31" modulepath="/etc/puppet/modules:/usr/share/puppet/modules:/opt/puppet/share/puppet/modules" />
         </environmentSet>
       </PuppetEnvironmentSettings>
     </environmentSettings>
