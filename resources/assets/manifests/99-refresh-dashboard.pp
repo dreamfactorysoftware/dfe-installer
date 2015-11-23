@@ -10,6 +10,14 @@ Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
 ## Checks directory/file permissions
 class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
+  exec { "clear-console-cache":
+    command     => "sudo rm -rf bootstrap/cache/* storage/frameword/sessions/* storage/framework/views/*",
+    user        => $user,
+    provider    => shell,
+    cwd         => $root,
+    timeout     => 1800,
+    environment => [ "HOME=/home/$user", ]
+  }->
   exec { 'chown-and-pwn':
     user            => root,
     command         => "chown -R ${www_user}:${group} ${root}/storage/ ${root}/bootstrap/cache/",
