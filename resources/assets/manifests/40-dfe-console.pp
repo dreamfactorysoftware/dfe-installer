@@ -269,8 +269,8 @@ class { laravelDirectories:
   owner   => $www_user,
   group   => $group,
 }->
-exec { "composer-update":
-  command     => "$composer_bin update",
+exec { "composer-install":
+  command     => "$composer_bin install",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
@@ -280,7 +280,7 @@ exec { "composer-update":
 class { setupApp:
   root => $console_root,
 }->
-exec { "composer-update-again":
+exec { "composer-update":
   command     => "$composer_bin update",
   user        => $user,
   provider    => shell,
