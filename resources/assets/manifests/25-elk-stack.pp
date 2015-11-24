@@ -167,12 +167,11 @@ class installKibana( $root ) {
   file { "$root/kibana":
     ensure => link,
     target => "$root/_releases/kibana/kibana-4.2.0-linux-x64",
+  }->
+  file_line { 'change-kibana-index-name':
+    path    => "$root/kibana/config/kibana.yml",
+    line    => 'kibana.index: ".dfekibana"',
   }
-  #  ->
-  #  file_line { 'change-kibana-index-name':
-  #    path    => "$root/kibana/config/kibana.yml",
-  #    line    => 'kibana.index: ".dfekibana"',
-  #  }
 
   ##  Create a service definition
   file { '/etc/init/kibana.conf':

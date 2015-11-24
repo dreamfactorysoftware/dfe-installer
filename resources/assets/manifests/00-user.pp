@@ -20,9 +20,11 @@ class updateHostsFile( $hostname, $ip = '127.0.1.1' ) {
     "console.local",
     "dashboard.local",
     "kibana.local",
+    "download.local",
     "console.${vendor_id}.${domain}",
     "dashboard.${vendor_id}.${domain}",
     "kibana.${vendor_id}.${domain}",
+    "download.${vendor_id}.${domain}",
     "${vendor_id}.${domain}",
   ]
 

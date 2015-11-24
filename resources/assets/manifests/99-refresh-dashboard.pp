@@ -74,5 +74,24 @@ exec { "composer-update-dashboard":
 }->
 class { checkPermissions:
   root => $dashboard_root,
+}->
+  ## I'm re-running these because, for some unknown reason, the first two times it
+  ## runs, the autoload.php generated doesn't seem to be right
+  ## 2015-11-24 GHA
+exec { "rerun-console-composer":
+  command     => "$composer_bin update",
+  user        => $user,
+  provider    => shell,
+  cwd         => $console_root,
+  timeout     => 1800,
+  environment => [ "HOME=/home/$user", ]
+}->
+exec { "rerun-dashboard-composer":
+  command     => "$composer_bin update",
+  user        => $user,
+  provider    => shell,
+  cwd         => $dashboard_root,
+  timeout     => 1800,
+  environment => [ "HOME=/home/$user", ]
 }
 

@@ -204,6 +204,14 @@ exec { "composer-update":
 class { setupApp:
   root => $dashboard_root,
 }->
+exec { "composer-update-again":
+  command     => "$composer_bin update",
+  user        => $user,
+  provider    => shell,
+  cwd         => $dashboard_root,
+  timeout     => 1800,
+  environment => [ "HOME=/home/$user", ]
+}->
 class { checkPermissions:
   root => $dashboard_root,
 }
