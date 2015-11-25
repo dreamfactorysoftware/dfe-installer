@@ -167,10 +167,6 @@ class installKibana( $root ) {
   file { "$root/kibana":
     ensure => link,
     target => "$root/_releases/kibana/kibana-4.2.0-linux-x64",
-  }->
-  file_line { 'change-kibana-index-name':
-    path    => "$root/kibana/config/kibana.yml",
-    line    => 'kibana.index: ".dfekibana"',
   }
 
   ##  Create a service definition
@@ -184,6 +180,11 @@ class installKibana( $root ) {
     unless      => "sudo service kibana status",
     command     => "sudo service kibana $_kibanaCommand",
     cwd         => $root,
+  }->
+    ## Add .dfekibana alias
+  exec { 'add-dfekibana-alias':
+    command => 'curl -XPOST \'http://localhost:9200/_aliases\' -d \'{"actions":[{"add":{"index":".kibana","alias":".dfekibana"}}]}\'',
+    cwd     => $root,
   }
 }
 
