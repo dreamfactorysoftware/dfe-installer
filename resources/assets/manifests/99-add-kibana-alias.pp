@@ -6,7 +6,7 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] Adding Kibana alias', }
-Exec { cwd => root, path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
+Exec { cwd => $root, path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
 ## Add .dfekibana alias
 exec { 'restart-kibana':
