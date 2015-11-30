@@ -94,4 +94,3 @@ exec { "rerun-dashboard-composer":
   timeout     => 1800,
   environment => [ "HOME=/home/$user", ]
 }
-

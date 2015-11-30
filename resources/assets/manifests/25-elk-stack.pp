@@ -176,14 +176,9 @@ class installKibana( $root ) {
     require => Exec['install-kibana'],
   }->
     ##  Kibana service
-  exec { 'start-or-restart-kibana':
-    command     => "sudo service kibana $_kibanaCommand",
+  exec { 'start-kibana':
+    command     => "sudo service kibana start",
     cwd         => $root,
-  }->
-    ## Add .dfekibana alias
-  exec { 'add-dfekibana-alias':
-    command => 'curl -XPOST \'http://localhost:9200/_aliases\' -d \'{"actions":[{"add":{"index":".kibana","alias":".dfekibana"}}]}\'',
-    cwd     => $root,
   }
 }
 
