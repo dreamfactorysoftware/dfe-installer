@@ -116,6 +116,9 @@ export FACTER_INSTALL_HOSTNAME=`/bin/hostname`
 export FACTER_VENDOR_ID=dfe
 export FACTER_DC_ES_PORT=9200
 export FACTER_SUPPORT_EMAIL_ADDRESS=support@dreamfactory.com
+export FACTER_INSTALL_VERSION_KIBANA='4.3.0'
+export FACTER_INSTALL_VERSION_LOGSTASH='2.0'
+export FACTER_INSTALL_VERSION_ELASTICSEARCH='2.x'
 
 ## Needs to match DB name in dfe_local.schema.sql
 export FACTER_DB_NAME=dfe_local

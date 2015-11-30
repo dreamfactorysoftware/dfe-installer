@@ -199,6 +199,11 @@ class Installer
             $_facterData['export FACTER_STORAGE_MOUNT_POINT'] = Disk::path([$_mountPoint, $_storagePath]);
         }
 
+        //  Add software versions
+        foreach (config('dfe.versions', []) as $_package => $_version) {
+            $_facterData['export FACTER_INSTALL_VERSION_' . trim(strtoupper(strtr($_package, '-', '_')))] = $_version;
+        }
+
         $this->formData = $formData;
         $this->cleanData = $_cleanData;
         $this->facterData = $_facterData;

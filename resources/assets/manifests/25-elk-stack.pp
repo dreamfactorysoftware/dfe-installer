@@ -92,7 +92,7 @@ class installElasticsearch( $root ) {
     ##  Elasticsearch
     exec { "install-elasticsearch":
       unless  => 'service elasticsearch status',
-      command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
+      command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/$install_version_elasticsearch/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
       cwd     => $root,
       require => Exec['install-java8'],
     }->
@@ -119,7 +119,7 @@ class installElasticsearch( $root ) {
 class installLogstash( $root ) {
   exec { "install-logstash":
     unless  => 'service logstash status',
-    command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
+    command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/$install_version_logstash/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
     cwd     => $root,
   }->
   file_line { 'logstash-force-ipv4':
@@ -148,25 +148,25 @@ class installLogstash( $root ) {
 ## Download and install Kibana
 class installKibana( $root ) {
   ##
-  ##  Kibana (v4.2.x not available on PPA as of 2015-11-03 hence the tarball)
+  ##  Kibana (v4.3.x not available on PPA as of 2015-11-30 hence the tarball)
   ##
   exec { "download-kibana":
     cwd     => "$root/_releases/kibana",
-    command => "wget https://download.elastic.co/kibana/kibana/kibana-4.2.0-linux-x64.tar.gz",
-    creates => "$root/_releases/kibana/kibana-4.2.0-linux-x64.tar.gz",
+    command => "wget https://download.elastic.co/kibana/kibana/kibana-${install_version_kibana}-linux-x64.tar.gz",
+    creates => "$root/_releases/kibana/kibana-${install_version_kibana}-linux-x64.tar.gz",
   }
 
   exec { "install-kibana":
     user        => $www_user,
     group       => $group,
     cwd         => "$root/_releases/kibana",
-    command     => "tar xzf kibana-4.2.0-linux-x64.tar.gz",
+    command     => "tar xzf kibana-${install_version_kibana}-linux-x64.tar.gz",
     environment => ["HOME=/home/${user}"],
     require     => Exec["download-kibana"],
   }->
   file { "$root/kibana":
     ensure => link,
-    target => "$root/_releases/kibana/kibana-4.2.0-linux-x64",
+    target => "$root/_releases/kibana/kibana-${install_version_kibana}-linux-x64",
   }
 
   ##  Create a service definition
