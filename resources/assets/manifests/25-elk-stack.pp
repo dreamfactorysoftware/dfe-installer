@@ -176,8 +176,7 @@ class installKibana( $root ) {
     require => Exec['install-kibana'],
   }->
     ##  Kibana service
-  exec { 'restart-kibana':
-    unless      => "sudo service kibana status",
+  exec { 'start-or-restart-kibana':
     command     => "sudo service kibana $_kibanaCommand",
     cwd         => $root,
   }->
