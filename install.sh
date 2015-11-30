@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.35 2015-11-16 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.36 2015-11-16 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.35
+VERSION=1.1.36
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/assets/manifests
 ENV_FILE=./storage/.env-install
@@ -116,6 +116,9 @@ export FACTER_INSTALL_HOSTNAME=`/bin/hostname`
 export FACTER_VENDOR_ID=dfe
 export FACTER_DC_ES_PORT=9200
 export FACTER_SUPPORT_EMAIL_ADDRESS=support@dreamfactory.com
+export FACTER_INSTALL_VERSION_KIBANA='4.3.0'
+export FACTER_INSTALL_VERSION_LOGSTASH='2.0'
+export FACTER_INSTALL_VERSION_ELASTICSEARCH='2.x'
 
 ## Needs to match DB name in dfe_local.schema.sql
 export FACTER_DB_NAME=dfe_local
