@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.36 2015-11-16 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.37 2015-11-16 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.36
+VERSION=1.1.37
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/assets/manifests
 ENV_FILE=./storage/.env-install
@@ -150,9 +150,9 @@ export FACTER_DB_USER=dfe_user
 export FACTER_DB_PWD=dfe_user
 export FACTER_DB_HOST=localhost
 export FACTER_DB_NAME=dfe_local
-export FACTER_CONSOLE_BRANCH=develop
-export FACTER_DASHBOARD_BRANCH=develop
-export FACTER_INSTANCE_BRANCH=develop
+export FACTER_CONSOLE_BRANCH=master
+export FACTER_DASHBOARD_BRANCH=master
+export FACTER_INSTANCE_BRANCH=master
 export FACTER_INSTANCE_CACHE_PATH=/tmp/.df-cache
 
 ## Blanks filled in by .env-install
