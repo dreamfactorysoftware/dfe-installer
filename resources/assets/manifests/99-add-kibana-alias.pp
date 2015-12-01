@@ -16,5 +16,6 @@ exec { 'restart-kibana':
   command => 'sudo service kibana restart',
 }->
 exec { 'add-dfekibana-alias':
-  command => 'curl -XPOST \'http://localhost:9200/_aliases\' -d \'{"actions":[{"add":{"index":".kibana","alias":".dfekibana"}}]}\'',
+  ##  Wait 30 seconds for es/kibana to connect then add our alias
+  command => 'sleep 30 && curl -XPOST http://localhost:9200/_aliases -d \'{"actions":[{"add":{"index":".kibana","alias":".dfekibana"}}]}\'',
 }
