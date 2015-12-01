@@ -5,14 +5,16 @@
 # Add the .dfekibana alias
 ################################################################################
 
-notify { 'announce-thyself': message => '[DFE] Adding Kibana alias', }
+notify { 'announce-thyself': message => '[DFE] Kickstart ELK', }
 Exec { cwd => $root, path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
 ## Add .dfekibana alias
+exec { 'restart-elasticsearch':
+  command => 'sudo service elasticsearch restart',
+}->
 exec { 'restart-kibana':
   command => 'sudo service kibana restart',
 }->
 exec { 'add-dfekibana-alias':
-  onlyif  => 'sudo service kibana status',
   command => 'curl -XPOST \'http://localhost:9200/_aliases\' -d \'{"actions":[{"add":{"index":".kibana","alias":".dfekibana"}}]}\'',
 }
