@@ -4,3 +4,4 @@
 /.idea/composerJson.xml
 /storage/.env-install*
 /vendor/dreamfactory/*.setdev-on
+.idea/
