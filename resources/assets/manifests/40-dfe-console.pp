@@ -52,6 +52,8 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
       "DFE_AUDIT_PORT"                                    => $dc_port,
       "DFE_AUDIT_CLIENT_HOST"                             => $dc_client_host,
       "DFE_AUDIT_CLIENT_PORT"                             => $dc_client_port,
+      "DFE_CAPSULE_PATH"                                  => $capsule_path,
+      "DFE_CAPSULE_LOG_PATH"                              => $capsule_log_path,
     }
   }
 
