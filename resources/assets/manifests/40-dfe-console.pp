@@ -114,7 +114,7 @@ class createInitialCluster( $root ) {
       environment => ["HOME=/home/$user"]
     }->
     exec { "create-db-server":
-      command     => "$artisan dfe:server create db-${vendor_id} -t db -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c '{\"port\":3306, \"username\": \"${db_user}\", \"password\": \"${db_password}\", \"database\": \"${db_name}\", \"driver\": \"${db_driver}\", \"default-database-name\": \"\", \"charset\": \"utf8\", \"collation\": \"utf8_unicode_ci\", \"prefix\": \"\", \"multi-assign\": \"on\"}'",
+      command     => "$artisan dfe:server create db-${vendor_id} -t db -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c '{\"port\":3306, \"username\": \"${db_user}\", \"password\": \"${db_pwd}\", \"database\": \"${db_name}\", \"driver\": \"${db_driver}\", \"default-database-name\": \"\", \"charset\": \"utf8\", \"collation\": \"utf8_unicode_ci\", \"prefix\": \"\", \"multi-assign\": \"on\"}'",
       user        => $user,
       provider    => shell,
       cwd         => $root,
