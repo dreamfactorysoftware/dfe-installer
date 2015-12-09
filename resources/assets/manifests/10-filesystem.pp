@@ -32,6 +32,8 @@ class createRequiredDirectories {
     $storage_path,
     $log_path,
     $trash_path,
+    $capsule_path,
+    $capsule_log_path,
     "$log_path/console",
     "$log_path/dashboard",
     "$log_path/hosted",
