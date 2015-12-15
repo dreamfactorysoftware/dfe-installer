@@ -77,11 +77,11 @@ CREATE TABLE `app_key_arch_t` (
 DROP TABLE IF EXISTS `auth_reset_t`;
 
 CREATE TABLE `auth_reset_t` (
-  `email`      VARCHAR(255)
-               COLLATE utf8_unicode_ci NOT NULL,
-  `token`      VARCHAR(255)
-               COLLATE utf8_unicode_ci NOT NULL,
-  `created_at` TIMESTAMP               NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `email` VARCHAR(255)
+          COLLATE utf8_unicode_ci NOT NULL,
+  `token` VARCHAR(255)
+          COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` TIMESTAMP          NOT NULL DEFAULT '0000-00-00 00:00:00',
   KEY `ix_auth_reset_email` (`email`),
   KEY `ix_auth_reset_token` (`token`))
   ENGINE = InnoDB
@@ -171,10 +171,8 @@ CREATE TABLE `mount_t` (
 
 DROP TABLE IF EXISTS `migration_t`;
 
-CREATE TABLE `migration_t` (
-  `migration` VARCHAR(256)
-              COLLATE utf8_unicode_ci NOT NULL,
-  `batch`     INT(11)                 NOT NULL)
+CREATE TABLE `migration_t` (`migration` VARCHAR(256)
+                                        COLLATE utf8_unicode_ci NOT NULL, `batch` INT(11) NOT NULL)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -759,6 +757,7 @@ CREATE TABLE `limit_t` (
   `id`             BIGINT(20) UNSIGNED     NOT NULL AUTO_INCREMENT,
   `cluster_id`     INT(11)                          DEFAULT NULL,
   `instance_id`    INT(11)                          DEFAULT NULL,
+  `limit_type_nbr` INT(11)                          DEFAULT 0,
   `limit_key_text` VARCHAR(192)
                    COLLATE utf8_unicode_ci NOT NULL,
   `limit_nbr`      INT(11)                          DEFAULT NULL,
@@ -862,11 +861,7 @@ CREATE TABLE `cluster_server_asgn_t` (
 
 DROP TABLE IF EXISTS `cluster_server_asgn_arch_t`;
 
-CREATE TABLE `cluster_server_asgn_arch_t` (
-  `cluster_id`  INT(11),
-  `server_id`   INT(11),
-  `create_date` DATETIME,
-  `lmod_date`   TIMESTAMP)
+CREATE TABLE `cluster_server_asgn_arch_t` (`cluster_id` INT(11), `server_id` INT(11), `create_date` DATETIME, `lmod_date` TIMESTAMP)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -894,11 +889,7 @@ CREATE TABLE `instance_server_asgn_t` (
 
 DROP TABLE IF EXISTS `instance_server_asgn_arch_t`;
 
-CREATE TABLE `instance_server_asgn_arch_t` (
-  `instance_id` INT(11),
-  `server_id`   INT(11),
-  `create_date` DATETIME,
-  `lmod_date`   TIMESTAMP)
+CREATE TABLE `instance_server_asgn_arch_t` (`instance_id` INT(11), `server_id` INT(11), `create_date` DATETIME, `lmod_date` TIMESTAMP)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -1022,17 +1013,7 @@ VALUES
 
 INSERT INTO `vendor_image_t` (`id`, `vendor_id`, `os_text`, `license_text`, `image_id_text`, `image_name_text`, `image_description_text`, `architecture_nbr`, `region_text`, `availability_zone_text`, `root_storage_text`, `create_date`, `lmod_date`)
 VALUES
-  (34,
-    1,
-    'Linux',
-    'Public',
-    'ami-013f9768',
-    'ubuntu/images/ebs/ubuntu-precise-12.04-amd64-server-20120728',
-    NULL,
-    1,
-    NULL,
-    NULL,
-    'ebs', NOW(), NOW()),
+  (34, 1, 'Linux', 'Public', 'ami-013f9768', 'ubuntu/images/ebs/ubuntu-precise-12.04-amd64-server-20120728', NULL, 1, NULL, NULL, 'ebs', NOW(), NOW()),
   (169, 1, 'Linux', 'Public', 'ami-057bcf6c', 'ubuntu/images/ebs/ubuntu-precise-12.04-i386-server-20120822', NULL, 0, NULL, NULL, 'ebs', NOW(), NOW()),
   (430, 1, 'Linux', 'Public', 'ami-0d3f9764', 'ubuntu/images/ebs/ubuntu-precise-12.04-i386-server-20120728', NULL, 0, NULL, NULL, 'ebs', NOW(), NOW()),
   (624, 1, 'Linux', 'Public', 'ami-137bcf7a', 'ubuntu/images/ebs/ubuntu-precise-12.04-amd64-server-20120822', NULL, 1, NULL, NULL, 'ebs', NOW(), NOW()),
@@ -1043,37 +1024,7 @@ VALUES
   (4647, 1, 'Linux', 'Public', 'ami-9878c0f1', 'ubuntu/images/ebs/ubuntu-precise-12.04-i386-server-20121026.1', NULL, 0, NULL, NULL, 'ebs', NOW(), NOW()),
   (4764, 1, 'Linux', 'Public', 'ami-9c78c0f5', 'ubuntu/images/ebs/ubuntu-precise-12.04-amd64-server-20121026.1', NULL, 1, NULL, NULL, 'ebs', NOW(), NOW()),
   (4946, 1, 'Linux', 'Public', 'ami-a29943cb', 'ubuntu/images/ebs/ubuntu-precise-12.04-amd64-server-20120424', NULL, 1, NULL, NULL, 'ebs', NOW(), NOW()),
-  (5246,
-    1,
-    'Linux',
-    'Public',
-    'ami-ac9943c5',
-    'ubuntu/images/ebs/ubuntu-precise-12.04-i386-server-20120424',
-    NULL,
-    0,
-    NULL,
-    NULL,
-    'ebs', NOW(), NOW()),
-  (12601,
-    1,
-    'Linux',
-    'Public',
-    'ami-e720ad8e',
-    'ubuntu/images/ebs/ubuntu-precise-12.04-i386-server-20121218',
-    NULL,
-    0,
-    NULL,
-    NULL,
-    'ebs', NOW(), NOW()),
-  (13287,
-    1,
-    'Linux',
-    'Public',
-    'ami-fd20ad94',
-    'ubuntu/images/ebs/ubuntu-precise-12.04-amd64-server-20121218',
-    NULL,
-    1,
-    NULL,
-    NULL,
-    'ebs', NOW(), NOW());
+  (5246, 1, 'Linux', 'Public', 'ami-ac9943c5', 'ubuntu/images/ebs/ubuntu-precise-12.04-i386-server-20120424', NULL, 0, NULL, NULL, 'ebs', NOW(), NOW()),
+  (12601, 1, 'Linux', 'Public', 'ami-e720ad8e', 'ubuntu/images/ebs/ubuntu-precise-12.04-i386-server-20121218', NULL, 0, NULL, NULL, 'ebs', NOW(), NOW()),
+  (13287, 1, 'Linux', 'Public', 'ami-fd20ad94', 'ubuntu/images/ebs/ubuntu-precise-12.04-amd64-server-20121218', NULL, 1, NULL, NULL, 'ebs', NOW(), NOW());
 
