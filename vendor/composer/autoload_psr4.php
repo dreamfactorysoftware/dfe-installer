@@ -32,6 +32,7 @@ return array(
     'League\\Flysystem\\' => array($vendorDir . '/league/flysystem/src'),
     'Illuminate\\' => array($vendorDir . '/laravel/framework/src/Illuminate'),
     'Faker\\' => array($vendorDir . '/fzaninotto/faker/src/Faker'),
+    'DreamFactory\\Library\\Utility\\Tests\\' => array($vendorDir . '/dreamfactory/php-utils/tests'),
     'DreamFactory\\Library\\Utility\\' => array($vendorDir . '/dreamfactory/php-utils/src'),
     'DreamFactory\\Enterprise\\Installer\\' => array($baseDir . '/app'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),

@@ -29,10 +29,12 @@ class createRequiredDirectories {
   ## Create all directories under the $mount_point
   file { [
     $mount_point,
-    $storage_path,
-    $log_path,
-    $trash_path,
+    $blueprint_path,
     $capsule_path,
+    $log_path,
+    $storage_path,
+    $trash_path,
+    $blueprint_log_path,
     $capsule_log_path,
     "$log_path/console",
     "$log_path/dashboard",
@@ -50,7 +52,6 @@ class createRequiredFiles {
   file { [
     ## And our indicator files
     "$doc_root_base_path/.dfe-managed",
-    "$doc_root_base_path/.maintenace-mode.off",
   ]:
     ensure => present,
     owner  => $www_user,

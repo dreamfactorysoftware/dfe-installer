@@ -14,18 +14,15 @@ Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 ############
 
 ##  Updates /etc/hosts
-class updateHostsFile( $hostname, $ip = '127.0.1.1' ) {
+class updateHostsFile( $hostname, $ip = '127.0.0.1' ) {
   ## The host aliases we want
   $_hostAliases = [
-    "console.local",
-    "dashboard.local",
-    "kibana.local",
-    "download.local",
+    "console",
+    "${vendor_id}.${domain}",
     "console.${vendor_id}.${domain}",
     "dashboard.${vendor_id}.${domain}",
-    "kibana.${vendor_id}.${domain}",
     "download.${vendor_id}.${domain}",
-    "${vendor_id}.${domain}",
+    "kibana.${vendor_id}.${domain}",
   ]
 
   host { $hostname:

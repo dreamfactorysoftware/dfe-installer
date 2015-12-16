@@ -446,6 +446,8 @@ return array(
     'DreamFactory\\Library\\Utility\\Shapers\\JsonShape' => $vendorDir . '/dreamfactory/php-utils/src/Shapers/JsonShape.php',
     'DreamFactory\\Library\\Utility\\Shapers\\MediaWikiTableShape' => $vendorDir . '/dreamfactory/php-utils/src/Shapers/MediaWikiTableShape.php',
     'DreamFactory\\Library\\Utility\\Sql' => $vendorDir . '/dreamfactory/php-utils/src/Sql.php',
+    'DreamFactory\\Library\\Utility\\Tests\\Enums\\FactoryEnumTest' => $vendorDir . '/dreamfactory/php-utils/tests/Enums/FactoryEnumTest.php',
+    'DreamFactory\\Library\\Utility\\Tests\\Enums\\TestEnum' => $vendorDir . '/dreamfactory/php-utils/tests/Enums/TestEnum.php',
     'DreamFactory\\Library\\Utility\\Uri' => $vendorDir . '/dreamfactory/php-utils/src/Uri.php',
     'DreamFactory\\Library\\Utility\\WorkPath' => $vendorDir . '/dreamfactory/php-utils/src/WorkPath.php',
     'Faker\\Calculator\\Luhn' => $vendorDir . '/fzaninotto/faker/src/Faker/Calculator/Luhn.php',
