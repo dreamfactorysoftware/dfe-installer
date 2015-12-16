@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.40 2015-11-16 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.41 2015-11-16 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.40
+VERSION=1.1.41
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/assets/manifests
 ENV_FILE=./storage/.env-install
@@ -184,6 +184,8 @@ export FACTER_TRASH_PATH=${FACTER_MOUNT_POINT}/trash
 export FACTER_INSTANCE_LOG_PATH=${FACTER_LOG_PATH}/instance
 export FACTER_SSL_CERT_STUB=$(echo ${FACTER_DOMAIN} | tr '.' '-')
 export FACTER_DC_INDEX_TYPE="cluster-${FACTER_VENDOR_ID}"
+export FACTER_BLUEPRINT_PATH=${FACTER_MOUNT_POINT}/blueprints
+export FACTER_BLUEPRINT_LOG_PATH=${FACTER_LOG_PATH}/blueprints
 export FACTER_CAPSULE_PATH=${FACTER_MOUNT_POINT}/capsules
 export FACTER_CAPSULE_LOG_PATH=${FACTER_LOG_PATH}/capsules
 
