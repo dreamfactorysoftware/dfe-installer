@@ -37,6 +37,9 @@ class updatePackages {
     'openssl',
     'curl',
     'sqlite3',
+    'apt-file',
+    'apt-utils',
+    'software-properties-common',
   ]
 
   $_removePackages = [

@@ -11,6 +11,7 @@
 namespace Barryvdh\LaravelIdeHelper\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
@@ -74,8 +75,8 @@ class ModelsCommand extends Command
         $filename = $this->option('filename');
         $this->write = $this->option('write');
         $this->dirs = array_merge(
-            $this->laravel['config']->get('ide-helper.model_locations'),
-            $this->option('dir')
+          $this->laravel['config']->get('ide-helper.model_locations'),
+          $this->option('dir')
         );
         $model = $this->argument('model');
         $ignore = $this->option('ignore');
@@ -84,7 +85,7 @@ class ModelsCommand extends Command
         //If filename is default and Write is not specified, ask what to do
         if (!$this->write && $filename === $this->filename && !$this->option('nowrite')) {
             if ($this->confirm(
-                "Do you want to overwrite the existing model files? Choose no to write to $filename instead? (Yes/No): "
+              "Do you want to overwrite the existing model files? Choose no to write to $filename instead? (Yes/No): "
             )
             ) {
                 $this->write = true;
@@ -112,7 +113,7 @@ class ModelsCommand extends Command
     protected function getArguments()
     {
         return array(
-            array('model', InputArgument::OPTIONAL | InputArgument::IS_ARRAY, 'Which models to include', array()),
+          array('model', InputArgument::OPTIONAL | InputArgument::IS_ARRAY, 'Which models to include', array()),
         );
     }
 
@@ -124,12 +125,12 @@ class ModelsCommand extends Command
     protected function getOptions()
     {
         return array(
-            array('filename', 'F', InputOption::VALUE_OPTIONAL, 'The path to the helper file', $this->filename),
-            array('dir', 'D', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The model dir', array()),
-            array('write', 'W', InputOption::VALUE_NONE, 'Write to Model file'),
-            array('nowrite', 'N', InputOption::VALUE_NONE, 'Don\'t write to Model file'),
-            array('reset', 'R', InputOption::VALUE_NONE, 'Remove the original phpdocs instead of appending'),
-            array('ignore', 'I', InputOption::VALUE_OPTIONAL, 'Which models to ignore', ''),
+          array('filename', 'F', InputOption::VALUE_OPTIONAL, 'The path to the helper file', $this->filename),
+          array('dir', 'D', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The model dir', array()),
+          array('write', 'W', InputOption::VALUE_NONE, 'Write to Model file'),
+          array('nowrite', 'N', InputOption::VALUE_NONE, 'Don\'t write to Model file'),
+          array('reset', 'R', InputOption::VALUE_NONE, 'Remove the original phpdocs instead of appending'),
+          array('ignore', 'I', InputOption::VALUE_OPTIONAL, 'Which models to ignore', ''),
         );
     }
 
@@ -204,7 +205,7 @@ class ModelsCommand extends Command
 
         if (!$hasDoctrine) {
             $this->error(
-                'Warning: `"doctrine/dbal": "~2.3"` is required to load database information. Please require that in your composer.json and run `composer update`.'
+              'Warning: `"doctrine/dbal": "~2.3"` is required to load database information. Please require that in your composer.json and run `composer update`.'
             );
         }
 
@@ -289,11 +290,6 @@ class ModelsCommand extends Command
 
                 $comment = $column->getComment();
                 $this->setProperty($name, $type, true, true, $comment);
-                $this->setMethod(
-                    Str::camel("where_" . $name),
-                    '\Illuminate\Database\Query\Builder|\\' . get_class($model),
-                    array('$value')
-                );
             }
         }
     }
@@ -307,9 +303,9 @@ class ModelsCommand extends Command
         if ($methods) {
             foreach ($methods as $method) {
                 if (Str::startsWith($method, 'get') && Str::endsWith(
-                        $method,
-                        'Attribute'
-                    ) && $method !== 'getAttribute'
+                    $method,
+                    'Attribute'
+                  ) && $method !== 'getAttribute'
                 ) {
                     //Magic get<name>Attribute
                     $name = Str::snake(substr($method, 3, -9));
@@ -317,9 +313,9 @@ class ModelsCommand extends Command
                         $this->setProperty($name, null, true, null);
                     }
                 } elseif (Str::startsWith($method, 'set') && Str::endsWith(
-                        $method,
-                        'Attribute'
-                    ) && $method !== 'setAttribute'
+                    $method,
+                    'Attribute'
+                  ) && $method !== 'setAttribute'
                 ) {
                     //Magic set<name>Attribute
                     $name = Str::snake(substr($method, 3, -9));
@@ -354,36 +350,34 @@ class ModelsCommand extends Command
                     $code = substr($code, $begin, strrpos($code, '}') - $begin + 1);
 
                     foreach (array(
-                                 'hasMany',
-                                 'belongsToMany',
-                                 'hasOne',
-                                 'belongsTo',
-                                 'morphTo',
-                                 'morphMany',
-                                 'morphToMany'
+                               'hasMany',
+                               'belongsToMany',
+                               'hasOne',
+                               'belongsTo',
+                               'morphTo',
+                               'morphMany',
+                               'morphToMany'
                              ) as $relation) {
                         $search = '$this->' . $relation . '(';
                         if ($pos = stripos($code, $search)) {
-                            $code = substr($code, $pos + strlen($search));
-                            $end = strpos($code, ')->') ?:strpos($code, ');');
-                            if (false !== $end) {
-                                $arguments = substr($code, 0, $end);
-                                $arguments = array_map(function($item) {
-                                    return trim($item, ' \'\"');
-                                }, explode(',', $arguments));
-                                //Remove quotes, ensure 1 \ in front of the model
-                                $returnModel = $this->getClassName($arguments[0], $model);
-                                if ($relation === "belongsToMany" or $relation === 'hasMany' or $relation === 'morphMany' or $relation === 'morphToMany') {
+
+                            //Resolve the relation's model to a Relation object.
+                            $relationObj = $model->$method();
+
+                            if ($relationObj instanceof Relation) {
+                                $relatedModel = '\\' . get_class($relationObj->getRelated());
+
+                                if (in_array($relation, ['belongsToMany', 'hasMany', 'morphMany', 'morphToMany'])) {
                                     //Collection or array of models (because Collection is Arrayable)
                                     $this->setProperty(
-                                        $method,
-                                        '\Illuminate\Database\Eloquent\Collection|' . $returnModel . '[]',
-                                        true,
-                                        null
+                                      $method,
+                                      $this->getCollectionClass($relatedModel) . '|' . $relatedModel . '[]',
+                                      true,
+                                      null
                                     );
                                 } else {
                                     //Single model is returned
-                                    $this->setProperty($method, $returnModel, true, null);
+                                    $this->setProperty($method, $relatedModel, true, null);
                                 }
                             }
                         }
@@ -422,7 +416,9 @@ class ModelsCommand extends Command
 
     protected function setMethod($name, $type = '', $arguments = array())
     {
-        if (!isset($this->methods[$name])) {
+        $methods = array_change_key_case($this->methods, CASE_LOWER);
+
+        if (!isset($methods[strtolower($name)])) {
             $this->methods[$name] = array();
             $this->methods[$name]['type'] = $type;
             $this->methods[$name]['arguments'] = $arguments;
@@ -526,10 +522,11 @@ class ModelsCommand extends Command
         //Loop through the default values for paremeters, and make the correct output string
         $params = array();
         $paramsWithDefault = array();
+        /** @var \ReflectionParameter $param */
         foreach ($method->getParameters() as $param) {
             $paramStr = '$' . $param->getName();
             $params[] = $paramStr;
-            if ($param->isOptional()) {
+            if ($param->isOptional() && $param->isDefaultValueAvailable()) {
                 $default = $param->getDefaultValue();
                 if (is_bool($default)) {
                     $default = $default ? 'true' : 'false';
@@ -550,23 +547,22 @@ class ModelsCommand extends Command
     }
 
     /**
+     * Determine a model classes' collection type.
+     *
+     * @see http://laravel.com/docs/eloquent-collections#custom-collections
      * @param string $className
-     * @param \Illuminate\Database\Eloquent\Model $model
      * @return string
      */
-    private function getClassName($className, $model)
+    private function getCollectionClass($className)
     {
-        // If the class name was resolved via get_class($this) or static::class
-        if (strpos($className, 'get_class($this)') !== false || strpos($className, 'static::class') !== false) {
-            return "\\" . get_class($model);
+        // Return something in the very very unlikely scenario the model doesn't
+        // have a newCollection() method.
+        if (!method_exists($className, 'newCollection')) {
+            return '\Illuminate\Database\Eloquent\Collection';
         }
 
-        // If the class name was resolved via ::class (PHP 5.5+)
-        if (strpos($className, '::class') !== false) {
-            $end = -1 * strlen('::class');
-            return substr($className, 0, $end);
-        }
-
-        return "\\" . ltrim(trim($className, " \"'"), "\\") ;
+        /** @var \Illuminate\Database\Eloquent\Model $model */
+        $model = new $className;
+        return '\\' . get_class($model->newCollection());
     }
 }
