@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.42 2015-11-16 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.43 2015-11-16 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.42
+VERSION=1.1.43
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/assets/manifests
 ENV_FILE=./storage/.env-install
@@ -19,6 +19,8 @@ PHP_BIN=`which php`
 PHP_ENMOD_BIN=`which php5enmod`
 LOG_FILE=/tmp/dfe-installer.log
 DFE_UPDATE=false
+
+[ "x" = "${LANG}x" ] && LANG="en_US.UTF8"
 
 ## Basic usage statement
 usage() {
