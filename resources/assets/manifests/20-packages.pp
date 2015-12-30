@@ -43,10 +43,10 @@ class updatePackages {
   ]
 
   $_removePackages = [
-    "apache2",
-    "apache2-bin",
-    "apache2-data",
-    "libapache2-mod-php5",
+#    "apache2",
+#    "apache2-bin",
+#    "apache2-data",
+#    "libapache2-mod-php5",
   ]
 
   ## If SMTP is local, then install postfix
@@ -58,9 +58,9 @@ class updatePackages {
 
   package { $_requiredPackages:
     ensure  => latest
-  }->
-  package { $_removePackages:
-    ensure  => absent
+#  }->
+#  package { $_removePackages:
+#    ensure  => absent
   }
 }
 
