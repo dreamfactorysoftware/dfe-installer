@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.44 2015-11-16 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.45 2015-11-16 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.44
+VERSION=1.1.45
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/assets/manifests
 ENV_FILE=./storage/.env-install
@@ -110,7 +110,6 @@ export FACTER_FSTAB=/etc/fstab
 export FACTER_USER_PWD=`openssl rand -base64 32`
 export FACTER_PERCONA_VERSION=5.6
 export FACTER_NGINX_PATH=/etc/nginx
-export FACTER_DEFAULT_PROTOCOL=http
 export FACTER_RUN_USER=${USER}
 export FACTER_LOG_USER=ubuntu
 export FACTER_STATIC_ZONE_NAME=local
@@ -121,6 +120,10 @@ export FACTER_SUPPORT_EMAIL_ADDRESS=support@dreamfactory.com
 export FACTER_INSTALL_VERSION_KIBANA='4.3.0'
 export FACTER_INSTALL_VERSION_LOGSTASH='2.0'
 export FACTER_INSTALL_VERSION_ELASTICSEARCH='2.x'
+
+## SSL (change accordingly)
+export FACTER_ENABLE_SSL=false
+export FACTER_DEFAULT_PROTOCOL=http
 
 ## Needs to match DB name in dfe_local.schema.sql
 export FACTER_DB_NAME=dfe_local

@@ -17,6 +17,7 @@ class updatePackages {
   $_basePackages = [
     'nginx-extras',
     'php5',
+    'php5-common',
     'php5-fpm',
     'php5-mysql',
     'php5-redis',

@@ -25,6 +25,8 @@ $dashboard_hostname = "dashboard.${vendor_id}.${domain}"
 $download_hostname = "download.${vendor_id}.${domain}"
 
 ## Set up SSL template parts
+$enable_ssl = str2bool($enable_ssl)
+
 $ssl_include = $enable_ssl ? {
   true => "include conf.d/ssl/dfe-instance.conf;",
   default => "",

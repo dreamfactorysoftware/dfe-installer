@@ -8,6 +8,21 @@
 notify { 'announce-thyself': message => '[DFE] Install/update console software', }
 Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
 
+$db_server_config = "
+'{
+  \"port\": 3306,
+  \"username\": \"${db_user}\",
+  \"password\": \"${db_pwd}\",
+  \"database\": \"${db_name}\",
+  \"driver\": \"${db_driver}\",
+  \"default-database-name\": \"\",
+  \"charset\": \"utf8\",
+  \"collation\": \"utf8_unicode_ci\",
+  \"prefix\": \"\",
+  \"multi-assign\": \"on\"
+}'
+"
+
 ############
 ## Classes
 ############
@@ -99,7 +114,16 @@ class setupApp( $root ) {
 ##  Creates the initial default cluster
 class createInitialCluster( $root ) {
   ##  Only on new installs
-  if ( false == str2bool($dfe_update) ) {
+  if ( true == str2bool($dfe_update) ) {
+    exec { "composer-update":
+      command     => "$composer_bin update",
+      user        => $user,
+      provider    => shell,
+      cwd         => $console_root,
+      timeout     => 1800,
+      environment => [ "HOME=/home/$user", ]
+    }
+  } else {
     exec { "create-web-server":
       command     => "$artisan dfe:server create web-${vendor_id} -t web -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c {}",
       user        => $user,
@@ -114,7 +138,7 @@ class createInitialCluster( $root ) {
       environment => ["HOME=/home/$user"]
     }->
     exec { "create-db-server":
-      command     => "$artisan dfe:server create db-${vendor_id} -t db -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c '{\"port\":3306, \"username\": \"${db_user}\", \"password\": \"${db_pwd}\", \"database\": \"${db_name}\", \"driver\": \"${db_driver}\", \"default-database-name\": \"\", \"charset\": \"utf8\", \"collation\": \"utf8_unicode_ci\", \"prefix\": \"\", \"multi-assign\": \"on\"}'",
+      command     => "$artisan dfe:server create db-${vendor_id} -t db -a ${vendor_id}.${domain} -m ${default_local_mount_name} -c ${db_server_config}",
       user        => $user,
       provider    => shell,
       cwd         => $root,
@@ -147,6 +171,14 @@ class createInitialCluster( $root ) {
       provider    => shell,
       cwd         => $root,
       environment => ["HOME=/home/$user"]
+    }->
+    exec { "composer-update":
+      command     => "$composer_bin update",
+      user        => $user,
+      provider    => shell,
+      cwd         => $console_root,
+      timeout     => 1800,
+      environment => [ "HOME=/home/$user", ]
     }
   }
 }
@@ -282,15 +314,6 @@ exec { "composer-install":
 class { setupApp:
   root => $console_root,
 }->
-exec { "composer-update":
-  command     => "$composer_bin update",
-  user        => $user,
-  provider    => shell,
-  cwd         => $console_root,
-  timeout     => 1800,
-  environment => [ "HOME=/home/$user", ]
-}->
 class { checkPermissions:
   root => $console_root,
 }
-
