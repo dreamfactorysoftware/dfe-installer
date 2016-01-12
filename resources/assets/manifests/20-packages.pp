@@ -65,10 +65,16 @@ class updatePackages {
   }->
     ## Install/update Composer
   exec { 'install-composer':
-    user    => root,
-    command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
+    command     => "/usr/bin/curl -sS https://getcomposer.org/installer | /usr/bin/php",
+    creates     => "$pwd/composer.phar",
+    provider    => shell,
+    cwd         => $root,
+    environment => ["HOME=/home/$user"],
+    require     => Package['curl']
+  }->
+  exec { 'move-installed-composer':
+    command => "mv composer.phar $composer_bin; chmod a+x $composer_bin",
     creates => $composer_bin,
-    require => Package['curl']
   }
 }
 
