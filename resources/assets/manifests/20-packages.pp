@@ -19,7 +19,7 @@ class updatePackages {
     'php5',
     'php5-common',
     'php5-fpm',
-    'php5-mysql',
+    'php5-mysqlnd',
     'php5-redis',
     'php5-pgsql',
     'php5-mongo',
@@ -62,6 +62,13 @@ class updatePackages {
   }->
   package { $_removePackages:
     ensure  => absent
+  }->
+    ## Install/update Composer
+  exec { 'install-composer':
+    user    => root,
+    command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
+    creates => $composer_bin,
+    require => Package['curl']
   }
 }
 
@@ -76,8 +83,7 @@ class { updatePackages:
 class { postfix:
   service_enable => true,
   service_ensure => running,
-}
-
+}->
 exec { 'enable-mcrypt-settings':
   command  => "$php_enmod_bin mcrypt",
   provider => posix
@@ -93,11 +99,4 @@ group { "mongodb":
 group { $group:
   ensure  => present,
   members => [$user, $www_user],
-}
-
-## Install/update Composer
-exec { 'install-composer':
-  command => "/usr/bin/curl -sS https://getcomposer.org/installer | php; mv composer.phar $composer_bin; chmod a+x $composer_bin",
-  creates => $composer_bin,
-  require => Package['curl']
 }
