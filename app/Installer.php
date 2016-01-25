@@ -300,9 +300,25 @@ class Installer
         $_path = Disk::path([base_path(), static::ASSET_LOCATION], true);
         logger('Custom asset path ensured: ' . $_path);
 
+        //  Pull in any custom CSS
+        if (null !== ($_css = trim(array_get($formData, 'custom-css')))) {
+            $_file = $domain . '-style.css';
+            if (false === file_put_contents($_fullFile = Disk::path([$_path, $_file]), $_css)) {
+                throw new \RuntimeException('Unable to write out custom css file "' . $_path . '"');
+            }
+
+            $formData['custom-css-file-source'] = $_fullFile;
+            $formData['custom-css-file-path'] = $_path;
+            $formData['custom-css-file'] = $_file;
+
+            array_forget($formData, 'custom-css');
+        } else {
+            //  Remove any existing files
+            exec('rm -f ' . Disk::segment([$_path, $domain . '-style.css']));
+        }
+
         //  Custom CSS
         return array_merge($formData,
-            $this->moveUploadedFile('custom-css-file', $domain, 'style'),
             $this->moveUploadedFile('custom-auth-logo', $domain, 'logo-dfe', 'navbar-image'),
             $this->moveUploadedFile('custom-nav-logo', $domain, 'logo-navbar', 'login-splash-image'));
     }
