@@ -135,15 +135,15 @@ class Installer
                 //  Remove augmented settings
                 array_forget($_priorData,
                     [
-                        'custom-css-file-source',
-                        'custom-css-file-path',
-                        'custom-css-file',
-                        'login-splash-image-source',
-                        'login-splash-image-file',
-                        'login-splash-image',
-                        'navbar-image-source',
-                        'navbar-image-file',
-                        'navbar-image',
+                        'custom_css_file_source',
+                        'custom_css_file_path',
+                        'custom_css_file',
+                        'login_splash_image_source',
+                        'login_splash_image_file',
+                        'login_splash_image',
+                        'navbar_image_source',
+                        'navbar_image_file',
+                        'navbar_image',
                     ]);
 
                 $this->defaults = array_merge($this->defaults, $_priorData);
