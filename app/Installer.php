@@ -316,6 +316,8 @@ class Installer
             array_forget($formData, 'custom-css');
         }
 
+        logger('aut-logo: ' . print_r(\Input::file('custom-auth-logo', true)));
+
         //  Check for auth logo
         if (\Input::file('custom-auth-logo')) {
             $_name = $domain . '-logo-dfe.' . \Input::file('custom-auth-logo')->guessExtension();
