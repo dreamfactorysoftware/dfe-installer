@@ -299,6 +299,7 @@ class Installer
     protected function getCustomisations($domain, array &$formData)
     {
         $_path = Disk::path([base_path(), static::ASSET_LOCATION], true);
+        logger('Custom asset path ensured: ' . $_path);
 
         //  Custom CSS
         if (null !== ($_css = array_get($formData, 'custom-css'))) {
@@ -306,6 +307,8 @@ class Installer
             if (false === file_put_contents(Disk::path([$_path, $_name]), $_css)) {
                 throw new \RuntimeException('Error writing custom css file.');
             }
+
+            logger('Custom CSS written to: ' . $_name);
 
             $formData['CUSTOM_CSS_FILE_PATH'] = $_path;
             $formData['CUSTOM_CSS_FILE'] = $_name;
@@ -323,6 +326,8 @@ class Installer
                 }
             }
 
+            logger('Custom auth logo written to: ' . $_name);
+
             $formData['NAVBAR_IMAGE_PATH'] = $_path;
             $formData['NAVBAR_IMAGE'] = $_name;
 
@@ -336,6 +341,8 @@ class Installer
             if (false === @rename(\Input::file('custom-nav-logo')->getRealPath(), Disk::path([$_path, $_name]))) {
                 throw new \RuntimeException('Navigation logo upload failed to complete successfully.');
             }
+
+            logger('Custom nav logo written to: ' . $_name);
 
             $formData['LOGIN_SPLASH_IMAGE_PATH'] = $_path;
             $formData['LOGIN_SPLASH_IMAGE'] = $_name;
