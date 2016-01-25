@@ -181,9 +181,16 @@ class Installer
         //  Remove CSRF token
         array_forget($formData, '_token');
 
+        //  Get the domain
+        $_domain = trim(array_get($formData, 'domain'));
+
         //  Incorporate any customisations
-        $_customisations = array_merge($formData, $this->getCustomisations($_domain = trim(array_get($formData, 'domain'))));
+        $_customisations = array_merge($formData, $this->getCustomisations($_domain));
+
+        //  Remove transformed form data...
         array_forget($formData, ['custom-css', 'custom_css']);
+        array_forget($_customisations, ['custom-css', 'custom_css']);
+
         logger('Normalised customisation settings: ' . print_r($_customisations, true));
         $formData = array_merge($formData, $_customisations);
 
