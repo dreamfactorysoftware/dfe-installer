@@ -17,4 +17,10 @@ return [
         'logstash'      => '2.0',
         'elasticsearch' => '2.x',
     ],
+    /** The repository branches to install */
+    'branches'          => [
+        'console'   => 'develop',
+        'dashboard' => 'develop',
+        'instance'  => 'develop',
+    ],
 ];

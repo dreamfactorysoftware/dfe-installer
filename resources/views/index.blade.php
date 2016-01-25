@@ -217,7 +217,7 @@
                         <legend>Custom CSS</legend>
                         <div class="form-group">
                             <label for="custom-css">CSS</label>
-                            <textarea rows="10" cols="60" class="form-control" id="custom-css" name="custom-css">{!! $custom_css_file !!}</textarea>
+                            <textarea rows="10" cols="60" class="form-control" id="custom-css" name="custom-css">{!! $custom_css !!}</textarea>
                             <p class="help-block">CSS to use with DFE web applications. Validity is <em>not</em> checked. Custom CSS is loaded <em>last</em>.
                             </p>
                         </div>

@@ -2,12 +2,8 @@
 
 use DreamFactory\Library\Utility\Disk;
 use DreamFactory\Library\Utility\Exceptions\FileSystemException;
-use DreamFactory\Library\Utility\Json;
 use DreamFactory\Library\Utility\JsonFile;
 use DreamFactory\Library\Utility\Providers\InspectionServiceProvider;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Session;
 
 class Installer
 {
@@ -56,38 +52,44 @@ class Installer
      * @type array
      */
     protected $defaults = [
-        'user'                => 'dfadmin',
-        'group'               => 'dfadmin',
-        'storage_group'       => 'dfadmin',
-        'www_user'            => 'www-data',
-        'www_group'           => 'www-data',
-        'admin_email'         => null,
-        'admin_pwd'           => null,
-        'mysql_root_pwd'      => null,
-        'vendor_id'           => 'dfe',
-        'domain'              => null,
-        'gh_user'             => null,
-        'gh_pwd'              => null,
-        'mount_point'         => '/data',
-        'storage_path'        => '/storage',
-        'log_path'            => '/data/logs',
-        'gh_token'            => null,
-        'token_name'          => null,
-        'console_host_name'   => 'console',
-        'dashboard_host_name' => 'dashboard',
-        'requirements'        => [],
+        'user'                  => 'dfadmin',
+        'group'                 => 'dfadmin',
+        'storage_group'         => 'dfadmin',
+        'www_user'              => 'www-data',
+        'www_group'             => 'www-data',
+        'admin_email'           => null,
+        'admin_pwd'             => null,
+        'mysql_root_pwd'        => null,
+        'vendor_id'             => 'dfe',
+        'domain'                => null,
+        'gh_user'               => null,
+        'gh_pwd'                => null,
+        'mount_point'           => '/data',
+        'storage_path'          => '/storage',
+        'log_path'              => '/data/logs',
+        'gh_token'              => null,
+        'token_name'            => null,
+        'console_host_name'     => 'console',
+        'dashboard_host_name'   => 'dashboard',
+        'requirements'          => [],
         /** Data Collection */
-        'dc_es_exists'        => false,
-        'dc_es_cluster'       => 'elasticsearch',
-        'dc_es_port'          => 9200,
-        'dc_host'             => 'localhost',
-        'dc_port'             => 12202,
-        'dc_client_host'      => null,
-        'dc_client_port'      => 5601,
+        'dc_es_exists'          => false,
+        'dc_es_cluster'         => 'elasticsearch',
+        'dc_es_port'            => 9200,
+        'dc_host'               => 'localhost',
+        'dc_port'               => 12202,
+        'dc_client_host'        => null,
+        'dc_client_port'        => 5601,
+        /** Installation branch selection */
+        'console-branch'        => ['master', 'develop',],
+        'dashboard-branch'      => ['master', 'develop',],
+        'instance-branch'       => ['master', 'develop',],
+        /** Installation software versions */
+        'kibana-version'        => '4.3.0',
+        'logstash-version'      => '2.0',
+        'elasticsearch-version' => '2.x',
         /** Customisation */
-        'custom_css_file'     => null,
-        'login_splash_image'  => null,
-        'navbar_image'        => null,
+        'custom_css'            => null,
     ];
 
     //******************************************************************************
@@ -98,30 +100,44 @@ class Installer
     public function __construct()
     {
         $this->formData = $this->cleanData = [];
+        $this->defaults['token_name'] = 'dfe-installer-on-' . gethostname() . '-' . date('YmdHis');
 
+        //  Default locations & files
         $this->outputFile = storage_path() . DIRECTORY_SEPARATOR . self::OUTPUT_FILE_NAME;
         $this->jsonFile = storage_path() . DIRECTORY_SEPARATOR . self::JSON_FILE_NAME;
-        $this->defaults['token_name'] = 'dfe-installer-on-' . gethostname() . '-' . date('YmdHis');
 
         logger('Output files set to:');
         logger(' > shell source file ' . $this->outputFile);
         logger(' > json source file ' . $this->outputFile);
 
-        logger('Checking for last values in "' . $this->jsonFile . '"');
+        //  Default versions
+        $this->defaults['kibana-version'] = config('dfe.versions.kibana', $this->defaults['kibana-version']);
+        $this->defaults['logstash-version'] = config('dfe.versions.logstash', $this->defaults['logstash-version']);
+        $this->defaults['elasticsearch-version'] = config('dfe.versions.elasticsearch', $this->defaults['elasticsearch-version']);
+
+        //  Default branches
+        $this->defaults['console-branch'] = config('dfe.branches.console', $this->defaults['console-branch']);
+        $this->defaults['dashboard-branch'] = config('dfe.branches.dashboard', $this->defaults['dashboard-branch']);
+        $this->defaults['instance-branch'] = config('dfe.branches.instance', $this->defaults['instance-branch']);
 
         //  If an existing run's data is available, pre-fill form with it
+        logger('Checking for last values in "' . $this->jsonFile . '"');
+
         if (file_exists($this->jsonFile)) {
             logger('Found existing file "' . $this->jsonFile . '"');
 
             try {
                 $this->defaults = array_merge($this->defaults, JsonFile::decodeFile($this->jsonFile, true));
-                logger('Prior values read from "' . $this->jsonFile . '": ' . print_r($this->defaults, true));
+                logger('Values from prior run merged into defaults.');
             } catch (\Exception $_ex) {
                 //  Bogus JSON, just ignore
-                logger('No prior values found to seed page. Defaults: ' . print_r($this->defaults, true));
+                logger('No prior values found. Using defaults.');
             }
         }
-//        $this->getRequiredPackages();
+
+        logger('Base operational values set: ' . print_r($this->defaults, true));
+
+        $this->getRequiredPackages();
     }
 
     /**
@@ -138,20 +154,18 @@ class Installer
         $_cleanData = [];
 
         if (empty($formData) || count($formData) < 5) {
-            /** @noinspection PhpUndefinedMethodInspection */
-            Session::flash('failure', 'Not all required fields were completed.');
-            /** @noinspection PhpUndefinedMethodInspection */
-            Log::error('Invalid number of post entries: ' . print_r($formData, true));
-
-            /** @noinspection PhpUndefinedMethodInspection */
-            Redirect::home();
+            \Session::flash('failure', 'Not all required fields were completed.');
+            \Log::error('Invalid number of post entries: ' . print_r($formData, true));
+            \Redirect::home();
         }
 
         //  Remove CSRF token
         array_forget($formData, '_token');
 
         //  Incorporate any customisations
-        $formData = $this->getCustomisations($_domain = trim(array_get($formData, 'domain')), $formData);
+        $_customisations = array_merge($formData, $this->getCustomisations($_domain = trim(array_get($formData, 'domain'))));
+        logger('Normalised customisation settings: ' . print_r($_customisations, true));
+        $formData = array_merge($formData, $_customisations);
 
         //  Add in things that don't exist in form...
         $formData['dc-es-exists'] = array_key_exists('dc-es-exists', $formData) ? 'true' : 'false';
@@ -191,15 +205,7 @@ class Installer
                     break;
             }
 
-            //  Dump non-empties into the source file
-            null !== $_value && $_facterData['export FACTER_' . strtoupper($_cleanKey)] = $_value;
-
-            //  Keep a pristine copy
-            $_cleanData[$_cleanKey] = $_value;
-
-            //  Save cleaned value, if any
-            $formData[$_key] = $_value;
-
+            $formData[$_key] = $_cleanData[$_cleanKey] = $_facterData['export FACTER_' . strtoupper($_cleanKey)] = $_value ?: '';
             unset($_cleanKey, $_key, $_value);
         }
 
@@ -213,13 +219,19 @@ class Installer
             $_facterData['export FACTER_INSTALL_VERSION_' . trim(strtoupper(strtr($_package, '-', '_')))] = $_version;
         }
 
+        //  Add distribution branches
+        foreach (config('dfe.branches', []) as $_package => $_branch) {
+            $_facterData['export FACTER_' . trim(strtoupper(strtr($_package, '-', '_'))) . '_BRANCH'] = $_branch;
+        }
+
         $this->formData = $formData;
         $this->cleanData = $_cleanData;
         $this->facterData = $_facterData;
 
-        logger('Form data set: ' . print_r($this->formData, true));
-        logger('Clean data set: ' . print_r($this->cleanData, true));
-        logger('Facter data set: ' . print_r($this->facterData, true));
+        logger('Finalized datasets:');
+        logger(' > Original: ' . print_r($this->formData, true));
+        logger(' > Normalised: ' . print_r($this->cleanData, true));
+        logger(' > FACTER normalised: ' . print_r($this->facterData, true));
 
         return $this;
     }
@@ -235,23 +247,18 @@ class Installer
 
         //  Fix up fact data
         $_facts = [];
+
         foreach ($this->facterData as $_key => $_value) {
             $_facts[] = $_key . '=' . $_value;
         }
 
         //  Write out source file
-        if (false === file_put_contents($this->outputFile,
-                '#!/bin/sh' . PHP_EOL . PHP_EOL . implode(PHP_EOL, $_facts) . PHP_EOL . PHP_EOL)
-        ) {
+        if (false === file_put_contents($this->outputFile, '#!/bin/sh' . PHP_EOL . PHP_EOL . implode(PHP_EOL, $_facts) . PHP_EOL . PHP_EOL)) {
             throw new FileSystemException('Unable to write output file "' . $this->outputFile . '"');
         }
 
         //  Write out the JSON file
-        if (false === file_put_contents($this->jsonFile,
-                Json::encode($this->cleanData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES))
-        ) {
-            throw new FileSystemException('Unable to write JSON output file "' . $this->jsonFile . '"');
-        }
+        JsonFile::encodeFile($this->jsonFile, $this->cleanData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
     /**
@@ -290,84 +297,96 @@ class Installer
      * Copies uploaded files to the static asset location locally. Puppet manifests will utilize from there.
      *
      * @param string $domain
-     * @param array  $formData
      *
      * @return array
      */
-    protected function getCustomisations($domain, array &$formData)
+    protected function getCustomisations($domain)
     {
         $_path = Disk::path([base_path(), static::ASSET_LOCATION], true);
-        logger('Custom asset path ensured: ' . $_path);
+        logger('Custom asset files will be written to: ' . $_path);
 
-        //  Pull in any custom CSS
-        if (null !== ($_css = trim(array_get($formData, 'custom-css-file')))) {
-            $_file = $domain . '-style.css';
-            if (false === file_put_contents($_fullFile = Disk::path([$_path, $_file]), $_css)) {
-                throw new \RuntimeException('Unable to write out custom css file "' . $_path . '"');
+        //  Set the customisation defaults
+        $_result = [
+            'custom-css-file-source'    => null,
+            'custom-css-file-path'      => null,
+            'custom-css-file'           => null,
+            'login-splash-image-source' => null,
+            'login-splash-image-path'   => null,
+            'login-splash-image'        => null,
+            'navbar-image-source'       => null,
+            'navbar-image-path'         => null,
+            'navbar-image'              => null,
+        ];
+
+        //  Check for new custom CSS and write to file...
+        $_css = trim(\Input::get('custom-css'));
+
+        if (!empty($_css)) {
+            $_fullFile = Disk::path([$_path, $_file = $domain . '-style.css']);
+
+            if (false === file_put_contents($_fullFile, $_css)) {
+                throw new \RuntimeException('Unable to write out custom css file "' . $_fullFile . '"');
             }
 
-            $formData['custom-css-file-source'] = $_fullFile;
-            $formData['custom-css-file-path'] = $_path;
-            $formData['custom-css-file'] = $_file;
-
-            array_forget($formData, 'custom-css');
+            $_result['custom-css-file-source'] = $_fullFile;
+            $_result['custom-css-file-path'] = $_path;
+            $_result['custom-css-file'] = $_file;
         } else {
             logger('No custom CSS found.');
+
             //  Remove any existing files
-            exec('rm -f ' . Disk::segment([$_path, $domain . '-style.css']));
+            @exec('rm -f ' . Disk::segment([$_path, $domain . '-style.css']));
         }
 
-        //  Custom CSS
-        $formData = array_merge($formData, $this->moveUploadedFile('login-splash-image', $domain, 'logo-dfe'));
-        $formData = array_merge($formData, $this->moveUploadedFile('navbar-image', $domain, 'logo-navbar'));
-
-        return $formData;
+        return array_merge($_result,
+            $this->moveUploadedFile('login-splash-image', $domain, 'logo-dfe'),
+            $this->moveUploadedFile('navbar-image', $domain, 'logo-navbar'));
     }
 
     /**
-     * @param string $name         The name of the uploaded field field from the form post
-     * @param string $domain       The domain of the upload
-     * @param string $fileName     The constant part of the result file
-     * @param string $facterPrefix The string to prepend to the variable within the FACTER set
-     * @param string $location     The final destination of the upload
+     * @param string $name     The name of the uploaded field field from the form post
+     * @param string $domain   The domain of the upload
+     * @param string $fileName The constant part of the result file
+     * @param string $location The final destination of the upload
      *
      * @return array
      */
-    protected function moveUploadedFile($name, $domain, $fileName, $facterPrefix = null, $location = self::ASSET_LOCATION)
+    protected function moveUploadedFile($name, $domain, $fileName, $location = self::ASSET_LOCATION)
     {
         $_result = [];
 
         //  Make sure our path exists
         $_path = Disk::path([base_path(), $location,], true);
-        $facterPrefix = $facterPrefix ?: $name;
 
-        if (\Input::file($name)) {
-            $_uploadedFile = \Input::file($name)->getRealPath();
+        //  No files? Return empty array
+        if (!\Input::hasFile($name) || !\Input::file($name)) {
+            //  Remove any existing files from prior runs
+            @exec('rm -f ' . Disk::path([$_path, $domain . '-' . $name . '.*']));
 
-            try {
-                $_name = Disk::segment([$domain, '-', trim($fileName, '- '), '.', \Input::file($name)->guessExtension()]);
+            //  Remove any trace of this from the form data
+            logger('No "' . $name . '" upload file present in posted data');
 
-                if (false === @rename($_uploadedFile, $_fullFile = Disk::path([$_path, $_name]))) {
-                    throw new \RuntimeException('File upload "' . $name . '" failed to complete successfully.');
-                }
-
-                logger('Uploaded file "' . $_uploadedFile . '" written to: ' . $_fullFile);
-
-                $_result = [
-                    $facterPrefix . '-source' => $_fullFile,
-                    $facterPrefix . '-path'   => $_path,
-                    $facterPrefix = $_name,
-                ];
-            } catch (\Exception $_ex) {
-                logger('Exception while storing uploaded file: ' . $_ex->getMessage());
-            }
-        } else {
-            //  Remove any existing files
-            logger('No file found in form "' . $name . '"');
-            exec('rm -f ' . Disk::segment([$domain, '-', $name, '.*']));
+            return $_result;
         }
 
-        return $_result;
+        $_file = \Input::file($name);
+
+        $_sourceFile = $_file->getRealPath();
+        $_name = $domain . '-' . trim($fileName, '- ') . '.' . $_file->guessExtension();
+        $_fullFile = Disk::path([$_path, $_name]);
+
+        //  Rename/move source file to destination
+        if (false === @rename($_sourceFile, $_fullFile)) {
+            throw new \RuntimeException('Failed to move uploaded file "' . $_sourceFile . '" to "' . $_fullFile . '".');
+        }
+
+        logger('Uploaded file "' . $_sourceFile . '" moved to "' . $_fullFile . '".');
+
+        return [
+            $name . '-source' => $_fullFile,
+            $name . '-path'   => $_path,
+            $name = $_name,
+        ];
     }
 
     /**
