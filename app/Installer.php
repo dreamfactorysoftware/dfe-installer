@@ -110,6 +110,14 @@ class Installer
         logger(' > shell source file ' . $this->outputFile);
         logger(' > json source file ' . $this->outputFile);
 
+        //  Branch selections
+        $this->defaults = array_merge($this->defaults,
+            [
+                'console-branch'   => config('dfe.branches.console', 'master'),
+                'dashboard-branch' => config('dfe.branches.dashboard', 'master'),
+                'instance-branch'  => config('dfe.branches.instance', 'master'),
+            ]);
+
         //  Default versions
         $this->defaults['kibana-version'] = config('dfe.versions.kibana', $this->defaults['kibana-version']);
         $this->defaults['logstash-version'] = config('dfe.versions.logstash', $this->defaults['logstash-version']);
@@ -129,16 +137,6 @@ class Installer
                 logger('No prior values found. Using defaults.');
             }
         }
-
-        //  Branch selections
-        $this->defaults = array_merge($this->defaults,
-            [
-                'branches' => [
-                    'console-branch'   => config('dfe.branches.console', $this->defaults['console-branch']),
-                    'dashboard-branch' => config('dfe.branches.dashboard', $this->defaults['dashboard-branch']),
-                    'instance-branch'  => config('dfe.branches.instance', $this->defaults['instance-branch']),
-                ],
-            ]);
 
         logger('Base operational values set: ' . print_r($this->defaults, true));
 
