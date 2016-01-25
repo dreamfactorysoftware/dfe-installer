@@ -217,7 +217,7 @@
                         <legend>Custom CSS</legend>
                         <div class="form-group">
                             <label for="custom-css">CSS</label>
-                            <textarea rows="10" cols="60" class="form-control" id="custom-css" name="custom-css">{!! $custom_css !!}</textarea>
+                            <textarea rows="10" cols="60" class="form-control" id="custom-css" name="custom-css">{!! $custom_css_file !!}</textarea>
                             <p class="help-block">CSS to use with DFE web applications. Validity is <em>not</em> checked. Custom CSS is loaded <em>last</em>.
                             </p>
                         </div>
@@ -227,13 +227,13 @@
                     <fieldset>
                         <legend>Custom Logos</legend>
                         <div class="form-group">
-                            <label for="custom-auth-logo">Login/Splash Image</label>
-                            <input type="file" class="form-control" id="custom-auth-logo" name="custom-auth-logo" value="{{ $custom_auth_logo }}">
+                            <label for="login-splash-image">Login/Splash Image</label>
+                            <input type="file" class="form-control" id="login-splash-image" name="login-splash-image" value="{{ $login_splash_image }}">
                             <p class="help-block">This image will be displayed on all login and password pages. Recommended image size is 256x256 pixels.</p>
                         </div>
                         <div class="form-group">
-                            <label for="custom-nav-logo">Navigation Bar Image</label>
-                            <input type="file" class="form-control" id="custom-nav-logo" name="custom-nav-logo" value="{{ $custom_nav_logo }}">
+                            <label for="navbar-image">Navigation Bar Image</label>
+                            <input type="file" class="form-control" id="navbar-image" name="navbar-image" value="{{ $navbar_image }}">
                             <p class="help-block">This image will be displayed in the navigation bar of all DFE web applications. Image size expected to be
                                 194x42 pixels.</p>
                         </div>
