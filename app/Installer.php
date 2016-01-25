@@ -301,75 +301,54 @@ class Installer
         logger('Custom asset path ensured: ' . $_path);
 
         //  Custom CSS
-        if (!empty(($_css = array_get($formData, 'custom-css')))) {
-            $_name = $domain . '-style.css';
-            if (false === file_put_contents(Disk::path([$_path, $_name]), $_css)) {
-                throw new \RuntimeException('Error writing custom css file.');
-            }
+        return array_merge($formData,
+            $this->moveUploadedFile('custom-css-file', $domain, 'style'),
+            $this->moveUploadedFile('custom-auth-logo', $domain, 'logo-dfe', 'navbar-image'),
+            $this->moveUploadedFile('custom-nav-logo', $domain, 'logo-navbar', 'login-splash-image'));
+    }
 
-            logger('Custom CSS written to: ' . $_name);
+    /**
+     * @param string $name         The name of the uploaded field field from the form post
+     * @param string $domain       The domain of the upload
+     * @param string $fileName     The constant part of the result file
+     * @param string $facterPrefix The string to prepend to the variable within the FACTER set
+     * @param string $location     The final destination of the upload
+     *
+     * @return array|bool
+     */
+    protected function moveUploadedFile($name, $domain, $fileName, $facterPrefix = null, $location = self::ASSET_LOCATION)
+    {
+        $_result = [];
 
-            $formData['custom-css-file-source'] = Disk::path([$_path, $_name]);
-            $formData['custom-css-file-path'] = $_path;
-            $formData['custom-css-file'] = $_name;
+        //  Make sure our path exists
+        $_path = Disk::path([base_path(), $location,], true);
+        $facterPrefix = $facterPrefix ?: $name;
 
-            array_forget($formData, 'custom-css');
-        } else {
-            if (file_exists($_file = Disk::path([$_path, $domain . '-style.css']))) {
-                @unlink($_file);
-            }
-        }
+        if (\Input::file($name)) {
+            $_uploadedFile = \Input::file($name)->getRealPath();
 
-        //  Check for auth logo
-        if (\Input::file('custom-auth-logo')) {
             try {
-                $_name = $domain . '-logo-dfe.' . \Input::file('custom-auth-logo')->guessExtension();
+                $_name = Disk::segment([$domain, '-', trim($fileName, '- '), '.', \Input::file($name)->guessExtension()]);
 
-                if (false === @rename(\Input::file('custom-auth-logo')->getRealPath(), Disk::path([$_path, $_name]))) {
-                    {
-                        throw new \RuntimeException('Authentication logo upload failed to complete successfully.');
-                    }
+                if (false === @rename($_uploadedFile, $_fullFile = Disk::path([$_path, $_name]))) {
+                    throw new \RuntimeException('File upload "' . $name . '" failed to complete successfully.');
                 }
 
-                logger('Custom auth logo written to: ' . $_name);
+                logger('Uploaded file "' . $_uploadedFile . '" written to: ' . $_fullFile);
 
-                $formData['navbar-image-source'] = Disk::path([$_path, $_name]);
-                $formData['navbar-image-path'] = $_path;
-                $formData['navbar-image'] = $_name;
+                $_result = [
+                    $facterPrefix . '-source' => $_fullFile,
+                    $facterPrefix . '-path'   => $_path,
+                    $facterPrefix = $_name,
+                ];
             } catch (\Exception $_ex) {
             }
-
-            array_forget($formData, 'custom-auth-logo');
         } else {
-            if (file_exists($_file = Disk::path([$_path, '-logo-dfe.' . \Input::file('custom-auth-logo')->guessExtension()]))) {
-                @unlink($_file);
-            }
+            //  Remove any existing files
+            exec('rm -f ' . Disk::segment([$domain, '-', $name, '.*']));
         }
 
-        //  Check for navbar logo
-        if (\Input::file('custom-nav-logo')) {
-            try {
-                $_name = $domain . '-logo-navbar.' . \Input::file('custom-nav-logo')->guessExtension();
-
-                if (false === @rename(\Input::file('custom-nav-logo')->getRealPath(), Disk::path([$_path, $_name]))) {
-                    throw new \RuntimeException('Navigation logo upload failed to complete successfully.');
-                }
-
-                logger('Custom nav logo written to: ' . $_name);
-
-                $formData['login-splash-image-source'] = Disk::path([$_path, $_name]);
-                $formData['login-splash-image-path'] = $_path;
-                $formData['login-splash-image'] = $_name;
-            } catch (\Exception $_ex) {
-            }
-            array_forget($formData, 'custom-nav-logo');
-        } else {
-            if (file_exists($_file = Disk::path([$_path, $domain . '-logo-navbar.' . \Input::file('custom-nav-logo')->guessExtension()]))) {
-                @unlink($_file);
-            }
-        }
-
-        return $formData;
+        return $_result;
     }
 
     /**
@@ -419,4 +398,5 @@ class Installer
     {
         return $this->cleanData;
     }
+
 }
