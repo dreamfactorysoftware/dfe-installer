@@ -8,7 +8,7 @@
     <section id="section-options">
         <h2>Installation Settings</h2>
 
-        <form method="POST" action="/">
+        <form method="POST" enctype="multipart/form-data">
             {{ csrf_field() }}
 
             <div class="row">
