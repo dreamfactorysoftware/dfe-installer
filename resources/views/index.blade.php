@@ -228,12 +228,12 @@
                         <legend>Custom Logos</legend>
                         <div class="form-group">
                             <label for="login-splash-image">Login/Splash Image</label>
-                            <input type="file" class="form-control" id="login-splash-image" name="login-splash-image" value="{{ $login_splash_image }}">
+                            <input type="file" class="form-control" id="login-splash-image" name="login-splash-image">
                             <p class="help-block">This image will be displayed on all login and password pages. Recommended image size is 256x256 pixels.</p>
                         </div>
                         <div class="form-group">
                             <label for="navbar-image">Navigation Bar Image</label>
-                            <input type="file" class="form-control" id="navbar-image" name="navbar-image" value="{{ $navbar_image }}">
+                            <input type="file" class="form-control" id="navbar-image" name="navbar-image">
                             <p class="help-block">This image will be displayed in the navigation bar of all DFE web applications. Image size expected to be
                                 194x42 pixels.</p>
                         </div>
