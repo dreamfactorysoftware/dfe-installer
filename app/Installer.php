@@ -300,7 +300,7 @@ class Installer
         logger('Custom asset path ensured: ' . $_path);
 
         //  Pull in any custom CSS
-        if (null !== ($_css = trim(array_get($formData, 'custom-css')))) {
+        if (null !== ($_css = trim(array_get($formData, 'custom-css-file')))) {
             $_file = $domain . '-style.css';
             if (false === file_put_contents($_fullFile = Disk::path([$_path, $_file]), $_css)) {
                 throw new \RuntimeException('Unable to write out custom css file "' . $_path . '"');
@@ -318,8 +318,8 @@ class Installer
         }
 
         //  Custom CSS
-        $formData = array_merge($formData, $this->moveUploadedFile('custom-auth-logo', $domain, 'logo-dfe', 'navbar-image'));
-        $formData = array_merge($formData, $this->moveUploadedFile('custom-nav-logo', $domain, 'logo-navbar', 'login-splash-image'));
+        $formData = array_merge($formData, $this->moveUploadedFile('login-splash-image', $domain, 'logo-dfe'));
+        $formData = array_merge($formData, $this->moveUploadedFile('navbar-image', $domain, 'logo-navbar'));
 
         return $formData;
     }
