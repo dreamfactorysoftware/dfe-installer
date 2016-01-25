@@ -192,9 +192,7 @@ class Installer
             }
 
             //  Dump non-empties into the source file
-            if (null !== $_value) {
-                $_facterData['export FACTER_' . strtoupper($_cleanKey)] = $_value;
-            }
+            $_facterData['export FACTER_' . strtoupper($_cleanKey)] = $_value ?: '';
 
             //  Keep a pristine copy
             $_cleanData[$_cleanKey] = $_value;
@@ -301,8 +299,18 @@ class Installer
         $_path = Disk::path([base_path(), static::ASSET_LOCATION], true);
         logger('Custom asset path ensured: ' . $_path);
 
+        $formData['CUSTOM_CSS_FILE_SOURCE'] = null;
+        $formData['CUSTOM_CSS_FILE_PATH'] = null;
+        $formData['CUSTOM_CSS_FILE'] = null;
+        $formData['NAVBAR_IMAGE_PATH_SOURCE'] = null;
+        $formData['NAVBAR_IMAGE_PATH'] = null;
+        $formData['NAVBAR_IMAGE'] = null;
+        $formData['LOGIN_SPLASH_SOURCE'] = null;
+        $formData['LOGIN_SPLASH_IMAGE_PATH'] = null;
+        $formData['LOGIN_SPLASH_IMAGE'] = null;
+
         //  Custom CSS
-        if (null !== ($_css = array_get($formData, 'custom-css'))) {
+        if (!empty(($_css = array_get($formData, 'custom-css')))) {
             $_name = $domain . '-style.css';
             if (false === file_put_contents(Disk::path([$_path, $_name]), $_css)) {
                 throw new \RuntimeException('Error writing custom css file.');
@@ -310,13 +318,16 @@ class Installer
 
             logger('Custom CSS written to: ' . $_name);
 
+            $formData['CUSTOM_CSS_FILE_SOURCE'] = Disk::path([$_path, $_name]);
             $formData['CUSTOM_CSS_FILE_PATH'] = $_path;
             $formData['CUSTOM_CSS_FILE'] = $_name;
 
             array_forget($formData, 'custom-css');
+        } else {
+            if (file_exists($_file = Disk::path([$_path, $domain . '-style.css']))) {
+                @unlink($_file);
+            }
         }
-
-        logger('aut-logo: ' . print_r(\Input::file('custom-auth-logo', true)));
 
         //  Check for auth logo
         if (\Input::file('custom-auth-logo')) {
@@ -330,10 +341,15 @@ class Installer
 
             logger('Custom auth logo written to: ' . $_name);
 
+            $formData['NAVBAR_IMAGE_SOURCE'] = Disk::path([$_path, $_name]);
             $formData['NAVBAR_IMAGE_PATH'] = $_path;
             $formData['NAVBAR_IMAGE'] = $_name;
 
             array_forget($formData, 'custom-auth-logo');
+        } else {
+            if (file_exists($_file = Disk::path([$_path, '-logo-dfe.' . \Input::file('custom-auth-logo')->guessExtension()]))) {
+                @unlink($_file);
+            }
         }
 
         //  Check for navbar logo
@@ -346,10 +362,15 @@ class Installer
 
             logger('Custom nav logo written to: ' . $_name);
 
+            $formData['LOGIN_SPLASH_IMAGE_SOURCE'] = Disk::path([$_path, $_name]);
             $formData['LOGIN_SPLASH_IMAGE_PATH'] = $_path;
             $formData['LOGIN_SPLASH_IMAGE'] = $_name;
 
             array_forget($formData, 'custom-nav-logo');
+        } else {
+            if (file_exists($_file = Disk::path([$_path, $domain . '-logo-navbar.' . \Input::file('custom-nav-logo')->guessExtension()]))) {
+                @unlink($_file);
+            }
         }
 
         return $formData;

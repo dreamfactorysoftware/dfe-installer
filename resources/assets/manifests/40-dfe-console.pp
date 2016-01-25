@@ -16,50 +16,53 @@ $db_server_config = "'{\"port\": 3306,\"username\": \"${db_user}\",\"password\":
 
 ## Defines the console .env settings. Relies on FACTER_* data
 class iniSettings( $root, $zone, $domain, $protocol = "https") {
-  ## Define our stuff
+## Define our stuff
   $_env = { "path" => "$root/.env", }
   $_consoleUrl = "$protocol://console.${zone}.${domain}"
   $_dashboardUrl = "$protocol://dashboard.${zone}.${domain}"
   $_consoleApiUrl = "$_consoleUrl/api/v1/ops"
   $_settings = {
     "" => {
-      "APP_DEBUG"                                         => $app_debug,
-      "APP_URL"                                           => $_consoleUrl,
-      "DB_HOST"                                           => $db_host,
-      "DB_DATABASE"                                       => $db_name,
-      "DB_USERNAME"                                       => $db_user,
-      "DB_PASSWORD"                                       => $db_pwd,
-      "DFE_CLUSTER_ID"                                    => "cluster-${zone}",
-      "DFE_DEFAULT_CLUSTER"                               => "cluster-${zone}",
-      "DFE_DEFAULT_DATABASE"                              => "db-${zone}",
-      "DFE_SCRIPT_USER"                                   => $user,
-      "DFE_DEFAULT_DNS_ZONE"                              => $zone,
-      "DFE_DEFAULT_DNS_DOMAIN"                            => $domain,
-      "DFE_DEFAULT_DOMAIN"                                => "${zone}.${domain}",
-      "DFE_DEFAULT_DOMAIN_PROTOCOL"                       => $default_protocol,
-      "DFE_STATIC_ZONE_NAME"                              => $static_zone_name,
-      "SMTP_DRIVER"                                       => "smtp",
-      "SMTP_HOST"                                         => $smtp_host,
-      "SMTP_PORT"                                         => $smtp_port,
-      "MAIL_FROM_ADDRESS"                                 => $mail_from_address,
-      "MAIL_FROM_NAME"                                    => $mail_from_name,
-      "MAIL_USERNAME"                                     => $mail_username,
-      "MAIL_PASSWORD"                                     => $mail_password,
-      "DFE_HOSTED_BASE_PATH"                              => $storage_path,
-      "DFE_SNAPSHOT_TRASH_PATH"                           => $trash_path,
-      "DFE_DASHBOARD_URL"                                 => $_dashboardUrl,
-      "DFE_SUPPORT_EMAIL_ADDRESS"                         => $support_email_address,
-      "DFE_CONSOLE_API_URL"                               => $_consoleApiUrl,
-      "DFE_AUDIT_HOST"                                    => $dc_host,
-      "DFE_AUDIT_PORT"                                    => $dc_port,
-      "DFE_AUDIT_CLIENT_HOST"                             => $dc_client_host,
-      "DFE_AUDIT_CLIENT_PORT"                             => $dc_client_port,
-      "DFE_CAPSULE_PATH"                                  => $capsule_path,
-      "DFE_CAPSULE_LOG_PATH"                              => $capsule_log_path,
+      "APP_DEBUG"                   => $app_debug,
+      "APP_URL"                     => $_consoleUrl,
+      "DB_HOST"                     => $db_host,
+      "DB_DATABASE"                 => $db_name,
+      "DB_USERNAME"                 => $db_user,
+      "DB_PASSWORD"                 => $db_pwd,
+      "DFE_CLUSTER_ID"              => "cluster-${zone}",
+      "DFE_DEFAULT_CLUSTER"         => "cluster-${zone}",
+      "DFE_DEFAULT_DATABASE"        => "db-${zone}",
+      "DFE_SCRIPT_USER"             => $user,
+      "DFE_DEFAULT_DNS_ZONE"        => $zone,
+      "DFE_DEFAULT_DNS_DOMAIN"      => $domain,
+      "DFE_DEFAULT_DOMAIN"          => "${zone}.${domain}",
+      "DFE_DEFAULT_DOMAIN_PROTOCOL" => $default_protocol,
+      "DFE_STATIC_ZONE_NAME"        => $static_zone_name,
+      "SMTP_DRIVER"                 => "smtp",
+      "SMTP_HOST"                   => $smtp_host,
+      "SMTP_PORT"                   => $smtp_port,
+      "MAIL_FROM_ADDRESS"           => $mail_from_address,
+      "MAIL_FROM_NAME"              => $mail_from_name,
+      "MAIL_USERNAME"               => $mail_username,
+      "MAIL_PASSWORD"               => $mail_password,
+      "DFE_HOSTED_BASE_PATH"        => $storage_path,
+      "DFE_SNAPSHOT_TRASH_PATH"     => $trash_path,
+      "DFE_DASHBOARD_URL"           => $_dashboardUrl,
+      "DFE_SUPPORT_EMAIL_ADDRESS"   => $support_email_address,
+      "DFE_CONSOLE_API_URL"         => $_consoleApiUrl,
+      "DFE_AUDIT_HOST"              => $dc_host,
+      "DFE_AUDIT_PORT"              => $dc_port,
+      "DFE_AUDIT_CLIENT_HOST"       => $dc_client_host,
+      "DFE_AUDIT_CLIENT_PORT"       => $dc_client_port,
+      "DFE_CAPSULE_PATH"            => $capsule_path,
+      "DFE_CAPSULE_LOG_PATH"        => $capsule_log_path,
+      "DFE_LOGIN_SPLASH_IMAGE"      => $login_splash_image,
+      "DFE_NAVBAR_IMAGE"            => $navbar_image,
+      "DFE_CUSTOM_CSS_FILE"            => $navbar_image,
     }
   }
 
-  ## Update the .env file
+## Update the .env file
   create_ini_settings($_settings, $_env)
 }
 
@@ -92,6 +95,27 @@ class setupApp( $root ) {
       mode   => 0640,
       source => "$root/database/dfe/.dfe.cluster.json"
     }->
+    file { "$doc_root_base_path/public/img/$navbar_image":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => "$root/$navbar_image_source"
+    }->
+    file { "$doc_root_base_path/public/img/$navbar_image":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => "$root/$navbar_image_source"
+    }->
+    file { "$doc_root_base_path/public/img/$navbar_image":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => "$root/$navbar_image_source"
+    }->
     class { createInitialCluster:
       root => $root,
     }
@@ -100,7 +124,7 @@ class setupApp( $root ) {
 
 ##  Creates the initial default cluster
 class createInitialCluster( $root ) {
-  ##  Only on new installs
+##  Only on new installs
   if ( true == str2bool($dfe_update) ) {
     exec { "composer-update":
       command     => "$composer_bin update",
@@ -193,7 +217,7 @@ class laravelDirectories( $root, $owner, $group, $mode = '2775') {
     mode   => $mode,
   }
 
-  ## Blow away cached files on an update
+## Blow away cached files on an update
   if ( true == str2bool($dfe_update) ) {
     exec { "remove-services-json":
       command         => "rm -f $root/bootstrap/cache/services.json",
@@ -246,7 +270,7 @@ class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
 
 ##  Create an environment file
 class createEnvFile( $root, $source = ".env-dist" ) {
-  ##  On new installs only
+##  On new installs only
   if ( false == str2bool($dfe_update) ) {
     file { "${root}/.env":
       ensure => present,
@@ -279,7 +303,7 @@ class { createEnvFile:
   root => $console_root,
 }->
 class { iniSettings:
-  ## Applies INI settings in $_settings to .env
+## Applies INI settings in $_settings to .env
   root     => $console_root,
   zone     => $vendor_id,
   domain   => $domain,
