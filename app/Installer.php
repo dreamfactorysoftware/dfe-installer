@@ -154,9 +154,9 @@ class Installer
             }
         }
 
-        logger('Base operational values set: ' . print_r($this->defaults, true));
-
         $this->getRequiredPackages();
+
+        logger('Base operational values set: ' . print_r($this->defaults, true));
     }
 
     /**
@@ -183,6 +183,7 @@ class Installer
 
         //  Incorporate any customisations
         $_customisations = array_merge($formData, $this->getCustomisations($_domain = trim(array_get($formData, 'domain'))));
+        array_forget($formData, ['custom-css', 'custom_css']);
         logger('Normalised customisation settings: ' . print_r($_customisations, true));
         $formData = array_merge($formData, $_customisations);
 
@@ -404,7 +405,7 @@ class Installer
         return [
             $name . '-source' => $_fullFile,
             $name . '-path'   => $_path,
-            $name = $_name,
+            $name             => $_name,
         ];
     }
 
