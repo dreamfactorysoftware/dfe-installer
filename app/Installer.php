@@ -81,13 +81,13 @@ class Installer
         'dc_client_host'        => null,
         'dc_client_port'        => 5601,
         /** Installation branches */
-        'console-branch'        => 'develop',
-        'dashboard-branch'      => 'develop',
-        'instance-branch'       => 'develop',
+        'console_branch'        => 'develop',
+        'dashboard_branch'      => 'develop',
+        'instance_branch'       => 'develop',
         /** Installation software versions */
-        'kibana-version'        => '4.3.0',
-        'logstash-version'      => '2.0',
-        'elasticsearch-version' => '2.x',
+        'kibana_version'        => '4.3.0',
+        'logstash_version'      => '2.0',
+        'elasticsearch_version' => '2.x',
         /** Customisation */
         'custom_css'            => null,
     ];
