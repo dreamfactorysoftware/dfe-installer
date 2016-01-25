@@ -80,10 +80,10 @@ class Installer
         'dc_port'               => 12202,
         'dc_client_host'        => null,
         'dc_client_port'        => 5601,
-        /** Installation branch selection */
-        'console-branch'        => ['master', 'develop',],
-        'dashboard-branch'      => ['master', 'develop',],
-        'instance-branch'       => ['master', 'develop',],
+        /** Installation branches */
+        'console-branch'        => 'develop',
+        'dashboard-branch'      => 'develop',
+        'instance-branch'       => 'develop',
         /** Installation software versions */
         'kibana-version'        => '4.3.0',
         'logstash-version'      => '2.0',
@@ -115,10 +115,15 @@ class Installer
         $this->defaults['logstash-version'] = config('dfe.versions.logstash', $this->defaults['logstash-version']);
         $this->defaults['elasticsearch-version'] = config('dfe.versions.elasticsearch', $this->defaults['elasticsearch-version']);
 
-        //  Default branches
-        $this->defaults['console-branch'] = config('dfe.branches.console', $this->defaults['console-branch']);
-        $this->defaults['dashboard-branch'] = config('dfe.branches.dashboard', $this->defaults['dashboard-branch']);
-        $this->defaults['instance-branch'] = config('dfe.branches.instance', $this->defaults['instance-branch']);
+        //  Branch selections
+        $this->defaults = array_merge($this->defaults,
+            [
+                'branches' => [
+                    'console-branch'   => config('dfe.branches.console', $this->defaults['console-branch']),
+                    'dashboard-branch' => config('dfe.branches.dashboard', $this->defaults['dashboard-branch']),
+                    'instance-branch'  => config('dfe.branches.instance', $this->defaults['instance-branch']),
+                ],
+            ]);
 
         //  If an existing run's data is available, pre-fill form with it
         logger('Checking for last values in "' . $this->jsonFile . '"');
