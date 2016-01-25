@@ -58,7 +58,7 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
       "DFE_CAPSULE_LOG_PATH"        => $capsule_log_path,
       "DFE_LOGIN_SPLASH_IMAGE"      => $login_splash_image,
       "DFE_NAVBAR_IMAGE"            => $navbar_image,
-      "DFE_CUSTOM_CSS_FILE"            => $navbar_image,
+      "DFE_CUSTOM_CSS_FILE"         => $custom_css_file,
     }
   }
 

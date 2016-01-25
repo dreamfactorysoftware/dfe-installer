@@ -151,7 +151,8 @@ class Installer
         array_forget($formData, '_token');
 
         //  Incorporate any customisations
-        $this->getCustomisations($_domain = trim(array_get($formData, 'domain')), $formData);
+        $_domain = trim(array_get($formData, 'domain'));
+//        $this->getCustomisations($_domain, $formData);
 
         //  Add in things that don't exist in form...
         $formData['dc-es-exists'] = array_key_exists('dc-es-exists', $formData) ? 'true' : 'false';
@@ -192,7 +193,7 @@ class Installer
             }
 
             //  Dump non-empties into the source file
-            $_facterData['export FACTER_' . strtoupper($_cleanKey)] = $_value ?: '';
+            null !== $_value && $_facterData['export FACTER_' . strtoupper($_cleanKey)] = $_value;
 
             //  Keep a pristine copy
             $_cleanData[$_cleanKey] = $_value;
@@ -299,16 +300,6 @@ class Installer
         $_path = Disk::path([base_path(), static::ASSET_LOCATION], true);
         logger('Custom asset path ensured: ' . $_path);
 
-        $formData['custom-css-file-source'] = null;
-        $formData['custom-css-file-path'] = null;
-        $formData['custom-css-file'] = null;
-        $formData['navbar-image-path-source'] = null;
-        $formData['navbar-image-path'] = null;
-        $formData['navbar-image'] = null;
-        $formData['login-splash-source'] = null;
-        $formData['login-splash-image-path'] = null;
-        $formData['login-splash-image'] = null;
-
         //  Custom CSS
         if (!empty(($_css = array_get($formData, 'custom-css')))) {
             $_name = $domain . '-style.css';
@@ -331,19 +322,22 @@ class Installer
 
         //  Check for auth logo
         if (\Input::file('custom-auth-logo')) {
-            $_name = $domain . '-logo-dfe.' . \Input::file('custom-auth-logo')->guessExtension();
+            try {
+                $_name = $domain . '-logo-dfe.' . \Input::file('custom-auth-logo')->guessExtension();
 
-            if (false === @rename(\Input::file('custom-auth-logo')->getRealPath(), Disk::path([$_path, $_name]))) {
-                {
-                    throw new \RuntimeException('Authentication logo upload failed to complete successfully.');
+                if (false === @rename(\Input::file('custom-auth-logo')->getRealPath(), Disk::path([$_path, $_name]))) {
+                    {
+                        throw new \RuntimeException('Authentication logo upload failed to complete successfully.');
+                    }
                 }
+
+                logger('Custom auth logo written to: ' . $_name);
+
+                $formData['navbar-image-source'] = Disk::path([$_path, $_name]);
+                $formData['navbar-image-path'] = $_path;
+                $formData['navbar-image'] = $_name;
+            } catch (\Exception $_ex) {
             }
-
-            logger('Custom auth logo written to: ' . $_name);
-
-            $formData['navbar_image_source'] = Disk::path([$_path, $_name]);
-            $formData['navbar_image_path'] = $_path;
-            $formData['navbar_image'] = $_name;
 
             array_forget($formData, 'custom-auth-logo');
         } else {
@@ -354,18 +348,20 @@ class Installer
 
         //  Check for navbar logo
         if (\Input::file('custom-nav-logo')) {
-            $_name = $domain . '-logo-navbar.' . \Input::file('custom-nav-logo')->guessExtension();
+            try {
+                $_name = $domain . '-logo-navbar.' . \Input::file('custom-nav-logo')->guessExtension();
 
-            if (false === @rename(\Input::file('custom-nav-logo')->getRealPath(), Disk::path([$_path, $_name]))) {
-                throw new \RuntimeException('Navigation logo upload failed to complete successfully.');
+                if (false === @rename(\Input::file('custom-nav-logo')->getRealPath(), Disk::path([$_path, $_name]))) {
+                    throw new \RuntimeException('Navigation logo upload failed to complete successfully.');
+                }
+
+                logger('Custom nav logo written to: ' . $_name);
+
+                $formData['login-splash-image-source'] = Disk::path([$_path, $_name]);
+                $formData['login-splash-image-path'] = $_path;
+                $formData['login-splash-image'] = $_name;
+            } catch (\Exception $_ex) {
             }
-
-            logger('Custom nav logo written to: ' . $_name);
-
-            $formData['login-splash-image-source'] = Disk::path([$_path, $_name]);
-            $formData['login-splash-image-path'] = $_path;
-            $formData['login-splash-image'] = $_name;
-
             array_forget($formData, 'custom-nav-logo');
         } else {
             if (file_exists($_file = Disk::path([$_path, $domain . '-logo-navbar.' . \Input::file('custom-nav-logo')->guessExtension()]))) {
