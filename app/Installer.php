@@ -299,15 +299,15 @@ class Installer
         $_path = Disk::path([base_path(), static::ASSET_LOCATION], true);
         logger('Custom asset path ensured: ' . $_path);
 
-        $formData['CUSTOM_CSS_FILE_SOURCE'] = null;
-        $formData['CUSTOM_CSS_FILE_PATH'] = null;
-        $formData['CUSTOM_CSS_FILE'] = null;
-        $formData['NAVBAR_IMAGE_PATH_SOURCE'] = null;
-        $formData['NAVBAR_IMAGE_PATH'] = null;
-        $formData['NAVBAR_IMAGE'] = null;
-        $formData['LOGIN_SPLASH_SOURCE'] = null;
-        $formData['LOGIN_SPLASH_IMAGE_PATH'] = null;
-        $formData['LOGIN_SPLASH_IMAGE'] = null;
+        $formData['custom-css-file-source'] = null;
+        $formData['custom-css-file-path'] = null;
+        $formData['custom-css-file'] = null;
+        $formData['navbar-image-path-source'] = null;
+        $formData['navbar-image-path'] = null;
+        $formData['navbar-image'] = null;
+        $formData['login-splash-source'] = null;
+        $formData['login-splash-image-path'] = null;
+        $formData['login-splash-image'] = null;
 
         //  Custom CSS
         if (!empty(($_css = array_get($formData, 'custom-css')))) {
@@ -318,9 +318,9 @@ class Installer
 
             logger('Custom CSS written to: ' . $_name);
 
-            $formData['CUSTOM_CSS_FILE_SOURCE'] = Disk::path([$_path, $_name]);
-            $formData['CUSTOM_CSS_FILE_PATH'] = $_path;
-            $formData['CUSTOM_CSS_FILE'] = $_name;
+            $formData['custom-css-file-source'] = Disk::path([$_path, $_name]);
+            $formData['custom-css-file-path'] = $_path;
+            $formData['custom-css-file'] = $_name;
 
             array_forget($formData, 'custom-css');
         } else {
@@ -341,9 +341,9 @@ class Installer
 
             logger('Custom auth logo written to: ' . $_name);
 
-            $formData['NAVBAR_IMAGE_SOURCE'] = Disk::path([$_path, $_name]);
-            $formData['NAVBAR_IMAGE_PATH'] = $_path;
-            $formData['NAVBAR_IMAGE'] = $_name;
+            $formData['navbar_image_source'] = Disk::path([$_path, $_name]);
+            $formData['navbar_image_path'] = $_path;
+            $formData['navbar_image'] = $_name;
 
             array_forget($formData, 'custom-auth-logo');
         } else {
@@ -362,9 +362,9 @@ class Installer
 
             logger('Custom nav logo written to: ' . $_name);
 
-            $formData['LOGIN_SPLASH_IMAGE_SOURCE'] = Disk::path([$_path, $_name]);
-            $formData['LOGIN_SPLASH_IMAGE_PATH'] = $_path;
-            $formData['LOGIN_SPLASH_IMAGE'] = $_name;
+            $formData['login-splash-image-source'] = Disk::path([$_path, $_name]);
+            $formData['login-splash-image-path'] = $_path;
+            $formData['login-splash-image'] = $_name;
 
             array_forget($formData, 'custom-nav-logo');
         } else {
