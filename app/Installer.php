@@ -151,8 +151,7 @@ class Installer
         array_forget($formData, '_token');
 
         //  Incorporate any customisations
-        $_domain = trim(array_get($formData, 'domain'));
-        $formData = $this->getCustomisations($_domain, $formData);
+        $formData = $this->getCustomisations($_domain = trim(array_get($formData, 'domain')), $formData);
 
         //  Add in things that don't exist in form...
         $formData['dc-es-exists'] = array_key_exists('dc-es-exists', $formData) ? 'true' : 'false';
@@ -318,9 +317,10 @@ class Installer
         }
 
         //  Custom CSS
-        return array_merge($formData,
-            $this->moveUploadedFile('custom-auth-logo', $domain, 'logo-dfe', 'navbar-image'),
-            $this->moveUploadedFile('custom-nav-logo', $domain, 'logo-navbar', 'login-splash-image'));
+        $formData = array_merge($formData, $this->moveUploadedFile('custom-auth-logo', $domain, 'logo-dfe', 'navbar-image'));
+        $formData = array_merge($formData, $this->moveUploadedFile('custom-nav-logo', $domain, 'logo-navbar', 'login-splash-image'));
+
+        return $formData;
     }
 
     /**
@@ -330,7 +330,7 @@ class Installer
      * @param string $facterPrefix The string to prepend to the variable within the FACTER set
      * @param string $location     The final destination of the upload
      *
-     * @return array|bool
+     * @return array
      */
     protected function moveUploadedFile($name, $domain, $fileName, $facterPrefix = null, $location = self::ASSET_LOCATION)
     {
