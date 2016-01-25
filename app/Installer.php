@@ -146,7 +146,13 @@ class Installer
                         'navbar_image',
                     ]);
 
-                $this->defaults = array_merge($this->defaults, $_priorData);
+                //  Merge in known things
+                foreach ($this->defaults as $_key => $_value) {
+                    if (array_key_exists($_priorData, $_key)) {
+                        $this->defaults[$_key] = $_value;
+                    }
+                }
+
                 logger('Values from prior run merged into defaults.');
             } catch (\Exception $_ex) {
                 //  Bogus JSON, just ignore
