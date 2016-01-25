@@ -85,9 +85,9 @@ class Installer
         'dc_client_host'      => null,
         'dc_client_port'      => 5601,
         /** Customisation */
-        'custom_css'          => null,
-        'custom_auth_logo'    => null,
-        'custom_nav_logo'     => null,
+        'custom_css_file'     => null,
+        'login_splash_image'  => null,
+        'navbar_image'        => null,
     ];
 
     //******************************************************************************
@@ -312,6 +312,7 @@ class Installer
 
             array_forget($formData, 'custom-css');
         } else {
+            logger('No custom CSS found.');
             //  Remove any existing files
             exec('rm -f ' . Disk::segment([$_path, $domain . '-style.css']));
         }
@@ -358,9 +359,11 @@ class Installer
                     $facterPrefix = $_name,
                 ];
             } catch (\Exception $_ex) {
+                logger('Exception while storing uploaded file: ' . $_ex->getMessage());
             }
         } else {
             //  Remove any existing files
+            logger('No file found in form "' . $name . '"');
             exec('rm -f ' . Disk::segment([$domain, '-', $name, '.*']));
         }
 
