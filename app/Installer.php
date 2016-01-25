@@ -130,7 +130,23 @@ class Installer
             logger('Found existing file "' . $this->jsonFile . '"');
 
             try {
-                $this->defaults = array_merge($this->defaults, JsonFile::decodeFile($this->jsonFile, true));
+                $_priorData = JsonFile::decodeFile($this->jsonFile, true);
+
+                //  Remove augmented settings
+                array_forget($_priorData,
+                    [
+                        'custom-css-file-source',
+                        'custom-css-file-path',
+                        'custom-css-file',
+                        'login-splash-image-source',
+                        'login-splash-image-file',
+                        'login-splash-image',
+                        'navbar-image-source',
+                        'navbar-image-file',
+                        'navbar-image',
+                    ]);
+
+                $this->defaults = array_merge($this->defaults, $_priorData);
                 logger('Values from prior run merged into defaults.');
             } catch (\Exception $_ex) {
                 //  Bogus JSON, just ignore
