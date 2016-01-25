@@ -23,6 +23,10 @@ class Installer
      * @type string The name of the output JSON file
      */
     const JSON_FILE_NAME = '.env-install.json';
+    /**
+     * @type string The relative base path of where custom files are stored.
+     */
+    const ASSET_LOCATION = 'resources/assets/custom';
 
     //******************************************************************************
     //* Members
@@ -72,6 +76,7 @@ class Installer
         'console_host_name'   => 'console',
         'dashboard_host_name' => 'dashboard',
         'requirements'        => [],
+        /** Data Collection */
         'dc_es_exists'        => false,
         'dc_es_cluster'       => 'elasticsearch',
         'dc_es_port'          => 9200,
@@ -79,6 +84,10 @@ class Installer
         'dc_port'             => 12202,
         'dc_client_host'      => null,
         'dc_client_port'      => 5601,
+        /** Customisation */
+        'custom_css'          => null,
+        'custom_auth_logo'    => null,
+        'custom_nav_logo'     => null,
     ];
 
     //******************************************************************************
@@ -141,6 +150,9 @@ class Installer
         //  Remove CSRF token
         array_forget($formData, '_token');
 
+        //  Incorporate any customisations
+        $this->getCustomisations($_domain = trim(array_get($formData, 'domain')), $formData);
+
         //  Add in things that don't exist in form...
         $formData['dc-es-exists'] = array_key_exists('dc-es-exists', $formData) ? 'true' : 'false';
         $formData['dc-es-cluster'] = array_get($formData, 'dc-es-cluster', $this->defaults['dc_es_cluster']);
@@ -154,7 +166,7 @@ class Installer
                 [
                     $this->defaults['console_host_name'],
                     trim(array_get($formData, 'vendor-id')),
-                    trim(array_get($formData, 'domain')),
+                    $_domain,
                 ]);
         }
 
@@ -195,8 +207,7 @@ class Installer
 
         //  If set have a storage and mount, construct a storage path
         if (!empty($_storagePath) && !empty($_mountPoint)) {
-            $_cleanData['storage_mount_point'] =
-            $_facterData['export FACTER_STORAGE_MOUNT_POINT'] = Disk::path([$_mountPoint, $_storagePath]);
+            $_cleanData['storage_mount_point'] = $_facterData['export FACTER_STORAGE_MOUNT_POINT'] = Disk::path([$_mountPoint, $_storagePath]);
         }
 
         //  Add software versions
@@ -275,6 +286,57 @@ class Installer
         }
 
         return $this->defaults['requirements'] = $_requirements;
+    }
+
+    /**
+     * Copies uploaded files to the static asset location locally. Puppet manifests will utilize from there.
+     *
+     * @param string $domain
+     * @param array  $formData
+     *
+     * @return array
+     */
+    protected function getCustomisations($domain, array &$formData)
+    {
+        //  Custom CSS
+        if (null !== ($_css = array_get($formData, 'custom-css'))) {
+            if (false === file_put_contents($_path = Disk::path([base_path(), static::ASSET_LOCATION, $_name = $domain . '-style.css']), $_css)) {
+                throw new \RuntimeException('Error writing custom css file.');
+            }
+
+            $formData['CUSTOM_CSS_FILE_PATH'] = $_path;
+            $formData['CUSTOM_CSS_FILE'] = $_name;
+
+            array_forget($formData, 'custom-css');
+        }
+
+        //  Check for auth logo
+        if (\Input::file('custom-auth-logo')) {
+            $_name = $domain . '-logo-dfe.' . \Input::file('custom-auth-logo')->getExtension();
+            if (false === @rename(\Input::file('custom-auth-logo')->getRealPath(), $_path = Disk::path([base_path(), static::ASSET_LOCATION, $_name]))) {
+                throw new \RuntimeException('Authentication logo upload failed to complete successfully.');
+            }
+
+            $formData['NAVBAR_IMAGE_PATH'] = $_path;
+            $formData['NAVBAR_IMAGE'] = $_name;
+
+            array_forget($formData, 'custom-auth-logo');
+        }
+
+        //  Check for navbar logo
+        if (\Input::file('custom-nav-logo')) {
+            $_name = $domain . '-logo-navbar.' . \Input::file('custom-nav-logo')->getExtension();
+            if (false === @rename(\Input::file('custom-nav-logo')->getRealPath(), $_path = Disk::path([base_path(), static::ASSET_LOCATION, $_name]))) {
+                throw new \RuntimeException('Navigation logo upload failed to complete successfully.');
+            }
+
+            $formData['LOGIN_SPLASH_IMAGE_PATH'] = $_path;
+            $formData['LOGIN_SPLASH_IMAGE'] = $_name;
+
+            array_forget($formData, 'custom-nav-logo');
+        }
+
+        return $formData;
     }
 
     /**

@@ -98,7 +98,7 @@
                     <fieldset>
                         <legend>GitHub Token</legend>
                         <p class="text-muted">To avoid GitHub API Rating Limit issues during installation, please create
-                            a personal access token on GitHub and enter it below. Click the link below to do this:<br/>
+                            a personal access token on GitHub and enter it below. Click the link below to do this:<br />
                             <small>
                                 <a href="https://github.com/settings/tokens/new?scopes=repo&description={{ $token_name }}"
                                    target="_blank">https://github.com/settings/tokens/new?scopes=repo&description={{ $token_name }}</a>
@@ -211,6 +211,36 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-md-6 col-sm-8 col-xs-12">
+                    <fieldset>
+                        <legend>Custom CSS</legend>
+                        <div class="form-group">
+                            <label for="custom-css">CSS</label>
+                            <textarea rows="10" cols="60" class="form-control" id="custom-css" name="custom-css">{!! $custom_css !!}</textarea>
+                            <p class="help-block">CSS to use with DFE web applications. Validity is <em>not</em> checked. Custom CSS is loaded <em>last</em>.
+                            </p>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="col-md-6 col-sm-8 col-xs-12">
+                    <fieldset>
+                        <legend>Custom Logos</legend>
+                        <div class="form-group">
+                            <label for="custom-auth-logo">Login/Splash Image</label>
+                            <input type="file" class="form-control" id="custom-auth-logo" name="custom-auth-logo" value="{{ $custom_auth_logo }}">
+                            <p class="help-block">This image will be displayed on all login and password pages. Recommended image size is 256x256 pixels.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="custom-nav-logo">Navigation Bar Image</label>
+                            <input type="file" class="form-control" id="custom-nav-logo" name="custom-nav-logo" value="{{ $custom_nav_logo }}">
+                            <p class="help-block">This image will be displayed in the navigation bar of all DFE web applications. Image size expected to be
+                                194x42 pixels.</p>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
             <div class="form-actions">
                 <button type="submit" class="btn btn-md btn-success">
                     <i class="fa fa-arrow-circle-right"></i> Save Configuration
@@ -225,7 +255,7 @@
             var _lastHost = $_dcHost.val();
 
             //  Set the reporting host name the same as the console if we are installing ELK
-            $('#vendor-id, #domain').on('change', function (e) {
+            $('#vendor-id, #domain').on('change', function () {
                 if (!$_checkbox.prop('checked')) {
                     if (_lastHost == $_dcHost.val()) {
                         $_dcHost.val(_lastHost = '{{ $console_host_name }}.' + $_zone.val() + '.' + $_domain.val());
@@ -234,7 +264,7 @@
             });
 
             //  Enable/disable ES entries if we are not installing ELK
-            $_checkbox.on('change', function (e) {
+            $_checkbox.on('change', function () {
                 if (this.prop('checked')) {
                     $('#dc-es-cluster, #dc-host, #dc-port').removeAttr('disabled').removeClass('disabled').removeAttr('required');
                     $_dcHost.val('');
