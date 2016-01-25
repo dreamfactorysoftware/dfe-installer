@@ -318,7 +318,7 @@ class Installer
 
         //  Check for auth logo
         if (\Input::file('custom-auth-logo')) {
-            $_name = $domain . '-logo-dfe.' . \Input::file('custom-auth-logo')->getExtension();
+            $_name = $domain . '-logo-dfe.' . \Input::file('custom-auth-logo')->guessExtension();
 
             if (false === @rename(\Input::file('custom-auth-logo')->getRealPath(), Disk::path([$_path, $_name]))) {
                 {
@@ -336,7 +336,7 @@ class Installer
 
         //  Check for navbar logo
         if (\Input::file('custom-nav-logo')) {
-            $_name = $domain . '-logo-navbar.' . \Input::file('custom-nav-logo')->getExtension();
+            $_name = $domain . '-logo-navbar.' . \Input::file('custom-nav-logo')->guessExtension();
 
             if (false === @rename(\Input::file('custom-nav-logo')->getRealPath(), Disk::path([$_path, $_name]))) {
                 throw new \RuntimeException('Navigation logo upload failed to complete successfully.');

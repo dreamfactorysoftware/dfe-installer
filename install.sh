@@ -163,9 +163,9 @@ export FACTER_DB_USER=dfe_user
 export FACTER_DB_PWD=dfe_user
 export FACTER_DB_HOST=localhost
 export FACTER_DB_NAME=dfe_local
-export FACTER_CONSOLE_BRANCH=master
-export FACTER_DASHBOARD_BRANCH=master
-export FACTER_INSTANCE_BRANCH=master
+export FACTER_CONSOLE_BRANCH=develop
+export FACTER_DASHBOARD_BRANCH=develop
+export FACTER_INSTANCE_BRANCH=develop
 export FACTER_INSTANCE_CACHE_PATH=/tmp/.df-cache
 
 ## Blanks filled in by .env-install
