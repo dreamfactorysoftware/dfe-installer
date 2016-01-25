@@ -113,15 +113,15 @@ class Installer
         //  Branch selections
         $this->defaults = array_merge($this->defaults,
             [
-                'console-branch'   => config('dfe.branches.console', 'master'),
-                'dashboard-branch' => config('dfe.branches.dashboard', 'master'),
-                'instance-branch'  => config('dfe.branches.instance', 'master'),
+                'console_branch'   => config('dfe.branches.console', 'master'),
+                'dashboard_branch' => config('dfe.branches.dashboard', 'master'),
+                'instance_branch'  => config('dfe.branches.instance', 'master'),
             ]);
 
         //  Default versions
-        $this->defaults['kibana-version'] = config('dfe.versions.kibana', $this->defaults['kibana-version']);
-        $this->defaults['logstash-version'] = config('dfe.versions.logstash', $this->defaults['logstash-version']);
-        $this->defaults['elasticsearch-version'] = config('dfe.versions.elasticsearch', $this->defaults['elasticsearch-version']);
+        $this->defaults['kibana_version'] = config('dfe.versions.kibana', $this->defaults['kibana_version']);
+        $this->defaults['logstash_version'] = config('dfe.versions.logstash', $this->defaults['logstash_version']);
+        $this->defaults['elasticsearch_version'] = config('dfe.versions.elasticsearch', $this->defaults['elasticsearch_version']);
 
         //  If an existing run's data is available, pre-fill form with it
         logger('Checking for last values in "' . $this->jsonFile . '"');
