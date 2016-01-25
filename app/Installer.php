@@ -298,9 +298,12 @@ class Installer
      */
     protected function getCustomisations($domain, array &$formData)
     {
+        $_path = Disk::path([base_path(), static::ASSET_LOCATION], true);
+
         //  Custom CSS
         if (null !== ($_css = array_get($formData, 'custom-css'))) {
-            if (false === file_put_contents($_path = Disk::path([base_path(), static::ASSET_LOCATION, $_name = $domain . '-style.css']), $_css)) {
+            $_name = $domain . '-style.css';
+            if (false === file_put_contents(Disk::path([$_path, $_name]), $_css)) {
                 throw new \RuntimeException('Error writing custom css file.');
             }
 
@@ -313,8 +316,11 @@ class Installer
         //  Check for auth logo
         if (\Input::file('custom-auth-logo')) {
             $_name = $domain . '-logo-dfe.' . \Input::file('custom-auth-logo')->getExtension();
-            if (false === @rename(\Input::file('custom-auth-logo')->getRealPath(), $_path = Disk::path([base_path(), static::ASSET_LOCATION, $_name]))) {
-                throw new \RuntimeException('Authentication logo upload failed to complete successfully.');
+
+            if (false === @rename(\Input::file('custom-auth-logo')->getRealPath(), Disk::path([$_path, $_name]))) {
+                {
+                    throw new \RuntimeException('Authentication logo upload failed to complete successfully.');
+                }
             }
 
             $formData['NAVBAR_IMAGE_PATH'] = $_path;
@@ -326,7 +332,8 @@ class Installer
         //  Check for navbar logo
         if (\Input::file('custom-nav-logo')) {
             $_name = $domain . '-logo-navbar.' . \Input::file('custom-nav-logo')->getExtension();
-            if (false === @rename(\Input::file('custom-nav-logo')->getRealPath(), $_path = Disk::path([base_path(), static::ASSET_LOCATION, $_name]))) {
+
+            if (false === @rename(\Input::file('custom-nav-logo')->getRealPath(), Disk::path([$_path, $_name]))) {
                 throw new \RuntimeException('Navigation logo upload failed to complete successfully.');
             }
 
