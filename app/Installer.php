@@ -115,16 +115,6 @@ class Installer
         $this->defaults['logstash-version'] = config('dfe.versions.logstash', $this->defaults['logstash-version']);
         $this->defaults['elasticsearch-version'] = config('dfe.versions.elasticsearch', $this->defaults['elasticsearch-version']);
 
-        //  Branch selections
-        $this->defaults = array_merge($this->defaults,
-            [
-                'branches' => [
-                    'console-branch'   => config('dfe.branches.console', $this->defaults['console-branch']),
-                    'dashboard-branch' => config('dfe.branches.dashboard', $this->defaults['dashboard-branch']),
-                    'instance-branch'  => config('dfe.branches.instance', $this->defaults['instance-branch']),
-                ],
-            ]);
-
         //  If an existing run's data is available, pre-fill form with it
         logger('Checking for last values in "' . $this->jsonFile . '"');
 
@@ -139,6 +129,16 @@ class Installer
                 logger('No prior values found. Using defaults.');
             }
         }
+
+        //  Branch selections
+        $this->defaults = array_merge($this->defaults,
+            [
+                'branches' => [
+                    'console-branch'   => config('dfe.branches.console', $this->defaults['console-branch']),
+                    'dashboard-branch' => config('dfe.branches.dashboard', $this->defaults['dashboard-branch']),
+                    'instance-branch'  => config('dfe.branches.instance', $this->defaults['instance-branch']),
+                ],
+            ]);
 
         logger('Base operational values set: ' . print_r($this->defaults, true));
 
