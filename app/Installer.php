@@ -152,7 +152,7 @@ class Installer
 
         //  Incorporate any customisations
         $_domain = trim(array_get($formData, 'domain'));
-//        $this->getCustomisations($_domain, $formData);
+        $this->getCustomisations($_domain, $formData);
 
         //  Add in things that don't exist in form...
         $formData['dc-es-exists'] = array_key_exists('dc-es-exists', $formData) ? 'true' : 'false';
