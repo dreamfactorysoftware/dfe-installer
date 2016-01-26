@@ -308,7 +308,7 @@ class Installer
         foreach (array_only($this->cleanData,
             ['custom_css_file', 'navbar_image', 'login_splash_image',]) as $_key => $_value) {
             if (!empty($_value)) {
-                $_customs[] = 'DFE_' . strtoupper($_key) . '=' . $_value;
+                $_customs[] = 'DFE_' . strtoupper($_key) . '=' . (('custom_css_file' == $_key) ? '/public/css/' : '/public/img/') . $_value;
             }
         }
 
