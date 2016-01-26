@@ -89,6 +89,11 @@ class setupApp( $root ) {
       user            => root,
       onlyif          => "test -f $console_root/database/dfe/console.env",
     }->
+    exec { "append-customs":
+      command         => "cat $console_root/database/dfe/console.custom.env >> $root/.env",
+      user            => root,
+      onlyif          => "test -f $console_root/database/dfe/console.custom.env",
+    }->
     file { "$doc_root_base_path/.dfe.cluster.json":
       ensure => present,
       owner  => $user,

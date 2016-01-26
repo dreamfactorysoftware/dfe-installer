@@ -302,20 +302,16 @@ class Installer
             throw new FileSystemException('Unable to write output file "' . $this->outputFile . '"');
         }
 
-        //  Write out a customisation dot file
-        JsonFile::encodeFile(str_replace('.json', '.custom.json', $this->jsonFile),
-            array_only($this->cleanData,
-                [
-                    'custom_css_file',
-                    'custom_css_file_path',
-                    'custom_css_file_source',
-                    'navbar_image',
-                    'navbar_image_path',
-                    'navbar_image_source',
-                    'login_splash_image',
-                    'login_splash_image_path',
-                    'login_splash_image_source',
-                ]));
+        //  Write out a customisation INI file
+        $_customs = [];
+
+        foreach (array_only($this->facterData, ['FACTER_CUSTOM_CSS_FILE', 'FACTER_NAVBAR_IMAGE', 'FACTER_LOGIN_SPLASH_IMAGE',]) as $_key => $_value) {
+            if (!empty($_value)) {
+                $_customs[] = str_replace('FACTER_', 'DFE_', $_key) . '=' . $_value;
+            }
+        }
+
+        !empty($_customs) && file_put_contents(str_replace('.json', '.custom.json', $this->jsonFile), implode(PHP_EOL, $_customs));
 
         //  Write out the JSON file
         JsonFile::encodeFile($this->jsonFile, $this->cleanData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
