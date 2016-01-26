@@ -305,9 +305,10 @@ class Installer
         //  Write out a customisation INI file
         $_customs = [];
 
-        foreach (array_only($this->facterData, ['FACTER_CUSTOM_CSS_FILE', 'FACTER_NAVBAR_IMAGE', 'FACTER_LOGIN_SPLASH_IMAGE',]) as $_key => $_value) {
+        foreach (array_only($this->cleanData,
+            ['custom_css_file', 'navbar_image', 'login_splash_image',]) as $_key => $_value) {
             if (!empty($_value)) {
-                $_customs[] = str_replace('FACTER_', 'DFE_', $_key) . '=' . $_value;
+                $_customs[] = 'DFE_' . strtoupper($_key) . '=' . $_value;
             }
         }
 
