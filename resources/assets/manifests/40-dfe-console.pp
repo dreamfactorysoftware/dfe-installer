@@ -106,7 +106,7 @@ class setupApp( $root ) {
 class customizeApp( $root ) {
   if '' != $custom_css_file_source {
     file { "$root/public/css/$custom_css_file":
-      ensure => present,
+      ensure => file,
       owner  => $user,
       group  => $www_group,
       mode   => 0640,
@@ -116,7 +116,7 @@ class customizeApp( $root ) {
 
   if '' != $login_splash_image_source {
     file { "$root/public/img/$login_splash_image":
-      ensure => present,
+      ensure => file,
       owner  => $user,
       group  => $www_group,
       mode   => 0640,
@@ -126,7 +126,7 @@ class customizeApp( $root ) {
 
   if '' != $navbar_image_source {
     file { "$root/public/img/$navbar_image":
-      ensure => present,
+      ensure => file,
       owner  => $user,
       group  => $www_group,
       mode   => 0640,
@@ -339,7 +339,7 @@ class { setupApp:
   root => $console_root,
 }->
 class { customizeApp:
-  root => $dashboard_root,
+  root => $console_root,
 }->
 class { checkPermissions:
   root => $console_root,
