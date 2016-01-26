@@ -191,7 +191,7 @@ class Installer
         $_domain = trim(array_get($formData, 'domain'));
 
         //  Transform some paths and remove transformed form data...
-        $_customisations = $this->getCustomisations($_domain)
+        $_customisations = $this->getCustomisations($_domain);
         array_forget($formData, ['custom-css', 'custom_css']);
         array_forget($_customisations, ['custom-css', 'custom_css']);
         logger('Normalised customisation settings: ' . print_r($_customisations, true));
