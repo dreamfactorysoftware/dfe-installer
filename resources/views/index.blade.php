@@ -214,6 +214,31 @@
             <div class="row">
                 <div class="col-md-6 col-sm-8 col-xs-12">
                     <fieldset>
+                        <legend>Software Versions</legend>
+                        <div class="form-group">
+                            <label for="elasticsearch-version">elasticsearch</label>
+                            <input required
+                                   type="text"
+                                   class="form-control"
+                                   id="elasticsearch-version"
+                                   name="elasticsearch-version"
+                                   value="{{ $elasticsearch_version }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="logstash-version">logstash</label>
+                            <input required type="text" class="form-control" id="logstash-version" name="logstash-version" value="{{ $logstash_version }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="kibana-version">Kibana</label>
+                            <input required type="text" class="form-control" id="kibana-version" name="kibana-version" value="{{ $kibana_version }}">
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 col-sm-8 col-xs-12">
+                    <fieldset>
                         <legend>Custom CSS</legend>
                         <div class="form-group">
                             <label for="custom-css">CSS</label>
