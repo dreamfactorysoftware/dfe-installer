@@ -105,7 +105,7 @@ class setupApp( $root ) {
 ##  Customize the application
 class customizeApp( $root ) {
   if '' != $custom_css_file_source {
-    file { "$doc_root_bash_path/public/css/$custom_css_file":
+    file { "$root/public/css/$custom_css_file":
       ensure => present,
       owner  => $user,
       group  => $www_group,
@@ -115,7 +115,7 @@ class customizeApp( $root ) {
   }
 
   if '' != $login_splash_image_source {
-    file { "$doc_root_bash_path/public/img/$login_splash_image":
+    file { "$root/public/img/$login_splash_image":
       ensure => present,
       owner  => $user,
       group  => $www_group,
@@ -125,7 +125,7 @@ class customizeApp( $root ) {
   }
 
   if '' != $navbar_image_source {
-    file { "$doc_root_base_path/public/img/$navbar_image":
+    file { "$root/public/img/$navbar_image":
       ensure => present,
       owner  => $user,
       group  => $www_group,
