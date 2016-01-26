@@ -311,7 +311,7 @@ class Installer
             }
         }
 
-        !empty($_customs) && file_put_contents(str_replace('.json', '.custom.json', $this->jsonFile), implode(PHP_EOL, $_customs));
+        !empty($_customs) && file_put_contents(storage_path('customs.env'), implode(PHP_EOL, $_customs));
 
         //  Write out the JSON file
         JsonFile::encodeFile($this->jsonFile, $this->cleanData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
