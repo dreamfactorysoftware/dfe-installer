@@ -212,7 +212,39 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6 col-sm-8 col-xs-12">
+                <div class="col-md-6">
+                    <fieldset>
+                        <legend>DFE Branches</legend>
+                        <div class="form-group">
+                            <label for="console-branch">DFE Console</label>
+                            <input required
+                                   type="text"
+                                   class="form-control"
+                                   id="console-branch"
+                                   name="console-branch"
+                                   value="{{ $console_branch }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="dashboard-branch">DFE dashboard</label>
+                            <input required
+                                   type="text"
+                                   class="form-control"
+                                   id="dashboard-branch"
+                                   name="dashboard-branch"
+                                   value="{{ $dashboard_branch }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="instance-branch">DreamFactory Instances</label>
+                            <input required
+                                   type="text"
+                                   class="form-control"
+                                   id="instance-branch"
+                                   name="instance-branch"
+                                   value="{{ $instance_branch }}">
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="col-md-6">
                     <fieldset>
                         <legend>Software Versions</legend>
                         <div class="form-group">
