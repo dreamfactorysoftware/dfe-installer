@@ -93,45 +93,6 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
   create_ini_settings($_settings, $_env)
 }
 
-##  Customize the application
-class customizeApp( $root ) {
-  if '' != $custom_css_file_source {
-    file { "$doc_root_bash_path/public/css/$custom_css_file":
-      ensure => present,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0640,
-      source => $custom_css_file_source,
-    }
-
-    create_ini_settings({ ""=>{ 'DFE_CUSTOM_CSS_FILE'=> "$root/public/css/$custom_css_file", } },$_env)
-  }
-
-  if '' != $login_splash_image_source {
-    file { "$doc_root_bash_path/public/img/$login_splash_image":
-      ensure => present,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0640,
-      source => $login_splash_image_source,
-    }
-
-    create_ini_settings({ ""=>{ 'DFE_LOGIN_SLASH_IMAGE'=> "$root/public/img/$login_splash_image", } },$_env)
-  }
-
-  if '' != $navbar_image_source {
-    file { "$doc_root_base_path/public/img/$navbar_image":
-      ensure => present,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0640,
-      source => $navbar_image_source,
-    }
-
-    create_ini_settings({ ""=>{ 'DFE_NAVBAR_IMAGE'=> "$root/public/img/$navbar_image", } },$_env)
-  }
-}
-
 ## Setup the app / composer update
 class setupApp( $root ) {
   if ( false == str2bool($dfe_update) ) {
@@ -197,6 +158,63 @@ class createEnvFile( $root, $source = ".env-dist" ) {
       user            => $user,
       onlyif          => "test -f $console_root/database/dfe/dashboard.env",
     }
+  }
+}
+
+##  Customize the application
+class customizeApp( $root ) {
+  if '' != $custom_css_file_source {
+    file { "$doc_root_bash_path/public/css/$custom_css_file":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => $custom_css_file_source,
+    }
+
+    $_custom_setting = {
+      "" => {
+        'DFE_CUSTOM_CSS_FILE' => "$root/public/css/$custom_css_file",
+      }
+    }
+
+    create_ini_settings($_custom_setting,$_env)
+  }
+
+  if '' != $login_splash_image_source {
+    file { "$doc_root_bash_path/public/img/$login_splash_image":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => $login_splash_image_source,
+    }
+
+    $_custom_setting = {
+      "" => {
+        'DFE_LOGIN_SLASH_IMAGE'=> "$root/public/img/$login_splash_image",
+      }
+    }
+
+    create_ini_settings($_custom_setting,$_env)
+  }
+
+  if '' != $navbar_image_source {
+    file { "$doc_root_base_path/public/img/$navbar_image":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => $navbar_image_source,
+    }
+
+    $_custom_setting = {
+      "" => {
+        'DFE_NAVBAR_IMAGE'=> "$root/public/img/$navbar_image",
+      }
+    }
+
+    create_ini_settings($_custom_setting,$_env)
   }
 }
 

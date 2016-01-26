@@ -110,7 +110,13 @@ class customizeApp( $root ) {
       source => $custom_css_file_source,
     }
 
-    create_ini_settings({ ""=>{ 'DFE_CUSTOM_CSS_FILE'=> "$root/public/css/$custom_css_file", } },$_env)
+    $_custom_setting = {
+      "" => {
+        'DFE_CUSTOM_CSS_FILE' => "$root/public/css/$custom_css_file",
+      }
+    }
+
+    create_ini_settings($_custom_setting,$_env)
   }
 
   if '' != $login_splash_image_source {
@@ -122,7 +128,13 @@ class customizeApp( $root ) {
       source => $login_splash_image_source,
     }
 
-    create_ini_settings({ ""=>{ 'DFE_LOGIN_SLASH_IMAGE'=> "$root/public/img/$login_splash_image", } },$_env)
+    $_custom_setting = {
+      "" => {
+        'DFE_LOGIN_SLASH_IMAGE'=> "$root/public/img/$login_splash_image",
+      }
+    }
+
+    create_ini_settings($_custom_setting,$_env)
   }
 
   if '' != $navbar_image_source {
@@ -134,7 +146,13 @@ class customizeApp( $root ) {
       source => $navbar_image_source,
     }
 
-    create_ini_settings({ ""=>{ 'DFE_NAVBAR_IMAGE'=> "$root/public/img/$navbar_image", } },$_env)
+    $_custom_setting = {
+      "" => {
+        'DFE_NAVBAR_IMAGE'=> "$root/public/img/$navbar_image",
+      }
+    }
+
+    create_ini_settings($_custom_setting,$_env)
   }
 }
 
