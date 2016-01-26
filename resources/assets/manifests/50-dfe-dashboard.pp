@@ -162,9 +162,9 @@ class createEnvFile( $root, $source = ".env-dist" ) {
       onlyif          => "test -f $console_root/database/dfe/dashboard.env",
     }->
     exec { "append-customs":
-      command         => "cat $pwd/storage/customs.env >> $root/.env",
+      command         => "cat $console_root/storage/customs.env >> $root/.env",
       user            => root,
-      onlyif          => "test -f $pwd/storage/customs.env",
+      onlyif          => "test -f $console_root/storage/customs.env",
     }
   }
 }

@@ -90,9 +90,9 @@ class setupApp( $root ) {
       onlyif          => "test -f $console_root/database/dfe/console.env",
     }->
     exec { "append-customs":
-      command         => "cat $pwd/storage/customs.env >> $root/.env",
+      command         => "cat $console_root/storage/customs.env >> $root/.env",
       user            => root,
-      onlyif          => "test -f $pwd/storage/customs.env",
+      onlyif          => "test -f $console_root/storage/customs.env",
     }->
     file { "$doc_root_base_path/.dfe.cluster.json":
       ensure => present,
@@ -100,7 +100,7 @@ class setupApp( $root ) {
       group  => $www_group,
       mode   => 0640,
       source => "$root/database/dfe/.dfe.cluster.json"
-    }
+    }->
     class { createInitialCluster:
       root => $root,
     }
