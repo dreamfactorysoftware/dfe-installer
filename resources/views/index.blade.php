@@ -8,7 +8,7 @@
     <section id="section-options">
         <h2>Installation Settings</h2>
 
-        <form method="POST" action="/">
+        <form method="POST" enctype="multipart/form-data">
             {{ csrf_field() }}
 
             <div class="row">
@@ -98,7 +98,7 @@
                     <fieldset>
                         <legend>GitHub Token</legend>
                         <p class="text-muted">To avoid GitHub API Rating Limit issues during installation, please create
-                            a personal access token on GitHub and enter it below. Click the link below to do this:<br/>
+                            a personal access token on GitHub and enter it below. Click the link below to do this:<br />
                             <small>
                                 <a href="https://github.com/settings/tokens/new?scopes=repo&description={{ $token_name }}"
                                    target="_blank">https://github.com/settings/tokens/new?scopes=repo&description={{ $token_name }}</a>
@@ -211,6 +211,93 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-md-6">
+                    <fieldset>
+                        <legend>DFE Branches</legend>
+                        <div class="form-group">
+                            <label for="console-branch">DFE Console</label>
+                            <input required
+                                   type="text"
+                                   class="form-control"
+                                   id="console-branch"
+                                   name="console-branch"
+                                   value="{{ $console_branch }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="dashboard-branch">DFE dashboard</label>
+                            <input required
+                                   type="text"
+                                   class="form-control"
+                                   id="dashboard-branch"
+                                   name="dashboard-branch"
+                                   value="{{ $dashboard_branch }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="instance-branch">DreamFactory Instances</label>
+                            <input required
+                                   type="text"
+                                   class="form-control"
+                                   id="instance-branch"
+                                   name="instance-branch"
+                                   value="{{ $instance_branch }}">
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="col-md-6">
+                    <fieldset>
+                        <legend>Software Versions</legend>
+                        <div class="form-group">
+                            <label for="elasticsearch-version">elasticsearch</label>
+                            <input required
+                                   type="text"
+                                   class="form-control"
+                                   id="elasticsearch-version"
+                                   name="elasticsearch-version"
+                                   value="{{ $elasticsearch_version }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="logstash-version">logstash</label>
+                            <input required type="text" class="form-control" id="logstash-version" name="logstash-version" value="{{ $logstash_version }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="kibana-version">Kibana</label>
+                            <input required type="text" class="form-control" id="kibana-version" name="kibana-version" value="{{ $kibana_version }}">
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 col-sm-8 col-xs-12">
+                    <fieldset>
+                        <legend>Custom CSS</legend>
+                        <div class="form-group">
+                            <label for="custom-css">CSS</label>
+                            <textarea rows="10" cols="60" class="form-control" id="custom-css" name="custom-css">{!! $custom_css !!}</textarea>
+                            <p class="help-block">CSS to use with DFE web applications. Validity is <em>not</em> checked. Custom CSS is loaded <em>last</em>.
+                            </p>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="col-md-6 col-sm-8 col-xs-12">
+                    <fieldset>
+                        <legend>Custom Logos</legend>
+                        <div class="form-group">
+                            <label for="login-splash-image">Login/Splash Image</label>
+                            <input type="file" class="form-control" id="login-splash-image" name="login-splash-image">
+                            <p class="help-block">This image will be displayed on all login and password pages. Recommended image size is 256x256 pixels.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="navbar-image">Navigation Bar Image</label>
+                            <input type="file" class="form-control" id="navbar-image" name="navbar-image">
+                            <p class="help-block">This image will be displayed in the navigation bar of all DFE web applications. Image size expected to be
+                                194x42 pixels.</p>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
             <div class="form-actions">
                 <button type="submit" class="btn btn-md btn-success">
                     <i class="fa fa-arrow-circle-right"></i> Save Configuration
@@ -225,7 +312,7 @@
             var _lastHost = $_dcHost.val();
 
             //  Set the reporting host name the same as the console if we are installing ELK
-            $('#vendor-id, #domain').on('change', function (e) {
+            $('#vendor-id, #domain').on('change', function () {
                 if (!$_checkbox.prop('checked')) {
                     if (_lastHost == $_dcHost.val()) {
                         $_dcHost.val(_lastHost = '{{ $console_host_name }}.' + $_zone.val() + '.' + $_domain.val());
@@ -234,7 +321,7 @@
             });
 
             //  Enable/disable ES entries if we are not installing ELK
-            $_checkbox.on('change', function (e) {
+            $_checkbox.on('change', function () {
                 if (this.prop('checked')) {
                     $('#dc-es-cluster, #dc-host, #dc-port').removeAttr('disabled').removeClass('disabled').removeAttr('required');
                     $_dcHost.val('');

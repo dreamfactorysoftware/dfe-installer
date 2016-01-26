@@ -37,7 +37,7 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775 ) {
     mode   => $mode,
   }
 
-  ## Blow away cache on update
+## Blow away cache on update
   if ( true == str2bool($dfe_update) ) {
     exec { "remove-services-json":
       command         => "rm -f $root/bootstrap/cache/services.json",
@@ -54,7 +54,7 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775 ) {
 
 ## Defines the dashboard .env settings. Relies on FACTER_* data
 class iniSettings( $root, $zone, $domain, $protocol = "https") {
-  ## Define our stuff
+## Define our stuff
   $_env = { "path" => "$root/.env", }
   $_consoleUrl = "$protocol://console.${zone}.${domain}"
   $_dashboardUrl = "$protocol://dashboard.${zone}.${domain}"
@@ -62,34 +62,37 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
 
   $_settings = {
     "" => {
-      "APP_DEBUG"                                  => $app_debug,
-      "APP_URL"                                    => $_dashboardUrl,
-      "DB_HOST"                                    => $db_host,
-      "DB_DATABASE"                                => $db_name,
-      "DB_USERNAME"                                => $db_user,
-      "DB_PASSWORD"                                => $db_pwd,
-      "DFE_CLUSTER_ID"                             => "cluster-${zone}",
-      "DFE_DEFAULT_CLUSTER"                        => "cluster-${zone}",
-      "DFE_DEFAULT_DATABASE"                       => "db-${zone}",
-      "DFE_SCRIPT_USER"                            => $user,
-      "DFE_DEFAULT_DNS_ZONE"                       => $zone,
-      "DFE_DEFAULT_DNS_DOMAIN"                     => $domain,
-      "DFE_DEFAULT_DOMAIN"                         => "${zone}.${domain}",
-      "DFE_DEFAULT_DOMAIN_PROTOCOL"                => $default_protocol,
-      "DFE_STATIC_ZONE_NAME"                       => $static_zone_name,
-      "SMTP_DRIVER"                                => "smtp",
-      "SMTP_HOST"                                  => $smtp_host,
-      "SMTP_PORT"                                  => $smtp_port,
-      "MAIL_FROM_ADDRESS"                          => $mail_from_address,
-      "MAIL_FROM_NAME"                             => $mail_from_name,
-      "MAIL_USERNAME"                              => $mail_username,
-      "MAIL_PASSWORD"                              => $mail_password,
-      "DFE_HOSTED_BASE_PATH"                       => $storage_path,
-      "DFE_CONSOLE_API_URL"                        => $_consoleApiUrl,
+      "APP_DEBUG"                   => $app_debug,
+      "APP_URL"                     => $_dashboardUrl,
+      "DB_HOST"                     => $db_host,
+      "DB_DATABASE"                 => $db_name,
+      "DB_USERNAME"                 => $db_user,
+      "DB_PASSWORD"                 => $db_pwd,
+      "DFE_CLUSTER_ID"              => "cluster-${zone}",
+      "DFE_DEFAULT_CLUSTER"         => "cluster-${zone}",
+      "DFE_DEFAULT_DATABASE"        => "db-${zone}",
+      "DFE_SCRIPT_USER"             => $user,
+      "DFE_DEFAULT_DNS_ZONE"        => $zone,
+      "DFE_DEFAULT_DNS_DOMAIN"      => $domain,
+      "DFE_DEFAULT_DOMAIN"          => "${zone}.${domain}",
+      "DFE_DEFAULT_DOMAIN_PROTOCOL" => $default_protocol,
+      "DFE_STATIC_ZONE_NAME"        => $static_zone_name,
+      "SMTP_DRIVER"                 => "smtp",
+      "SMTP_HOST"                   => $smtp_host,
+      "SMTP_PORT"                   => $smtp_port,
+      "MAIL_FROM_ADDRESS"           => $mail_from_address,
+      "MAIL_FROM_NAME"              => $mail_from_name,
+      "MAIL_USERNAME"               => $mail_username,
+      "MAIL_PASSWORD"               => $mail_password,
+      "DFE_HOSTED_BASE_PATH"        => $storage_path,
+      "DFE_CONSOLE_API_URL"         => $_consoleApiUrl,
+      "DFE_CUSTOM_CSS_FILE"         => $custom_css_file,
+      "DFE_NAVBAR_IMAGE"            => $navbar_image,
+      "DFE_LOGIN_SPLASH_IMAGE"      => $login_splash_image,
     }
   }
 
-  ## Update the .env file
+## Update the .env file
   create_ini_settings($_settings, $_env)
 }
 
@@ -144,7 +147,7 @@ class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
 
 ##  Create an environment file
 class createEnvFile( $root, $source = ".env-dist" ) {
-  ##  On new installs only
+##  On new installs only
   if ( false == str2bool($dfe_update) ) {
     file { "${root}/.env":
       ensure => present,
@@ -157,6 +160,44 @@ class createEnvFile( $root, $source = ".env-dist" ) {
       command         => "cat $console_root/database/dfe/dashboard.env >> $root/.env",
       user            => $user,
       onlyif          => "test -f $console_root/database/dfe/dashboard.env",
+    }->
+    exec { "append-customs":
+      command         => "cat $pwd/storage/customs.env >> $root/.env",
+      user            => root,
+      onlyif          => "test -f $pwd/storage/customs.env",
+    }
+  }
+}
+
+##  Customize the application
+class customizeApp( $root ) {
+  if '' != $custom_css_file_source {
+    file { "$root/public/css/$custom_css_file":
+      ensure => file,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => $custom_css_file_source,
+    }
+  }
+
+  if '' != $login_splash_image_source {
+    file { "$root/public/img/$login_splash_image":
+      ensure => file,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => $login_splash_image_source,
+    }
+  }
+
+  if '' != $navbar_image_source {
+    file { "$root/public/img/$navbar_image":
+      ensure => file,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => $navbar_image_source,
     }
   }
 }
@@ -182,7 +223,7 @@ class { createEnvFile:
   root => $dashboard_root,
 }->
 class { iniSettings:
-  ## Applies INI settings in $_settings to .env
+## Applies INI settings in $_settings to .env
   root     => $dashboard_root,
   zone     => $vendor_id,
   domain   => $domain,
@@ -202,6 +243,9 @@ exec { "composer-install":
   environment => [ "HOME=/home/$user", ]
 }->
 class { setupApp:
+  root => $dashboard_root,
+}->
+class { customizeApp:
   root => $dashboard_root,
 }->
 exec { "composer-update":

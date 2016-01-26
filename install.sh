@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#)$Id: install.sh,v 1.1.49 2015-11-16 dweiner/jablan $
+# @(#)$Id: install.sh,v 1.1.50 2015-11-16 dweiner/jablan $
 #
 # This file is part of DreamFactory Enterprise(tm)
 #
@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.49
+VERSION=1.1.50
 SYSTEM_TYPE=`uname -s`
 MANIFEST_PATH=./resources/assets/manifests
 ENV_FILE=./storage/.env-install
@@ -96,7 +96,7 @@ _checkPuppetModules() {
     fi
 }
 
-## Defaults and executable locations
+## Defaults, versions, branches and executable locations
 export FACTER_APP_DEBUG=true
 export FACTER_DFE_UPDATE=${DFE_UPDATE}
 export FACTER_PREFERRED_MAIL_PACKAGE=exim4
@@ -117,9 +117,14 @@ export FACTER_INSTALL_HOSTNAME=`/bin/hostname`
 export FACTER_VENDOR_ID=dfe
 export FACTER_DC_ES_PORT=9200
 export FACTER_SUPPORT_EMAIL_ADDRESS=support@dreamfactory.com
-export FACTER_INSTALL_VERSION_KIBANA='4.3.0'
-export FACTER_INSTALL_VERSION_LOGSTASH='2.0'
-export FACTER_INSTALL_VERSION_ELASTICSEARCH='2.x'
+## 20160125-GHA: Now sourced from .env-install
+#export FACTER_INSTALL_VERSION_KIBANA='4.3.0'
+#export FACTER_INSTALL_VERSION_LOGSTASH='2.0'
+#export FACTER_INSTALL_VERSION_ELASTICSEARCH='2.x'
+## 20160125-GHA: Now sourced from .env-install
+#export FACTER_CONSOLE_BRANCH=develop
+#export FACTER_DASHBOARD_BRANCH=develop
+#export FACTER_INSTANCE_BRANCH=develop
 
 ## SSL (change accordingly)
 export FACTER_ENABLE_SSL=false
@@ -143,7 +148,7 @@ export FACTER_CONSOLE_RELEASE="${FACTER_RELEASE_PATH}/console"
 export FACTER_DASHBOARD_RELEASE="${FACTER_RELEASE_PATH}/dashboard"
 export FACTER_INSTANCE_RELEASE="${FACTER_RELEASE_PATH}/launchpad"
 
-## Users & Branches
+## User/auth defaults
 export FACTER_USER=dfadmin
 export FACTER_GROUP=dfadmin
 export FACTER_STORAGE_GROUP=dfadmin
@@ -155,15 +160,19 @@ export FACTER_DB_USER=dfe_user
 export FACTER_DB_PWD=dfe_user
 export FACTER_DB_HOST=localhost
 export FACTER_DB_NAME=dfe_local
-export FACTER_CONSOLE_BRANCH=master
-export FACTER_DASHBOARD_BRANCH=master
-export FACTER_INSTANCE_BRANCH=master
 export FACTER_INSTANCE_CACHE_PATH=/tmp/.df-cache
 
-## Blanks filled in by .env-install
+## General information that is sourced
 export FACTER_ADMIN_EMAIL FACTER_ADMIN_PWD FACTER_GH_TOKEN
 export FACTER_MOUNT_POINT FACTER_DOMAIN FACTER_LOG_PATH
 export FACTER_DC_HOST FACTER_DC_PORT FACTER_DC_INDEX_TYPE FACTER_DC_ES_CLUSTER FACTER_DC_ES_EXISTS
+
+## Customisation, version, and branch info that is sourced
+export FACTER_CUSTOM_CSS_FILE_SOURCE FACTER_CUSTOM_CSS_FILE_PATH FACTER_CUSTOM_CSS_FILE
+export FACTER_LOGIN_SPLASH_IMAGE_SOURCE FACTER_LOGIN_SPLASH_IMAGE_PATH FACTER_LOGIN_SPLASH_IMAGE
+export FACTER_NAVBAR_IMAGE_SOURCE FACTER_NAVBAR_IMAGE_PATH FACTER_NAVBAR_IMAGE
+export FACTER_INSTALL_VERSION_KIBANA FACTER_INSTALL_VERSION_LOGSTASH FACTER_INSTALL_VERSION_ELASTICSEARCH
+export FACTER_CONSOLE_BRANCH FACTER_DASHBOARD_BRANCH FACTER_INSTANCE_BRANCH
 
 ## Rotate log
 #[ -f "${LOG_FILE}" ] && mv "${LOG_FILE}" "${LOG_FILE}.1"
