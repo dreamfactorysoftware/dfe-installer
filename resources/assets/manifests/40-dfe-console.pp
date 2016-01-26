@@ -62,18 +62,6 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
 
 ## Update the .env file
   create_ini_settings($_settings, $_env)
-
-  if '' != $custom_css_file {
-    create_ini_settings({ ""=>{ 'DFE_CUSTOM_CSS_FILE'=> "$root/public/css/$custom_css_file", } },$_env)
-  }
-
-  if '' != $login_splash_image {
-    create_ini_settings({ ""=>{ 'DFE_LOGIN_SLASH_IMAGE'=> "$root/public/img/$login_splash_image", } },$_env)
-  }
-
-  if '' != $navbar_image {
-    create_ini_settings({ ""=>{ 'DFE_NAVBAR_IMAGE'=> "$root/public/img/$navbar_image", } },$_env)
-  }
 }
 
 ##  Initial set up
@@ -109,25 +97,32 @@ class setupApp( $root ) {
       root => $root,
     }
   }
+}
 
+##  Customize the application
+class customizeApp( $root ) {
   if '' != $custom_css_file_source {
-    file { "$root/public/css/$custom_css_file":
+    file { "$doc_root_bash_path/public/css/$custom_css_file":
       ensure => present,
       owner  => $user,
       group  => $www_group,
       mode   => 0640,
       source => $custom_css_file_source,
     }
+
+    create_ini_settings({ ""=>{ 'DFE_CUSTOM_CSS_FILE'=> "$root/public/css/$custom_css_file", } },$_env)
   }
 
   if '' != $login_splash_image_source {
-    file { "$doc_root_base_path/public/img/$login_splash_image":
+    file { "$doc_root_bash_path/public/img/$login_splash_image":
       ensure => present,
       owner  => $user,
       group  => $www_group,
       mode   => 0640,
       source => $login_splash_image_source,
     }
+
+    create_ini_settings({ ""=>{ 'DFE_LOGIN_SLASH_IMAGE'=> "$root/public/img/$login_splash_image", } },$_env)
   }
 
   if '' != $navbar_image_source {
@@ -138,6 +133,8 @@ class setupApp( $root ) {
       mode   => 0640,
       source => $navbar_image_source,
     }
+
+    create_ini_settings({ ""=>{ 'DFE_NAVBAR_IMAGE'=> "$root/public/img/$navbar_image", } },$_env)
   }
 }
 
@@ -343,6 +340,9 @@ exec { "composer-install":
 }->
 class { setupApp:
   root => $console_root,
+}->
+class { customizeApp:
+  root => $dashboard_root,
 }->
 class { checkPermissions:
   root => $console_root,

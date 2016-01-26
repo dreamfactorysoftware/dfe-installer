@@ -91,16 +91,43 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
 
 ## Update the .env file
   create_ini_settings($_settings, $_env)
+}
 
-  if '' != $custom_css_file {
+##  Customize the application
+class customizeApp( $root ) {
+  if '' != $custom_css_file_source {
+    file { "$doc_root_bash_path/public/css/$custom_css_file":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => $custom_css_file_source,
+    }
+
     create_ini_settings({ ""=>{ 'DFE_CUSTOM_CSS_FILE'=> "$root/public/css/$custom_css_file", } },$_env)
   }
 
-  if '' != $login_splash_image {
+  if '' != $login_splash_image_source {
+    file { "$doc_root_bash_path/public/img/$login_splash_image":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => $login_splash_image_source,
+    }
+
     create_ini_settings({ ""=>{ 'DFE_LOGIN_SLASH_IMAGE'=> "$root/public/img/$login_splash_image", } },$_env)
   }
 
-  if '' != $navbar_image {
+  if '' != $navbar_image_source {
+    file { "$doc_root_base_path/public/img/$navbar_image":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => $navbar_image_source,
+    }
+
     create_ini_settings({ ""=>{ 'DFE_NAVBAR_IMAGE'=> "$root/public/img/$navbar_image", } },$_env)
   }
 }
@@ -114,36 +141,6 @@ class setupApp( $root ) {
       provider    => shell,
       cwd         => $root,
       environment => ["HOME=/home/$user"]
-    }
-  }
-
-  if '' != $custom_css_file_source {
-    file { "$root/public/css/$custom_css_file":
-      ensure => present,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0640,
-      source => $custom_css_file_source,
-    }
-  }
-
-  if '' != $login_splash_image_source {
-    file { "$doc_root_base_path/public/img/$login_splash_image":
-      ensure => present,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0640,
-      source => $login_splash_image_source,
-    }
-  }
-
-  if '' != $navbar_image_source {
-    file { "$doc_root_base_path/public/img/$navbar_image":
-      ensure => present,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0640,
-      source => $navbar_image_source,
     }
   }
 }
@@ -244,6 +241,9 @@ exec { "composer-install":
   environment => [ "HOME=/home/$user", ]
 }->
 class { setupApp:
+  root => $dashboard_root,
+}->
+class { customizeApp:
   root => $dashboard_root,
 }->
 exec { "composer-update":
