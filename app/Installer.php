@@ -110,6 +110,20 @@ class Installer
         logger(' > shell source file ' . $this->outputFile);
         logger(' > json source file ' . $this->outputFile);
 
+        //  Load up any prior stuff
+        $this->loadSavedDefaults();
+
+        //  Get any package requirements
+        $this->getRequiredPackages();
+
+        logger('Base operational values set: ' . print_r($this->defaults, true));
+    }
+
+    /**
+     * Populates defaults from the config and/or any saved settings from prior runs
+     */
+    protected function loadSavedDefaults()
+    {
         //  Branch selections
         $this->defaults = array_merge($this->defaults,
             [
@@ -128,48 +142,40 @@ class Installer
             logger('Checking last run values for inclusion into default values.');
 
             try {
-                $_priorData = JsonFile::decodeFile($this->jsonFile, true);
+                if (!empty($_priorData = JsonFile::decodeFile($this->jsonFile, true))) {
+                    try {
+                        //  Remove augmented settings
+                        array_forget($_priorData,
+                            [
+                                'custom_css_file_source',
+                                'custom_css_file_path',
+                                'custom_css_file',
+                                'login_splash_image_source',
+                                'login_splash_image_file',
+                                'login_splash_image',
+                                'navbar_image_source',
+                                'navbar_image_file',
+                                'navbar_image',
+                            ]);
+
+                        //  Merge in known things
+                        foreach ($_priorData as $_key => $_value) {
+                            if (array_key_exists($this->defaults, $_dashKey = strtr('_', '-', $_key))) {
+                                $this->defaults[$_dashKey] = $_value;
+                                logger('> last run "' . $_dashKey . '" value loaded: ' . is_scalar($_value) ? $_value : print_r($_value, true));
+                            }
+                        }
+
+                        logger('Usable values from last run, merged into defaults.');
+                    } catch (\Exception $_ex) {
+                        //  Bogus JSON, just ignore
+                        logger('No usable values from last run found.');
+                    }
+                }
             } catch (\Exception $_ex) {
                 \Log::error('! Exception decoding last run save file: ' . $_ex->getMessage());
-                $_priorData = [];
-            }
-
-            if (!empty($_priorData)) {
-                try {
-                    //  Remove augmented settings
-                    array_forget($_priorData,
-                        [
-                            'custom_css_file_source',
-                            'custom_css_file_path',
-                            'custom_css_file',
-                            'login_splash_image_source',
-                            'login_splash_image_file',
-                            'login_splash_image',
-                            'navbar_image_source',
-                            'navbar_image_file',
-                            'navbar_image',
-                        ]);
-
-                    //  Merge in known things
-                    foreach ($_priorData as $_key => $_value) {
-                        if (array_key_exists($this->defaults, $_dashKey = strtr('_', '-', $_key))) {
-                            $this->defaults[$_dashKey] = $_value;
-                            logger('> last run "' . $_dashKey . '" value loaded: ' . is_scalar($_value) ? $_value : print_r($_value, true));
-                        }
-                    }
-
-                    logger('Usuable values from last run, merged into defaults.');
-                } catch (\Exception $_ex) {
-                    //  Bogus JSON, just ignore
-                    logger('No usable values from last run found.');
-                }
             }
         }
-
-        //  Get any package requirements
-        $this->getRequiredPackages();
-
-        logger('Base operational values set: ' . print_r($this->defaults, true));
     }
 
     /**

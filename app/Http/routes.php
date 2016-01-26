@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/',
     [
         'as' => 'home',
-        function () {
+        function() {
             $installer = new Installer();
 
             return view('index', $installer->getDefaults());
@@ -16,7 +16,7 @@ Route::get('/',
 
 /** @noinspection PhpUndefinedMethodInspection */
 Route::post('/',
-    function (Request $request) {
+    function(Request $request) {
         $installer = new Installer();
 
         $installer->setFormData($request->input())->writeInstallerFiles();
