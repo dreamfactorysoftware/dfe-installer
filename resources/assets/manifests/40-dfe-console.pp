@@ -92,7 +92,7 @@ class setupApp( $root ) {
     exec { "append-customs":
       command         => "cat $pwd/storage/customs.env >> $root/.env",
       user            => root,
-      onlyif          => "test -f $root/storage/customs.env",
+      onlyif          => "test -f $pwd/storage/customs.env",
     }->
     file { "$doc_root_base_path/.dfe.cluster.json":
       ensure => present,
