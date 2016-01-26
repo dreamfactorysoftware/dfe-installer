@@ -302,6 +302,21 @@ class Installer
             throw new FileSystemException('Unable to write output file "' . $this->outputFile . '"');
         }
 
+        //  Write out a customisation dot file
+        JsonFile::encodeFile(str_replace('.json', '.custom.json', $this->jsonFile),
+            array_only($this->cleanData,
+                [
+                    'custom_css_file',
+                    'custom_css_file_path',
+                    'custom_css_file_source',
+                    'navbar_image',
+                    'navbar_image_path',
+                    'navbar_image_source',
+                    'login_splash_image',
+                    'login_splash_image_path',
+                    'login_splash_image_source',
+                ]));
+
         //  Write out the JSON file
         JsonFile::encodeFile($this->jsonFile, $this->cleanData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
