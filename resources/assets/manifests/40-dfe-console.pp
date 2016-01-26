@@ -57,6 +57,9 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
       "DFE_AUDIT_CLIENT_PORT"       => $dc_client_port,
       "DFE_CAPSULE_PATH"            => $capsule_path,
       "DFE_CAPSULE_LOG_PATH"        => $capsule_log_path,
+      "DFE_CUSTOM_CSS_FILE"         => $custom_css_file,
+      "DFE_NAVBAR_IMAGE"            => $navbar_image,
+      "DFE_LOGIN_SPLASH_IMAGE"      => $login_splash_image,
     }
   }
 
@@ -109,14 +112,6 @@ class customizeApp( $root ) {
       mode   => 0640,
       source => $custom_css_file_source,
     }
-
-    $_custom_setting = {
-      "" => {
-        'DFE_CUSTOM_CSS_FILE' => "$root/public/css/$custom_css_file",
-      }
-    }
-
-    create_ini_settings($_custom_setting,$_env)
   }
 
   if '' != $login_splash_image_source {
@@ -127,14 +122,6 @@ class customizeApp( $root ) {
       mode   => 0640,
       source => $login_splash_image_source,
     }
-
-    $_custom_setting = {
-      "" => {
-        'DFE_LOGIN_SLASH_IMAGE'=> "$root/public/img/$login_splash_image",
-      }
-    }
-
-    create_ini_settings($_custom_setting,$_env)
   }
 
   if '' != $navbar_image_source {
@@ -145,14 +132,6 @@ class customizeApp( $root ) {
       mode   => 0640,
       source => $navbar_image_source,
     }
-
-    $_custom_setting = {
-      "" => {
-        'DFE_NAVBAR_IMAGE'=> "$root/public/img/$navbar_image",
-      }
-    }
-
-    create_ini_settings($_custom_setting,$_env)
   }
 }
 
