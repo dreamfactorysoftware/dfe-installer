@@ -99,7 +99,7 @@ class setupApp( $root ) {
       owner  => $user,
       group  => $www_group,
       mode   => 0640,
-      source => "$root/database/dfe/.dfe.cluster.json"
+      source => "$console_root/database/dfe/.dfe.cluster.json"
     }->
     class { createInitialCluster:
       root => $root,

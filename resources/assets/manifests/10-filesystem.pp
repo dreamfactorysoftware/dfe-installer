@@ -12,7 +12,7 @@ notify { 'announce-thyself': message => '[DFE] Creating required directory struc
 ############
 
 class createRequiredDirectories {
-  ## Create the root directories for the repos to be installed
+## Create the root directories for the repos to be installed
   file { [
     $doc_root_base_path,
     $release_path,
@@ -26,7 +26,7 @@ class createRequiredDirectories {
     mode   => '2775',
   }
 
-  ## Create all directories under the $mount_point
+## Create all directories under the $mount_point
   file { [
     $mount_point,
     $blueprint_path,
@@ -50,13 +50,19 @@ class createRequiredDirectories {
 
 class createRequiredFiles {
   file { [
-    ## And our indicator files
+  ## And our indicator files
     "$doc_root_base_path/.dfe-managed",
   ]:
     ensure => present,
     owner  => $www_user,
     group  => $group,
     mode   => '0660',
+  }->
+  ## Install a crontab file for metrics
+  file { "/etc/cron.daily/dreamfactory":
+    ensure => file,
+    mode   => '0775',
+    source => "$pwd/resources/assets/etc/cron.daily/dreamfactory",
   }
 }
 

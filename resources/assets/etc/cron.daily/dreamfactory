@@ -1,0 +1,12 @@
+#!/bin/sh
+
+DFE_CLUSTER_FILE=/var/www/.dfe.cluster.json
+
+if [ ! -f "${DFE_CLUSTER_FILE}" ]; then
+    echo "No cluster config file (${DFE_CLUSTER_FILE}) found. Please adjust path in ${0}"
+    exit 1
+fi
+
+cd /var/www/console
+sudo -u dfadmin php artisan dfe:metrics --gather >> /data/logs/console/cron.daily.log 2>&1
+
