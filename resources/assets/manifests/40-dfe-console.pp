@@ -22,6 +22,22 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
   $_dashboardUrl = "$protocol://dashboard.${zone}.${domain}"
   $_consoleApiUrl = "$_consoleUrl/api/v1/ops"
 
+##  Build the URIs for any custom files
+  $_customCssFileUri = $custom_css_file ? {
+    '' => $custom_css_file,
+    default => "/css/$custom_css_file",
+  }
+
+  $_navbarImageUri = $navbar_image ? {
+    '' => $navbar_image,
+    default => "/img/$navbar_image",
+  }
+
+  $_loginSplashImageUri = $login_splash_image ? {
+    '' => $login_splash_image,
+    default => "/img/$login_splash_image",
+  }
+
   $_settings = {
     "" => {
       "APP_DEBUG"                   => $app_debug,
@@ -57,9 +73,9 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
       "DFE_AUDIT_CLIENT_PORT"       => $dc_client_port,
       "DFE_CAPSULE_PATH"            => $capsule_path,
       "DFE_CAPSULE_LOG_PATH"        => $capsule_log_path,
-      "DFE_CUSTOM_CSS_FILE"         => $custom_css_file,
-      "DFE_NAVBAR_IMAGE"            => $navbar_image,
-      "DFE_LOGIN_SPLASH_IMAGE"      => $login_splash_image,
+      "DFE_CUSTOM_CSS_FILE"         => $_customCssFileUri,
+      "DFE_NAVBAR_IMAGE"            => $_navbarImageUri,
+      "DFE_LOGIN_SPLASH_IMAGE"      => $_loginSplashImageUri,
     }
   }
 
@@ -103,39 +119,6 @@ class setupApp( $root ) {
     }->
     class { createInitialCluster:
       root => $root,
-    }
-  }
-}
-
-##  Customize the application
-class customizeApp( $root ) {
-  if '' != $custom_css_file_source {
-    file { "$root/public/css/$custom_css_file":
-      ensure => file,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0640,
-      source => $custom_css_file_source,
-    }
-  }
-
-  if '' != $login_splash_image_source {
-    file { "$root/public/img/$login_splash_image":
-      ensure => file,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0640,
-      source => $login_splash_image_source,
-    }
-  }
-
-  if '' != $navbar_image_source {
-    file { "$root/public/img/$navbar_image":
-      ensure => file,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0640,
-      source => $navbar_image_source,
     }
   }
 }
@@ -296,6 +279,39 @@ class createEnvFile( $root, $source = ".env-dist" ) {
       group  => $www_group,
       mode   => 0640,
       source => "${root}/${source}",
+    }
+  }
+}
+
+##  Customize the application
+class customizeApp( $root ) {
+  if '' != $custom_css_file_source {
+    file { "$root/public/css/$custom_css_file":
+      ensure => file,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => $custom_css_file_source,
+    }
+  }
+
+  if '' != $login_splash_image_source {
+    file { "$root/public/img/$login_splash_image":
+      ensure => file,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => $login_splash_image_source,
+    }
+  }
+
+  if '' != $navbar_image_source {
+    file { "$root/public/img/$navbar_image":
+      ensure => file,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => $navbar_image_source,
     }
   }
 }
