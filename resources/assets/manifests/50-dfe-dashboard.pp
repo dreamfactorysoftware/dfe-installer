@@ -60,6 +60,22 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
   $_dashboardUrl = "$protocol://dashboard.${zone}.${domain}"
   $_consoleApiUrl = "$_consoleUrl/api/v1/ops"
 
+##  Build the URIs for any custom files
+  $_customCssFileUri = $custom_css_file ? {
+    '' => $custom_css_file,
+    default => "/css/$custom_css_file",
+  }
+
+  $_navbarImageUri = $navbar_image ? {
+    '' => $navbar_image,
+    default => "/img/$navbar_image",
+  }
+
+  $_loginSplashImageUri = $login_splash_image ? {
+    '' => $login_splash_image,
+    default => "/img/$login_splash_image",
+  }
+
   $_settings = {
     "" => {
       "APP_DEBUG"                   => $app_debug,
@@ -86,9 +102,9 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
       "MAIL_PASSWORD"               => $mail_password,
       "DFE_HOSTED_BASE_PATH"        => $storage_path,
       "DFE_CONSOLE_API_URL"         => $_consoleApiUrl,
-      "DFE_CUSTOM_CSS_FILE"         => $custom_css_file,
-      "DFE_NAVBAR_IMAGE"            => $navbar_image,
-      "DFE_LOGIN_SPLASH_IMAGE"      => $login_splash_image,
+      "DFE_CUSTOM_CSS_FILE"         => $_customCssFileUri,
+      "DFE_NAVBAR_IMAGE"            => $_navbarImageUri,
+      "DFE_LOGIN_SPLASH_IMAGE"      => $_loginSplashImageUri,
     }
   }
 
