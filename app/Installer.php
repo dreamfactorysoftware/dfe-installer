@@ -81,9 +81,9 @@ class Installer
         'dc_client_host'        => null,
         'dc_client_port'        => 5601,
         /** Installation branches */
-        'console_branch'        => 'develop',
-        'dashboard_branch'      => 'develop',
-        'instance_branch'       => 'develop',
+        'console_branch'        => 'master',
+        'dashboard_branch'      => 'master',
+        'instance_branch'       => 'master',
         /** Installation software versions */
         'kibana_version'        => '4.3.0',
         'logstash_version'      => '2.0',
@@ -131,11 +131,6 @@ class Installer
                 'dashboard_branch' => config('dfe.branches.dashboard', 'master'),
                 'instance_branch'  => config('dfe.branches.instance', 'master'),
             ]);
-
-        //  Default versions
-        $this->defaults['kibana_version'] = config('dfe.versions.kibana', $this->defaults['kibana_version']);
-        $this->defaults['logstash_version'] = config('dfe.versions.logstash', $this->defaults['logstash_version']);
-        $this->defaults['elasticsearch_version'] = config('dfe.versions.elasticsearch', $this->defaults['elasticsearch_version']);
 
         if (file_exists($this->jsonFile)) {
             //  If an existing run's data is available, pre-fill form with it
@@ -261,12 +256,14 @@ class Installer
 
         //  Add software versions
         foreach (config('dfe.versions', []) as $_package => $_version) {
-            $_facterData['export FACTER_INSTALL_VERSION_' . trim(strtoupper(strtr($_package, '-', '_')))] = $_version;
+            $_facterData['export FACTER_INSTALL_VERSION_' . trim(strtoupper(strtr($_package, '-', '_')))] =
+                array_get($formData, strtolower($_package) . '-version', $_version);
         }
 
         //  Add distribution branches
         foreach (config('dfe.branches', []) as $_package => $_branch) {
-            $_facterData['export FACTER_' . trim(strtoupper(strtr($_package, '-', '_'))) . '_BRANCH'] = $_branch;
+            $_facterData['export FACTER_' . trim(strtoupper(strtr($_package, '-', '_'))) . '_BRANCH'] =
+                array_get($formData, strtolower($_package) . '-branch', $_branch);
         }
 
         $this->formData = $formData;

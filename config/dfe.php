@@ -19,8 +19,8 @@ return [
     ],
     /** The repository branches to install */
     'branches'          => [
-        'console'   => 'develop',
-        'dashboard' => 'develop',
-        'instance'  => 'develop',
+        'console'   => 'master',
+        'dashboard' => 'master',
+        'instance'  => 'master',
     ],
 ];
