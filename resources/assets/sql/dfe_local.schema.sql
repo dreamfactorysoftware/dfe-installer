@@ -106,7 +106,7 @@ CREATE TABLE `environment_t` (
   DEFAULT CHARSET = utf8;
 
 /********************************************************************************
-* Metrics & Telemetry: metrics_t / telemetry_t
+* Metrics & Telemetry: metrics_t / metrics_detail_t / telemetry_t
 ********************************************************************************/
 
 DROP TABLE IF EXISTS `metrics_t`;
@@ -122,6 +122,25 @@ CREATE TABLE `metrics_t` (
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
+
+DROP TABLE IF EXISTS `metrics_detail_t`;
+
+CREATE TABLE `metrics_detail_t` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `instance_id` int(11) NOT NULL,
+  `gather_date` date NOT NULL,
+  `data_text` mediumtext COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `ix_metrics_detail_user_id` (`user_id`),
+  KEY `ix_metrics_detail_instance_id` (`instance_id`),
+  CONSTRAINT `fk_metrics_detail_instance_id` FOREIGN KEY (`instance_id`) REFERENCES `instance_t` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_metrics_detail_user_id` FOREIGN KEY (`user_id`) REFERENCES `user_t` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+DROP TABLE IF EXISTS `telemetry_t`;
 
 CREATE TABLE `telemetry_t` (
   `id`               BIGINT(20) UNSIGNED     NOT NULL AUTO_INCREMENT,
