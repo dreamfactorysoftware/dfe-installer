@@ -22,22 +22,6 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
   $_dashboardUrl = "$protocol://dashboard.${zone}.${domain}"
   $_consoleApiUrl = "$_consoleUrl/api/v1/ops"
 
-##  Build the URIs for any custom files
-  $_customCssFileUri = $custom_css_file ? {
-    '' => $custom_css_file,
-    default => "/css/$custom_css_file",
-  }
-
-  $_navbarImageUri = $navbar_image ? {
-    '' => $navbar_image,
-    default => "/img/$navbar_image",
-  }
-
-  $_loginSplashImageUri = $login_splash_image ? {
-    '' => $login_splash_image,
-    default => "/img/$login_splash_image",
-  }
-
   $_settings = {
     "" => {
       "APP_DEBUG"                   => $app_debug,
@@ -73,14 +57,50 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
       "DFE_AUDIT_CLIENT_PORT"       => $dc_client_port,
       "DFE_CAPSULE_PATH"            => $capsule_path,
       "DFE_CAPSULE_LOG_PATH"        => $capsule_log_path,
-      "DFE_CUSTOM_CSS_FILE"         => $_customCssFileUri,
-      "DFE_NAVBAR_IMAGE"            => $_navbarImageUri,
-      "DFE_LOGIN_SPLASH_IMAGE"      => $_loginSplashImageUri,
     }
   }
 
 ## Update the .env file
   create_ini_settings($_settings, $_env)
+}
+
+## Defines the console .env settings. Relies on FACTER_* data
+class customIniSettings( $root, $zone, $domain, $protocol = "https") {
+## Define our stuff
+  $_env = { "path" => "$root/.env", }
+
+## Custom CSS file
+  if ( '' != $custom_css_file ) {
+    $_customCss = {
+      "" => {
+        "DFE_CUSTOM_CSS_FILE"         => "/css/$custom_css_file",
+      }
+    }
+
+    create_init_settings($_customCss, $_env)
+  }
+
+## The navbar image
+  if ( '' != $navbar_image ) {
+    $_navbarImage = {
+      "" => {
+        "DFE_NAVBAR_IMAGE"         => "/img/$navbar_image",
+      }
+    }
+
+    create_init_settings($_navbarImage, $_env)
+  }
+
+## The login_splashPP image
+  if ( '' != $login_splash_image ) {
+    $_loginSplashImage = {
+      "" => {
+        "DFE_LOGIN_SPLASH_IMAGE"         => "/img/$login_splash_image",
+      }
+    }
+
+    create_init_settings($_loginSplashImage, $_env)
+  }
 }
 
 ##  Initial set up
@@ -338,6 +358,13 @@ class { createEnvFile:
 }->
 class { iniSettings:
 ## Applies INI settings in $_settings to .env
+  root     => $console_root,
+  zone     => $vendor_id,
+  domain   => $domain,
+  protocol => $default_protocol,
+}->
+class { customIniSettings:
+## Applies custom INI settings in $_settings to .env
   root     => $console_root,
   zone     => $vendor_id,
   domain   => $domain,
