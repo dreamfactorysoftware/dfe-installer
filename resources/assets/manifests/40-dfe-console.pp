@@ -77,7 +77,7 @@ class customIniSettings( $root, $zone, $domain, $protocol = "https") {
       }
     }
 
-    create_init_settings($_customCss, $_env)
+    create_ini_settings($_customCss, $_env)
   }
 
 ## The navbar image
@@ -88,7 +88,7 @@ class customIniSettings( $root, $zone, $domain, $protocol = "https") {
       }
     }
 
-    create_init_settings($_navbarImage, $_env)
+    create_ini_settings($_navbarImage, $_env)
   }
 
 ## The login_splashPP image
@@ -99,7 +99,7 @@ class customIniSettings( $root, $zone, $domain, $protocol = "https") {
       }
     }
 
-    create_init_settings($_loginSplashImage, $_env)
+    create_ini_settings($_loginSplashImage, $_env)
   }
 }
 
