@@ -1,0 +1,19 @@
+## Place in /etc/logrotate.d for DFE log rotation
+/var/www/console/storage/logs/*.log /var/www/dashboard/storage/logs/*.log /var/www/launchpad/storage/logs/*.log /data/logs/console/*.log /data/logs/dashboard/*.log /data/logs/hosted/*.log /data/logs/instance/*.log {
+	daily
+	missingok
+	rotate 3
+	compress
+	delaycompress
+	notifempty
+	create 0640 www-data adm
+	sharedscripts
+	prerotate
+		if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+			run-parts /etc/logrotate.d/httpd-prerotate; \
+		fi \
+	endscript
+	postrotate
+		[ -s /run/nginx.pid ] && kill -USR1 `cat /run/nginx.pid`
+	endscript
+}

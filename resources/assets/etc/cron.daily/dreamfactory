@@ -1,4 +1,4 @@
 #!/bin/sh
 # run metrics for DFE
 
-/usr/bin/php /var/www/console/artisan dfe:metrics --gather >/var/www/console/storage/logs/crontab.log 2>&1
+/usr/bin/php /var/www/console/artisan dfe:metrics --gather --force >>/var/www/console/storage/logs/crontab.log 2>&1
