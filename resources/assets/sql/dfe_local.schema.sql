@@ -134,6 +134,7 @@ CREATE TABLE `metrics_detail_t` (
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `ux_metrics_detail_user_instance_date` (`user_id`,`instance_id`,`gather_date`),
   KEY `ix_metrics_detail_user_id` (`user_id`),
   KEY `ix_metrics_detail_instance_id` (`instance_id`),
   CONSTRAINT `fk_metrics_detail_instance_id` FOREIGN KEY (`instance_id`) REFERENCES `instance_t` (`id`) ON DELETE CASCADE,

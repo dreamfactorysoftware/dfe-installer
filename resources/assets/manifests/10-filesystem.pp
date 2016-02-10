@@ -63,6 +63,12 @@ class createRequiredFiles {
     ensure => file,
     mode   => '0775',
     source => "$pwd/resources/assets/etc/cron.daily/dreamfactory",
+  }->
+  ## Install a crontab file for metrics
+  file { "/etc/logrotate.d/dreamfactory":
+    ensure => file,
+    mode   => '0775',
+    source => "$pwd/resources/assets/etc/logrotate.d/dreamfactory",
   }
 }
 
