@@ -49,7 +49,8 @@ CREATE TABLE `app_key_t` (
   `created_at`     TIMESTAMP               NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at`     TIMESTAMP               NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ux_app_key_client_id` (`client_id`))
+  UNIQUE KEY `ux_app_key_client_id` (`client_id`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -65,7 +66,8 @@ CREATE TABLE `app_key_arch_t` (
   `owner_id`       INT(11),
   `owner_type_nbr` INT(11),
   `created_at`     DATETIME,
-  `updated_at`     TIMESTAMP)
+  `updated_at`     TIMESTAMP
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -77,13 +79,14 @@ CREATE TABLE `app_key_arch_t` (
 DROP TABLE IF EXISTS `auth_reset_t`;
 
 CREATE TABLE `auth_reset_t` (
-  `email` VARCHAR(255)
-          COLLATE utf8_unicode_ci NOT NULL,
-  `token` VARCHAR(255)
-          COLLATE utf8_unicode_ci NOT NULL,
-  `created_at` TIMESTAMP          NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `email`      VARCHAR(255)
+               COLLATE utf8_unicode_ci NOT NULL,
+  `token`      VARCHAR(255)
+               COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` TIMESTAMP               NOT NULL DEFAULT '0000-00-00 00:00:00',
   KEY `ix_auth_reset_email` (`email`),
-  KEY `ix_auth_reset_token` (`token`))
+  KEY `ix_auth_reset_token` (`token`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -101,7 +104,8 @@ CREATE TABLE `environment_t` (
   `create_date`         DATETIME    NOT NULL,
   `lmod_date`           TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ux_environment_environment_id` (`environment_id_text`))
+  UNIQUE KEY `ux_environment_environment_id` (`environment_id_text`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -118,7 +122,8 @@ CREATE TABLE `metrics_t` (
   `sent_ind`          TINYINT(1)              NOT NULL DEFAULT 0,
   `create_date`       DATETIME                NOT NULL,
   `lmod_date`         TIMESTAMP               NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -126,20 +131,25 @@ CREATE TABLE `metrics_t` (
 DROP TABLE IF EXISTS `metrics_detail_t`;
 
 CREATE TABLE `metrics_detail_t` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `instance_id` int(11) NOT NULL,
-  `gather_date` date NOT NULL,
-  `data_text` mediumtext COLLATE utf8_unicode_ci NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `id`          BIGINT(20) UNSIGNED                NOT NULL AUTO_INCREMENT,
+  `user_id`     INT(11)                            NOT NULL,
+  `instance_id` INT(11)                            NOT NULL,
+  `gather_date` DATE                               NOT NULL,
+  `data_text`   MEDIUMTEXT COLLATE utf8_unicode_ci NOT NULL,
+  `created_at`  TIMESTAMP                          NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at`  TIMESTAMP                          NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ux_metrics_detail_user_instance_date` (`user_id`,`instance_id`,`gather_date`),
+  UNIQUE KEY `ux_metrics_detail_user_instance_date` (`user_id`, `instance_id`, `gather_date`),
   KEY `ix_metrics_detail_user_id` (`user_id`),
   KEY `ix_metrics_detail_instance_id` (`instance_id`),
-  CONSTRAINT `fk_metrics_detail_instance_id` FOREIGN KEY (`instance_id`) REFERENCES `instance_t` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_metrics_detail_user_id` FOREIGN KEY (`user_id`) REFERENCES `user_t` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  CONSTRAINT `fk_metrics_detail_instance_id` FOREIGN KEY (`instance_id`) REFERENCES `instance_t` (`id`)
+    ON DELETE CASCADE,
+  CONSTRAINT `fk_metrics_detail_user_id` FOREIGN KEY (`user_id`) REFERENCES `user_t` (`id`)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  COLLATE = utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `telemetry_t`;
 
@@ -154,7 +164,8 @@ CREATE TABLE `telemetry_t` (
   `lmod_date`        TIMESTAMP               NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `ix_telemetry_provider_id` (`provider_id_text`),
-  KEY `ix_telemetry_gather_date` (`gather_date`))
+  KEY `ix_telemetry_gather_date` (`gather_date`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -180,7 +191,8 @@ CREATE TABLE `mount_t` (
   `create_date`     DATETIME                NOT NULL,
   `lmod_date`       TIMESTAMP               NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ux_mount_mount_id` (`mount_id_text`))
+  UNIQUE KEY `ux_mount_mount_id` (`mount_id_text`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -191,8 +203,11 @@ CREATE TABLE `mount_t` (
 
 DROP TABLE IF EXISTS `migration_t`;
 
-CREATE TABLE `migration_t` (`migration` VARCHAR(256)
-                                        COLLATE utf8_unicode_ci NOT NULL, `batch` INT(11) NOT NULL)
+CREATE TABLE `migration_t` (
+  `migration` VARCHAR(256)
+              COLLATE utf8_unicode_ci NOT NULL,
+  `batch`     INT(11)                 NOT NULL
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -214,7 +229,8 @@ CREATE TABLE `role_t` (
   `create_date`      DATETIME                NOT NULL,
   `lmod_date`        TIMESTAMP               NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ux_role_role_name` (`role_name_text`))
+  UNIQUE KEY `ux_role_role_name` (`role_name_text`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -233,7 +249,8 @@ CREATE TABLE `owner_hash_t` (
   `hash_text`      VARCHAR(128) NOT NULL,
   `create_date`    DATETIME     NOT NULL,
   `lmod_date`      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -250,7 +267,8 @@ CREATE TABLE `route_hash_t` (
   `create_date`      DATETIME                NOT NULL,
   `lmod_date`        TIMESTAMP               NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ix_route_hash_hash` (`hash_text`))
+  UNIQUE KEY `ix_route_hash_hash` (`hash_text`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -292,7 +310,8 @@ CREATE TABLE `user_t` (
   `create_date`            DATETIME     NOT NULL,
   `lmod_date`              TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ux_user_email_addr` (`email_addr_text`))
+  UNIQUE KEY `ux_user_email_addr` (`email_addr_text`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -308,7 +327,8 @@ CREATE TABLE `vendor_t` (
   `create_date`      DATETIME    NOT NULL,
   `lmod_date`        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ux_vendor_vendor_name` (`vendor_name_text`))
+  UNIQUE KEY `ux_vendor_vendor_name` (`vendor_name_text`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -331,7 +351,8 @@ CREATE TABLE `vendor_image_t` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `ux_vendor_image_vendor_image` (`vendor_id`, `image_id_text`),
   CONSTRAINT `fk_vendor_image_vendor_id` FOREIGN KEY (`vendor_id`) REFERENCES `vendor_t` (`id`)
-    ON DELETE CASCADE)
+    ON DELETE CASCADE
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -351,7 +372,8 @@ CREATE TABLE `vendor_credentials_t` (
   KEY `ix_vendor_creds_user_id` (`user_id`),
   KEY `ix_vendor_creds_vendor_id` (`vendor_id`),
   CONSTRAINT `fk_vendor_creds_vendor_id` FOREIGN KEY (`vendor_id`) REFERENCES `vendor_t` (`id`)
-    ON DELETE CASCADE)
+    ON DELETE CASCADE
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -380,7 +402,8 @@ CREATE TABLE `service_user_t` (
   UNIQUE KEY `ux_service_user_email_addr` (`email_addr_text`),
   KEY `ix_service_user_owner_id` (`owner_id`),
   CONSTRAINT `fk_service_user_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `service_user_t` (`id`)
-    ON DELETE CASCADE)
+    ON DELETE CASCADE
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -400,7 +423,8 @@ CREATE TABLE `cluster_t` (
   `create_date`       DATETIME     NOT NULL,
   `lmod_date`         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ux_cluster_cluster_id_text` (`cluster_id_text`))
+  UNIQUE KEY `ux_cluster_cluster_id_text` (`cluster_id_text`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -414,7 +438,8 @@ CREATE TABLE `cluster_arch_t` (
   `subdomain_text`    VARCHAR(128) DEFAULT NULL,
   `max_instances_nbr` INT(11)      DEFAULT NULL,
   `create_date`       DATETIME     DEFAULT NULL,
-  `lmod_date`         TIMESTAMP)
+  `lmod_date`         TIMESTAMP
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -431,7 +456,8 @@ CREATE TABLE `server_type_t` (
   `create_date`    DATETIME    NOT NULL,
   `lmod_date`      TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ux_server_type_type_name` (`type_name_text`))
+  UNIQUE KEY `ux_server_type_type_name` (`type_name_text`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -453,7 +479,8 @@ CREATE TABLE `server_t` (
   CONSTRAINT `fk_server_server_type_id` FOREIGN KEY (`server_type_id`) REFERENCES `server_type_t` (`id`)
     ON UPDATE CASCADE,
   CONSTRAINT `fk_server_mount_id` FOREIGN KEY (`mount_id`) REFERENCES `mount_t` (`id`)
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -468,7 +495,8 @@ CREATE TABLE `server_arch_t` (
   `config_text`    MEDIUMTEXT,
   `create_date`    DATETIME,
   `lmod_date`      TIMESTAMP,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -534,7 +562,8 @@ CREATE TABLE `instance_t` (
   CONSTRAINT `fk_instance_cluster_id` FOREIGN KEY (`cluster_id`) REFERENCES `cluster_t` (`id`),
   CONSTRAINT `fk_instance_db_server_id` FOREIGN KEY (`db_server_id`) REFERENCES `server_t` (`id`),
   CONSTRAINT `fk_instance_user_id` FOREIGN KEY (`user_id`) REFERENCES `user_t` (`id`),
-  CONSTRAINT `fk_instance_web_server` FOREIGN KEY (`web_server_id`) REFERENCES `server_t` (`id`))
+  CONSTRAINT `fk_instance_web_server` FOREIGN KEY (`web_server_id`) REFERENCES `server_t` (`id`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -583,7 +612,8 @@ CREATE TABLE `instance_arch_t` (
   `end_date`            DATETIME                DEFAULT NULL,
   `terminate_date`      DATETIME                DEFAULT NULL,
   `create_date`         DATETIME                DEFAULT NULL,
-  `lmod_date`           TIMESTAMP)
+  `lmod_date`           TIMESTAMP
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -628,7 +658,8 @@ CREATE TABLE `instance_guest_t` (
   PRIMARY KEY (`id`),
   KEY `fk_instance_guest_instance_id` (`instance_id`),
   CONSTRAINT `fk_instance_guest_instance_id` FOREIGN KEY (`instance_id`) REFERENCES `instance_t` (`id`)
-    ON DELETE CASCADE)
+    ON DELETE CASCADE
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -665,7 +696,8 @@ CREATE TABLE `instance_guest_arch_t` (
   `state_text`             VARCHAR(64)
                            COLLATE utf8_unicode_ci DEFAULT NULL,
   `create_date`            DATETIME                DEFAULT NULL,
-  `lmod_date`              TIMESTAMP)
+  `lmod_date`              TIMESTAMP
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -693,7 +725,8 @@ CREATE TABLE `deactivation_t` (
   UNIQUE KEY `ux_deactivation_user_instance` (`user_id`, `instance_id`),
   KEY `ix_deactivation_instance_id` (`instance_id`),
   CONSTRAINT `fk_deactivation_instance_id` FOREIGN KEY (`instance_id`) REFERENCES `instance_t` (`id`)
-    ON DELETE CASCADE)
+    ON DELETE CASCADE
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -709,7 +742,8 @@ CREATE TABLE `deactivation_arch_t` (
   `user_notified_nbr` INT(1)   DEFAULT '0',
   `action_reason_nbr` INT(11)  DEFAULT '0',
   `create_date`       DATETIME DEFAULT NULL,
-  `lmod_date`         TIMESTAMP)
+  `lmod_date`         TIMESTAMP
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -731,7 +765,8 @@ CREATE TABLE `job_t` (
   `reserved_at`  INT(10) UNSIGNED                 DEFAULT NULL,
   `available_at` INT(10) UNSIGNED        NOT NULL,
   `created_at`   INT(10) UNSIGNED        NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -746,7 +781,8 @@ CREATE TABLE `job_fail_t` (
                COLLATE utf8_unicode_ci,
   `payload`    TEXT
                COLLATE utf8_unicode_ci,
-  `failed_at`  TIMESTAMP)
+  `failed_at`  TIMESTAMP
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -762,7 +798,8 @@ CREATE TABLE `job_result_t` (
   `create_date`    DATETIME                NOT NULL,
   `lmod_date`      TIMESTAMP               NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `ix_job_result_result_id` (`result_id_text`))
+  KEY `ix_job_result_result_id` (`result_id_text`)
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -796,7 +833,8 @@ CREATE TABLE `limit_t` (
   CONSTRAINT `fk_limit_cluster_id` FOREIGN KEY (`cluster_id`) REFERENCES `cluster_t` (`id`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_limit_instance_id` FOREIGN KEY (`instance_id`) REFERENCES `instance_t` (`id`)
-    ON DELETE CASCADE)
+    ON DELETE CASCADE
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -825,7 +863,8 @@ CREATE TABLE `snapshot_t` (
   KEY `ix_snapshot_user_id` (`user_id`),
   KEY `ix_snapshot_instance_id` (`instance_id`),
   CONSTRAINT `fk_snapshot_user_id` FOREIGN KEY (`user_id`) REFERENCES `user_t` (`id`)
-    ON DELETE CASCADE)
+    ON DELETE CASCADE
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -854,7 +893,8 @@ CREATE TABLE `user_role_asgn_t` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_role_user_id` FOREIGN KEY (`user_id`) REFERENCES `user_t` (`id`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -875,13 +915,19 @@ CREATE TABLE `cluster_server_asgn_t` (
   CONSTRAINT `fk_csa_cluster_id` FOREIGN KEY (`cluster_id`) REFERENCES `cluster_t` (`id`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_csa_server_id` FOREIGN KEY (`server_id`) REFERENCES `server_t` (`id`)
-    ON DELETE CASCADE)
+    ON DELETE CASCADE
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
 DROP TABLE IF EXISTS `cluster_server_asgn_arch_t`;
 
-CREATE TABLE `cluster_server_asgn_arch_t` (`cluster_id` INT(11), `server_id` INT(11), `create_date` DATETIME, `lmod_date` TIMESTAMP)
+CREATE TABLE `cluster_server_asgn_arch_t` (
+  `cluster_id`  INT(11),
+  `server_id`   INT(11),
+  `create_date` DATETIME,
+  `lmod_date`   TIMESTAMP
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -902,14 +948,20 @@ CREATE TABLE `instance_server_asgn_t` (
   CONSTRAINT `fk_isa_instance_id` FOREIGN KEY (`instance_id`) REFERENCES `instance_t` (`id`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_isa_server_id` FOREIGN KEY (`server_id`) REFERENCES `server_t` (`id`)
-    ON DELETE CASCADE)
+    ON DELETE CASCADE
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `instance_server_asgn_arch_t`;
 
-CREATE TABLE `instance_server_asgn_arch_t` (`instance_id` INT(11), `server_id` INT(11), `create_date` DATETIME, `lmod_date` TIMESTAMP)
+CREATE TABLE `instance_server_asgn_arch_t` (
+  `instance_id` INT(11),
+  `server_id`   INT(11),
+  `create_date` DATETIME,
+  `lmod_date`   TIMESTAMP
+)
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
@@ -1020,20 +1072,15 @@ VALUES (1, 'db', '', NOW(), NOW()), (2, 'web', '', NOW(), NOW()), (3, 'app', '',
 ********************************************************************************/
 
 INSERT INTO `vendor_t` (`id`, `vendor_name_text`, `create_date`, `lmod_date`)
-VALUES
-  (1, 'Amazon EC2', NOW(), NOW()),
-  (2, 'DreamFactory', NOW(), NOW()),
-  (3, 'Windows Azure', NOW(), NOW()),
-  (4, 'Rackspace', NOW(), NOW()),
+VALUES (1, 'Amazon EC2', NOW(), NOW()), (2, 'DreamFactory', NOW(), NOW()), (3, 'Windows Azure', NOW(), NOW()), (4, 'Rackspace', NOW(), NOW()),
   (5, 'OpenStack', NOW(), NOW());
 
 /********************************************************************************
-* Preloaded vendor images for instances (this is way old)
+* Pre-loaded vendor images for instances (this is way old)
 ********************************************************************************/
 
 INSERT INTO `vendor_image_t` (`id`, `vendor_id`, `os_text`, `license_text`, `image_id_text`, `image_name_text`, `image_description_text`, `architecture_nbr`, `region_text`, `availability_zone_text`, `root_storage_text`, `create_date`, `lmod_date`)
-VALUES
-  (34, 1, 'Linux', 'Public', 'ami-013f9768', 'ubuntu/images/ebs/ubuntu-precise-12.04-amd64-server-20120728', NULL, 1, NULL, NULL, 'ebs', NOW(), NOW()),
+VALUES (34, 1, 'Linux', 'Public', 'ami-013f9768', 'ubuntu/images/ebs/ubuntu-precise-12.04-amd64-server-20120728', NULL, 1, NULL, NULL, 'ebs', NOW(), NOW()),
   (169, 1, 'Linux', 'Public', 'ami-057bcf6c', 'ubuntu/images/ebs/ubuntu-precise-12.04-i386-server-20120822', NULL, 0, NULL, NULL, 'ebs', NOW(), NOW()),
   (430, 1, 'Linux', 'Public', 'ami-0d3f9764', 'ubuntu/images/ebs/ubuntu-precise-12.04-i386-server-20120728', NULL, 0, NULL, NULL, 'ebs', NOW(), NOW()),
   (624, 1, 'Linux', 'Public', 'ami-137bcf7a', 'ubuntu/images/ebs/ubuntu-precise-12.04-amd64-server-20120822', NULL, 1, NULL, NULL, 'ebs', NOW(), NOW()),
