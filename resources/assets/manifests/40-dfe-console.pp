@@ -66,10 +66,10 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
 
 ## Defines the console .env settings. Relies on FACTER_* data
 class customIniSettings( $root, $zone, $domain, $protocol = "https") {
-## Define our stuff
+  ## Define our stuff
   $_env = { "path" => "$root/.env", }
 
-## Custom CSS file
+  ## Custom CSS file
   if ( '' != $custom_css_file ) {
     $_customCss = {
       "" => {
@@ -80,7 +80,7 @@ class customIniSettings( $root, $zone, $domain, $protocol = "https") {
     create_ini_settings($_customCss, $_env)
   }
 
-## The navbar image
+  ## The navbar image
   if ( '' != $navbar_image ) {
     $_navbarImage = {
       "" => {
@@ -91,7 +91,7 @@ class customIniSettings( $root, $zone, $domain, $protocol = "https") {
     create_ini_settings($_navbarImage, $_env)
   }
 
-## The login_splashPP image
+  ## The login_splashPP image
   if ( '' != $login_splash_image ) {
     $_loginSplashImage = {
       "" => {
