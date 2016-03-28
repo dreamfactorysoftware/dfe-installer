@@ -184,7 +184,8 @@ class ModelsCommand extends Command
                     }
 
                     if (!$reflectionClass->IsInstantiable()) {
-                        throw new \Exception($name . ' is not instantiable.');
+                        // ignore abstract class or interface
+                        continue;
                     }
 
                     $model = $this->laravel->make($name);
@@ -290,6 +291,7 @@ class ModelsCommand extends Command
 
                 $comment = $column->getComment();
                 $this->setProperty($name, $type, true, true, $comment);
+                $this->setMethod(Str::camel("where_" . $name), '\Illuminate\Database\Query\Builder|\\' . get_class($model), array('$value'));
             }
         }
     }
@@ -332,7 +334,7 @@ class ModelsCommand extends Command
                         array_shift($args);
                         $this->setMethod($name, '\Illuminate\Database\Query\Builder|\\' . $reflection->class, $args);
                     }
-                } elseif (!method_exists('Eloquent', $method) && !Str::startsWith($method, 'get')) {
+                } elseif (!method_exists('Illuminate\Database\Eloquent\Model', $method) && !Str::startsWith($method, 'get')) {
 
                     //Use reflection to inspect the code, based on Illuminate/Support/SerializableClosure.php
                     $reflection = new \ReflectionMethod($model, $method);
@@ -354,6 +356,7 @@ class ModelsCommand extends Command
                                'belongsToMany',
                                'hasOne',
                                'belongsTo',
+                               'morphOne',
                                'morphTo',
                                'morphMany',
                                'morphToMany'
@@ -375,6 +378,9 @@ class ModelsCommand extends Command
                                       true,
                                       null
                                     );
+                                } elseif ($relation === "morphTo") {
+                                    // Model isn't specified because relation is polymorphic
+                                    $this->setProperty($method, '\Illuminate\Database\Eloquent\Model|\Eloquent', true, null);
                                 } else {
                                     //Single model is returned
                                     $this->setProperty($method, $relatedModel, true, null);
@@ -484,6 +490,10 @@ class ModelsCommand extends Command
             $phpdoc->appendTag($tag);
         }
 
+        if ($this->write && ! $phpdoc->getTagsByName('mixin')) {
+            $phpdoc->appendTag(Tag::createInstance("@mixin \\Eloquent", $phpdoc));
+        }
+
         $serializer = new DocBlockSerializer();
         $serializer->getDocComment($phpdoc);
         $docComment = $serializer->getDocComment($phpdoc);
@@ -507,7 +517,7 @@ class ModelsCommand extends Command
             }
         }
 
-        $output = "namespace {$namespace}{\n{$docComment}\n\tclass {$classname} {}\n}\n\n";
+        $output = "namespace {$namespace}{\n{$docComment}\n\tclass {$classname} extends \Eloquent {}\n}\n\n";
         return $output;
     }
 

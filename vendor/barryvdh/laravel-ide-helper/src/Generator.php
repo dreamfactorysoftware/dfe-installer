@@ -12,6 +12,7 @@ namespace Barryvdh\LaravelIdeHelper;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Config\Repository as ConfigRepository;
+use ReflectionClass;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Generator
@@ -113,11 +114,18 @@ class Generator
 
     protected function detectDrivers()
     {
-        $this->interfaces['\Illuminate\Contracts\Auth\Authenticatable'] = config('auth.model', 'App\User');
+        $this->interfaces['\Illuminate\Contracts\Auth\Authenticatable'] = config('auth.providers.users.model', config('auth.model', 'App\User'));
         
         try{
             if (class_exists('Auth') && is_a('Auth', '\Illuminate\Support\Facades\Auth', true)) {
-                $class = get_class(\Auth::driver());
+				if (class_exists('\Illuminate\Foundation\Application')) {
+					$authMethod = version_compare(\Illuminate\Foundation\Application::VERSION, '5.2', '>=') ? 'guard' : 'driver';
+				} else {
+                    $refClass = new ReflectionClass('\Laravel\Lumen\Application');
+                    $versionStr = $refClass->newInstanceWithoutConstructor()->version();
+					$authMethod = strpos($versionStr, 'Lumen (5.0') === 0 ? 'driver' : (strpos($versionStr, 'Lumen (5.1') === 0 ? 'driver' : 'guard');
+				}
+                $class = get_class(\Auth::$authMethod());
                 $this->extra['Auth'] = array($class);
                 $this->interfaces['\Illuminate\Auth\UserProviderInterface'] = $class;
             }

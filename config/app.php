@@ -1,6 +1,7 @@
 <?php
 return [
     'debug'           => env('APP_DEBUG', false),
+    'env'             => env('APP_ENV', 'production'),
     'url'             => env('APP_URL', 'http://dfe-installer.local'),
     'timezone'        => 'UTC',
     'locale'          => 'en',
@@ -9,16 +10,14 @@ return [
     'cipher'          => 'AES-256-CBC',
     'log'             => 'single',
     'os_type'         => `which lsb_release` ? strtolower(trim(`lsb_release -si`)) : null,
-    'version'         => env('APP_VERSION'),
+    'version'         => env('APP_VERSION', '1.1.58'),
     'providers'       => [
         /** Laravel Framework Service Providers */
-        Illuminate\Foundation\Providers\ArtisanServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
         Illuminate\Cache\CacheServiceProvider::class,
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
-        Illuminate\Routing\ControllerServiceProvider::class,
         Illuminate\Cookie\CookieServiceProvider::class,
         Illuminate\Database\DatabaseServiceProvider::class,
         Illuminate\Encryption\EncryptionServiceProvider::class,
