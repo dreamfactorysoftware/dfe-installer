@@ -16,8 +16,8 @@ namespace Symfony\Component\ClassLoader;
  *
  * It expects an object implementing a findFile method to find the file. This
  * allows using it as a wrapper around the other loaders of the component (the
- * ClassLoader and the UniversalClassLoader for instance) but also around any
- * other autoloaders following this convention (the Composer one for instance).
+ * ClassLoader for instance) but also around any other autoloaders following
+ * this convention (the Composer one for instance).
  *
  *     // with a Symfony autoloader
  *     use Symfony\Component\ClassLoader\ClassLoader;
@@ -67,8 +67,8 @@ class ApcClassLoader
      */
     public function __construct($prefix, $decorated)
     {
-        if (!extension_loaded('apc')) {
-            throw new \RuntimeException('Unable to use ApcClassLoader as APC is not enabled.');
+        if (!function_exists('apcu_fetch')) {
+            throw new \RuntimeException('Unable to use ApcClassLoader as APC is not installed.');
         }
 
         if (!method_exists($decorated, 'findFile')) {
@@ -122,8 +122,8 @@ class ApcClassLoader
      */
     public function findFile($class)
     {
-        if (false === $file = apc_fetch($this->prefix.$class)) {
-            apc_store($this->prefix.$class, $file = $this->decorated->findFile($class));
+        if (false === $file = apcu_fetch($this->prefix.$class)) {
+            apcu_store($this->prefix.$class, $file = $this->decorated->findFile($class));
         }
 
         return $file;
