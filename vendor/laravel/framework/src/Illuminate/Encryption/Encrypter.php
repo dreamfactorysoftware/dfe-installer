@@ -30,6 +30,10 @@ class Encrypter extends BaseEncrypter implements EncrypterContract
     {
         $key = (string) $key;
 
+        if (Str::startsWith($key, 'base64:')) {
+            $key = base64_decode(substr($key, 7));
+        }
+
         if (static::supported($key, $cipher)) {
             $this->key = $key;
             $this->cipher = $cipher;
@@ -62,7 +66,7 @@ class Encrypter extends BaseEncrypter implements EncrypterContract
      */
     public function encrypt($value)
     {
-        $iv = Str::randomBytes($this->getIvSize());
+        $iv = random_bytes($this->getIvSize());
 
         $value = openssl_encrypt(serialize($value), $this->cipher, $this->key, 0, $iv);
 

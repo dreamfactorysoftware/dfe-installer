@@ -1,4 +1,5 @@
 #!/bin/sh
-# run metrics for DFE
+## DFE cron tasks
 
-/usr/bin/php /var/www/console/artisan dfe:metrics --gather --force >>/var/www/console/storage/logs/crontab.log 2>&1
+/usr/bin/php /var/www/console/artisan -q dfe:daily >>/var/www/console/storage/logs/crontab.log 2>&1
+/usr/bin/php /var/www/console/artisan -q dfe:metrics --gather --force >>/var/www/console/storage/logs/crontab.log 2>&1

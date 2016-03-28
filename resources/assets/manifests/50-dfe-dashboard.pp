@@ -37,7 +37,7 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775 ) {
     mode   => $mode,
   }
 
-## Blow away cache on update
+  ## Blow away cache on update
   if ( true == str2bool($dfe_update) ) {
     exec { "remove-services-json":
       command         => "rm -f $root/bootstrap/cache/services.json",
@@ -54,7 +54,7 @@ class laravelDirectories( $root, $owner, $group, $mode = 2775 ) {
 
 ## Defines the dashboard .env settings. Relies on FACTER_* data
 class iniSettings( $root, $zone, $domain, $protocol = "https") {
-## Define our stuff
+  ## Define our stuff
   $_env = { "path" => "$root/.env", }
   $_consoleUrl = "$protocol://console.${zone}.${domain}"
   $_dashboardUrl = "$protocol://dashboard.${zone}.${domain}"
@@ -89,16 +89,16 @@ class iniSettings( $root, $zone, $domain, $protocol = "https") {
     }
   }
 
-## Update the .env file
+  ## Update the .env file
   create_ini_settings($_settings, $_env)
 }
 
 ## Defines the console .env settings. Relies on FACTER_* data
 class customIniSettings( $root, $zone, $domain, $protocol = "https") {
-## Define our stuff
+  ## Define our stuff
   $_env = { "path" => "$root/.env", }
 
-## Custom CSS file
+  ## Custom CSS file
   if ( '' != $custom_css_file ) {
     $_customCss = {
       "" => {
@@ -109,7 +109,7 @@ class customIniSettings( $root, $zone, $domain, $protocol = "https") {
     create_ini_settings($_customCss, $_env)
   }
 
-## The navbar image
+  ## The navbar image
   if ( '' != $navbar_image ) {
     $_navbarImage = {
       "" => {
@@ -120,7 +120,7 @@ class customIniSettings( $root, $zone, $domain, $protocol = "https") {
     create_ini_settings($_navbarImage, $_env)
   }
 
-## The login_splashPP image
+  ## The login_splashPP image
   if ( '' != $login_splash_image ) {
     $_loginSplashImage = {
       "" => {
@@ -183,7 +183,7 @@ class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
 
 ##  Create an environment file
 class createEnvFile( $root, $source = ".env-dist" ) {
-##  On new installs only
+  ##  On new installs only
   if ( false == str2bool($dfe_update) ) {
     file { "${root}/.env":
       ensure => present,
@@ -259,14 +259,14 @@ class { createEnvFile:
   root => $dashboard_root,
 }->
 class { iniSettings:
-## Applies INI settings in $_settings to .env
+  ## Applies INI settings in $_settings to .env
   root     => $dashboard_root,
   zone     => $vendor_id,
   domain   => $domain,
   protocol => $default_protocol,
 }->
 class { customIniSettings:
-## Applies INI settings in $_settings to .env
+  ## Applies INI settings in $_settings to .env
   root     => $dashboard_root,
   zone     => $vendor_id,
   domain   => $domain,

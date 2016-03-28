@@ -5,11 +5,11 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 
 class AuthServiceProvider extends ServiceProvider
 {
-    /**
-     * The policy mappings for the application.
-     *
-     * @var array
-     */
+    //******************************************************************************
+    //* Methods
+    //******************************************************************************
+
+    /** @inheritdoc */
     protected $policies = [
         'DreamFactory\Enterprise\Installer\Model' => 'DreamFactory\Enterprise\Installer\Policies\ModelPolicy',
     ];

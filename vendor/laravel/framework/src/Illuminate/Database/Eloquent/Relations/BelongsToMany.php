@@ -6,7 +6,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -116,7 +115,23 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Set an or where clause for a pivot table column.
+     * Set a "where in" clause for a pivot table column.
+     *
+     * @param  string  $column
+     * @param  mixed   $values
+     * @param  string  $boolean
+     * @param  bool    $not
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function wherePivotIn($column, $values, $boolean = 'and', $not = false)
+    {
+        $this->pivotWheres[] = func_get_args();
+
+        return $this->whereIn($this->table.'.'.$column, $values, $boolean, $not);
+    }
+
+    /**
+     * Set an "or where" clause for a pivot table column.
      *
      * @param  string  $column
      * @param  string  $operator
@@ -126,6 +141,18 @@ class BelongsToMany extends Relation
     public function orWherePivot($column, $operator = null, $value = null)
     {
         return $this->wherePivot($column, $operator, $value, 'or');
+    }
+
+    /**
+     * Set an "or where in" clause for a pivot table column.
+     *
+     * @param  string  $column
+     * @param  mixed   $values
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function orWherePivotIn($column, $values)
+    {
+        return $this->wherePivotIn($column, $values, 'or');
     }
 
     /**
@@ -173,7 +200,9 @@ class BelongsToMany extends Relation
 
         $select = $this->getSelectColumns($columns);
 
-        $models = $this->query->addSelect($select)->getModels();
+        $builder = $this->query->applyScopes();
+
+        $models = $builder->addSelect($select)->getModels();
 
         $this->hydratePivotRelation($models);
 
@@ -181,7 +210,7 @@ class BelongsToMany extends Relation
         // have been specified as needing to be eager loaded. This will solve the
         // n + 1 query problem for the developer and also increase performance.
         if (count($models) > 0) {
-            $models = $this->query->eagerLoadRelations($models);
+            $models = $builder->eagerLoadRelations($models);
         }
 
         return $this->related->newCollection($models);
@@ -301,39 +330,43 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Add the constraints for a relationship count query.
+     * Add the constraints for a relationship query.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  \Illuminate\Database\Eloquent\Builder  $parent
+     * @param  array|mixed  $columns
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getRelationCountQuery(Builder $query, Builder $parent)
+    public function getRelationQuery(Builder $query, Builder $parent, $columns = ['*'])
     {
         if ($parent->getQuery()->from == $query->getQuery()->from) {
-            return $this->getRelationCountQueryForSelfJoin($query, $parent);
+            return $this->getRelationQueryForSelfJoin($query, $parent, $columns);
         }
 
         $this->setJoin($query);
 
-        return parent::getRelationCountQuery($query, $parent);
+        return parent::getRelationQuery($query, $parent, $columns);
     }
 
     /**
-     * Add the constraints for a relationship count query on the same table.
+     * Add the constraints for a relationship query on the same table.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  \Illuminate\Database\Eloquent\Builder  $parent
+     * @param  array|mixed  $columns
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getRelationCountQueryForSelfJoin(Builder $query, Builder $parent)
+    public function getRelationQueryForSelfJoin(Builder $query, Builder $parent, $columns = ['*'])
     {
-        $query->select(new Expression('count(*)'));
+        $query->select($columns);
 
-        $query->from($this->table.' as '.$hash = $this->getRelationCountHash());
+        $query->from($this->related->getTable().' as '.$hash = $this->getRelationCountHash());
 
-        $key = $this->wrap($this->getQualifiedParentKeyName());
+        $this->related->setTable($hash);
 
-        return $query->where($hash.'.'.$this->foreignKey, '=', new Expression($key));
+        $this->setJoin($query);
+
+        return parent::getRelationQuery($query, $parent, $columns);
     }
 
     /**
@@ -538,7 +571,7 @@ class BelongsToMany extends Relation
 
         $fullKey = $related->getQualifiedKeyName();
 
-        return $this->getQuery()->select($fullKey)->lists($related->getKeyName());
+        return $this->getQuery()->select($fullKey)->pluck($related->getKeyName());
     }
 
     /**
@@ -561,11 +594,11 @@ class BelongsToMany extends Relation
     /**
      * Save an array of new models and attach them to the parent model.
      *
-     * @param  array  $models
+     * @param  \Illuminate\Support\Collection|array  $models
      * @param  array  $joinings
      * @return array
      */
-    public function saveMany(array $models, array $joinings = [])
+    public function saveMany($models, array $joinings = [])
     {
         foreach ($models as $key => $model) {
             $this->save($model, (array) Arr::get($joinings, $key), false);
@@ -768,7 +801,7 @@ class BelongsToMany extends Relation
         // First we need to attach any of the associated models that are not currently
         // in this joining table. We'll spin through the given IDs, checking to see
         // if they exist in the array of current ones, and if not we will insert.
-        $current = $this->newPivotQuery()->lists($this->otherKey);
+        $current = $this->newPivotQuery()->pluck($this->otherKey);
 
         $records = $this->formatSyncList($ids);
 
@@ -889,6 +922,10 @@ class BelongsToMany extends Relation
     {
         if ($id instanceof Model) {
             $id = $id->getKey();
+        }
+
+        if ($id instanceof Collection) {
+            $id = $id->modelKeys();
         }
 
         $query = $this->newPivotStatement();
