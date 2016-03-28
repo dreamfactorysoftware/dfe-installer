@@ -1033,6 +1033,16 @@ FOR EACH ROW BEGIN
                                 WHERE `instance_t`.`id` = old.id;
 END */$$
 
+/*!50003 DROP TRIGGER *//*!50032 IF EXISTS */ /*!50003 `instance_afterDelete` */$$
+  /*!50003 CREATE */ /*!50003 TRIGGER `instance_afterDelete` AFTER DELETE ON `instance_t`
+FOR EACH ROW BEGIN
+  DELETE FROM `app_key_t`
+  WHERE owner_id = old.id AND owner_type_nbr = 1;
+
+  DELETE FROM `deactivation_t`
+  WHERE instance_id = old.id;
+END */$$
+
 /*!50003 DROP TRIGGER *//*!50032 IF EXISTS */ /*!50003 `server_beforeDelete` */$$
   /*!50003 CREATE */ /*!50003 TRIGGER `server_beforeDelete` BEFORE DELETE ON `server_t`
 FOR EACH ROW BEGIN
@@ -1040,6 +1050,8 @@ FOR EACH ROW BEGIN
                               FROM `server_t`
                               WHERE `server_t`.`id` = old.id;
 END */$$
+
+DELIMITER ;
 
 /********************************************************************************
 * DreamFactory Enterprise(tm) Console/Dashboard Install/Setup Data
