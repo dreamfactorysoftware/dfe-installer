@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.2.26 on 2016-03-28.
+ * Generated for Laravel 5.2.27 on 2016-03-30.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -3269,6 +3269,19 @@ namespace {
         }
         
         /**
+         * Chunk the results of a query by comparing numeric IDs.
+         *
+         * @param int $count
+         * @param callable $callback
+         * @param string $column
+         * @return bool 
+         * @static 
+         */
+        public static function chunkById($count, $callback, $column = 'id'){
+            return \Illuminate\Database\Eloquent\Builder::chunkById($count, $callback, $column);
+        }
+        
+        /**
          * Execute a callback over each item while chunking.
          *
          * @param callable $callback
@@ -3733,6 +3746,18 @@ namespace {
          */
         public static function rightJoinWhere($table, $one, $operator, $two){
             return \Illuminate\Database\Query\Builder::rightJoinWhere($table, $one, $operator, $two);
+        }
+        
+        /**
+         * Apply the callback's query changes if the given "value" is true.
+         *
+         * @param bool $value
+         * @param \Closure $callback
+         * @return \Illuminate\Database\Query\Builder 
+         * @static 
+         */
+        public static function when($value, $callback){
+            return \Illuminate\Database\Query\Builder::when($value, $callback);
         }
         
         /**
@@ -4248,6 +4273,19 @@ namespace {
          */
         public static function forPage($page, $perPage = 15){
             return \Illuminate\Database\Query\Builder::forPage($page, $perPage);
+        }
+        
+        /**
+         * Constrain the query to the next "page" of results after a given ID.
+         *
+         * @param int $perPage
+         * @param int $lastId
+         * @param string $column
+         * @return \Illuminate\Database\Query\Builder|static 
+         * @static 
+         */
+        public static function forPageAfterId($perPage = 15, $lastId = 0, $column = 'id'){
+            return \Illuminate\Database\Query\Builder::forPageAfterId($perPage, $lastId, $column);
         }
         
         /**
@@ -11881,6 +11919,41 @@ namespace {
          */
         public static function yieldContent($section, $default = ''){
             return \Illuminate\View\Factory::yieldContent($section, $default);
+        }
+        
+        /**
+         * Start injecting content into a push section.
+         *
+         * @param string $section
+         * @param string $content
+         * @return void 
+         * @static 
+         */
+        public static function startPush($section, $content = ''){
+            \Illuminate\View\Factory::startPush($section, $content);
+        }
+        
+        /**
+         * Stop injecting content into a push section.
+         *
+         * @return string 
+         * @throws \InvalidArgumentException
+         * @static 
+         */
+        public static function stopPush(){
+            return \Illuminate\View\Factory::stopPush();
+        }
+        
+        /**
+         * Get the string contents of a push section.
+         *
+         * @param string $section
+         * @param string $default
+         * @return string 
+         * @static 
+         */
+        public static function yieldPushContent($section, $default = ''){
+            return \Illuminate\View\Factory::yieldPushContent($section, $default);
         }
         
         /**
