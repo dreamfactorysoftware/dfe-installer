@@ -250,6 +250,21 @@ class Route
     }
 
     /**
+     * Get the controller middleware for the route.
+     *
+     * @return array
+     */
+    protected function controllerMiddleware()
+    {
+        list($class, $method) = explode('@', $this->action['uses']);
+
+        $controller = $this->container->make($class);
+
+        return (new ControllerDispatcher($this->router, $this->container))
+            ->getMiddleware($controller, $method);
+    }
+
+    /**
      * Get the parameters that are listed in the route / controller signature.
      *
      * @return array

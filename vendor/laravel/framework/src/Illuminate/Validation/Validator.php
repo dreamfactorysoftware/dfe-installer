@@ -316,18 +316,20 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * Gather a copy of the data filled with any missing attributes.
+     * Gather a copy of the attribute data filled with any missing attributes.
      *
      * @param  string  $attribute
      * @return array
      */
     protected function initializeAttributeOnData($attribute)
     {
-        if (! Str::contains($attribute, '*') || Str::endsWith($attribute, '*')) {
-            return $this->data;
-        }
+        $explicitPath = $this->getLeadingExplicitAttributePath($attribute);
 
-        $data = $this->data;
+        $data = $this->extractDataFromPath($explicitPath);
+
+        if (! Str::contains($attribute, '*') || Str::endsWith($attribute, '*')) {
+            return $data;
+        }
 
         return data_fill($data, $attribute, null);
     }
@@ -363,19 +365,41 @@ class Validator implements ValidatorContract
     }
 
     /**
+     * Merge additional rules into a given attribute(s).
+     *
+     * @param  string  $attribute
+     * @param  string|array  $rules
+     * @return $this
+     */
+    public function mergeRules($attribute, $rules = [])
+    {
+        if (is_array($attribute)) {
+            foreach ($attribute as $innerAttribute => $innerRules) {
+                $this->mergeRulesForAttribute($innerAttribute, $innerRules);
+            }
+
+            return $this;
+        }
+
+        return $this->mergeRulesForAttribute($attribute, $rules);
+    }
+
+    /**
      * Merge additional rules into a given attribute.
      *
      * @param  string  $attribute
      * @param  string|array  $rules
-     * @return void
+     * @return $this
      */
-    public function mergeRules($attribute, $rules)
+    protected function mergeRulesForAttribute($attribute, $rules)
     {
         $current = isset($this->rules[$attribute]) ? $this->rules[$attribute] : [];
 
         $merge = head($this->explodeRules([$rules]));
 
         $this->rules[$attribute] = array_merge($current, $merge);
+
+        return $this;
     }
 
     /**
@@ -871,7 +895,11 @@ class Validator implements ValidatorContract
     {
         $this->requireParameterCount(1, $parameters, 'in_array');
 
-        $otherValues = Arr::where(Arr::dot($this->data), function ($key) use ($parameters) {
+        $explicitPath = $this->getLeadingExplicitAttributePath($parameters[0]);
+
+        $attributeData = $this->extractDataFromPath($explicitPath);
+
+        $otherValues = Arr::where(Arr::dot($attributeData), function ($key) use ($parameters) {
             return Str::is($parameters[0], $key);
         });
 
@@ -1208,7 +1236,11 @@ class Validator implements ValidatorContract
     {
         $attributeName = $this->getPrimaryAttribute($attribute);
 
-        $data = Arr::where(Arr::dot($this->data), function ($key) use ($attribute, $attributeName) {
+        $explicitPath = $this->getLeadingExplicitAttributePath($attributeName);
+
+        $attributeData = $this->extractDataFromPath($explicitPath);
+
+        $data = Arr::where(Arr::dot($attributeData), function ($key) use ($attribute, $attributeName) {
             return $key != $attribute && Str::is($attributeName, $key);
         });
 
@@ -1230,11 +1262,11 @@ class Validator implements ValidatorContract
         $this->requireParameterCount(1, $parameters, 'unique');
 
         list($connection, $table) = $this->parseTable($parameters[0]);
-
         // The second parameter position holds the name of the column that needs to
         // be verified as unique. If this parameter isn't specified we will just
         // assume that this column to be verified shares the attribute's name.
-        $column = isset($parameters[1]) ? $parameters[1] : $attribute;
+        $column = isset($parameters[1])
+                    ? $parameters[1] : $this->guessColumnForQuery($attribute);
 
         list($idColumn, $id) = [null, null];
 
@@ -1322,11 +1354,14 @@ class Validator implements ValidatorContract
         // The second parameter position holds the name of the column that should be
         // verified as existing. If this parameter is not specified we will guess
         // that the columns being "verified" shares the given attribute's name.
-        $column = isset($parameters[1]) ? $parameters[1] : $attribute;
+        $column = isset($parameters[1])
+                    ? $parameters[1] : $this->guessColumnForQuery($attribute);
 
         $expected = (is_array($value)) ? count($value) : 1;
 
-        return $this->getExistCount($connection, $table, $column, $value, $parameters) >= $expected;
+        return $this->getExistCount(
+            $connection, $table, $column, $value, $parameters
+        ) >= $expected;
     }
 
     /**
@@ -1385,6 +1420,22 @@ class Validator implements ValidatorContract
     }
 
     /**
+     * Guess the database column from the given attribute name.
+     *
+     * @param  string  $attribute
+     * @return string
+     */
+    public function guessColumnForQuery($attribute)
+    {
+        if (in_array($attribute, array_collapse($this->implicitAttributes))
+                && ! is_numeric($last = last(explode('.', $attribute)))) {
+            return $last;
+        }
+
+        return $attribute;
+    }
+
+    /**
      * Validate that an attribute is a valid IP.
      *
      * @param  string  $attribute
@@ -1418,7 +1469,8 @@ class Validator implements ValidatorContract
     protected function validateUrl($attribute, $value)
     {
         /*
-         * This pattern is derived from Symfony\Component\Validator\Constraints\UrlValidator (2.7.4)
+         * This pattern is derived from Symfony\Component\Validator\Constraints\UrlValidator (2.7.4).
+         *
          * (c) Fabien Potencier <fabien@symfony.com> http://symfony.com
          */
         $pattern = '~^
@@ -1449,6 +1501,10 @@ class Validator implements ValidatorContract
      */
     protected function validateActiveUrl($attribute, $value)
     {
+        if (! is_string($value)) {
+            return false;
+        }
+
         if ($url = parse_url($value, PHP_URL_HOST)) {
             return count(dns_get_record($url, DNS_A | DNS_AAAA)) > 0;
         }
@@ -1593,7 +1649,7 @@ class Validator implements ValidatorContract
             return true;
         }
 
-        if (strtotime($value) === false) {
+        if (! is_string($value) || strtotime($value) === false) {
             return false;
         }
 
@@ -1614,6 +1670,10 @@ class Validator implements ValidatorContract
     {
         $this->requireParameterCount(1, $parameters, 'date_format');
 
+        if (! is_string($value)) {
+            return false;
+        }
+
         $parsed = date_parse_from_format($parameters[0], $value);
 
         return $parsed['error_count'] === 0 && $parsed['warning_count'] === 0;
@@ -1630,6 +1690,10 @@ class Validator implements ValidatorContract
     protected function validateBefore($attribute, $value, $parameters)
     {
         $this->requireParameterCount(1, $parameters, 'before');
+
+        if (! is_string($value)) {
+            return false;
+        }
 
         if ($format = $this->getDateFormat($attribute)) {
             return $this->validateBeforeWithFormat($format, $value, $parameters);
@@ -1668,6 +1732,10 @@ class Validator implements ValidatorContract
     protected function validateAfter($attribute, $value, $parameters)
     {
         $this->requireParameterCount(1, $parameters, 'after');
+
+        if (! is_string($value)) {
+            return false;
+        }
 
         if ($format = $this->getDateFormat($attribute)) {
             return $this->validateAfterWithFormat($format, $value, $parameters);
@@ -2521,6 +2589,42 @@ class Validator implements ValidatorContract
         }
 
         return [];
+    }
+
+    /**
+     * Get the explicit part of the attribute name.
+     *
+     * E.g. 'foo.bar.*.baz' -> 'foo.bar'
+     *
+     * Allows us to not spin through all of the flattened data for some operations.
+     *
+     * @param  string  $attribute
+     * @return string
+     */
+    protected function getLeadingExplicitAttributePath($attribute)
+    {
+        return rtrim(explode('*', $attribute)[0], '.') ?: null;
+    }
+
+    /**
+     * Extract data based on the given dot-notated path.
+     *
+     * Used to extract a sub-section of the data for faster iteration.
+     *
+     * @param  string  $attribute
+     * @return array
+     */
+    protected function extractDataFromPath($attribute)
+    {
+        $results = [];
+
+        $value = Arr::get($this->data, $attribute, '__missing__');
+
+        if ($value != '__missing__') {
+            Arr::set($results, $attribute, $value);
+        }
+
+        return $results;
     }
 
     /**
