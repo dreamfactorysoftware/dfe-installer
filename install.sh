@@ -19,6 +19,7 @@ PHP_BIN=`which php`
 PHP_ENMOD_BIN=`which php5enmod`
 LOG_FILE=/tmp/dfe-installer.log
 DFE_UPDATE=false
+RUBY_BIN=`which ruby`
 
 [ "x" = "${LANG}x" ] && LANG="en_US.UTF8"
 
@@ -222,9 +223,12 @@ export FACTER_MAIL_PASSWORD=""
 for manifest in $(ls ${MANIFEST_PATH}/*.pp)
 do
 	_info "Applying ${manifest}..."
-	puppet apply -l "${LOG_FILE}" "${manifest}"
-	_applyResult=$?
-    _checkResult=`ruby resources/assets/bin/check_puppet.rb -c 5 -w 5 -f >/dev/null; echo $?`
+
+    puppet apply -l "${LOG_FILE}" "${manifest}"
+    _applyResult=$?
+
+    ${RUBY_BIN} ./resources/assets/bin/check_puppet.rb -c 10 -w 2 -f >>${LOG_FILE} 2>&1
+    _checkResult=$?
 
     ## Check the number of failed resources and exit code
     if [ ${_checkResult} -ne 0 -o ${_applyResult} -ne 0 ];
