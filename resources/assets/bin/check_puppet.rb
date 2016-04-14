@@ -193,12 +193,12 @@ else
         exit 1
 
     else
-        if enabled
-            puts "OK: last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events and currently enabled#{perfdata_time}"
-        else
-            puts "WARNING: last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events and currently disabled with reason: #{disabled_message}#{perfdata_time}"
-            exit 1
-        end
+#        if enabled
+            puts "OK: last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events #{perfdata_time}"
+#        else
+#            puts "WARNING: last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events and currently disabled with reason: #{disabled_message}#{perfdata_time}"
+#            exit 1
+#        end
 
         exit 0
     end
