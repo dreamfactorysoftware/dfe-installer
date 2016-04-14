@@ -224,7 +224,12 @@ do
 	_info "Applying ${manifest}..."
 	puppet apply -l "${LOG_FILE}" "${manifest}"
 
-    if [ $? -ne 0 ]; then
+	_pex=$?
+    _cp=`ruby resources/assets/bin/check_puppet.rb -c 5 -w 5 -f >/dev/null`
+
+    ## Check the number of failed resources and exit code
+    [ $? -ne 0 -o ${_cp} -ne 0 ] && _wasError=0
+
         _error "An unexpected result code of $? was returned. Halting."
         _error "See logged output in file /tmp/dfe-installer.log"
 	    exit 1

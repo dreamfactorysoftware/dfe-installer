@@ -15,9 +15,6 @@
 #            *** These changes are made to work with puppet 3.X and MAY cause some issues with 2.x users
 #            *** The script should still continue to work for 2.x, but may not handle the lockfiles correctly
 #            *** and will require the proper arguments to match 2.x filename.
-#
-# 13/04/2016 --- Adapted for use by DFE Installer
-#
 require 'optparse'
 require 'yaml'
 
@@ -37,7 +34,7 @@ crit = 0
 total_failure = false
 enabled_only = false
 failures = false
-disable_perfdata = false
+disable_perfdata = true
 disabled_message = "reason not specified"
 
 opt = OptionParser.new
