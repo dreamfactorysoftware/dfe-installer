@@ -218,7 +218,7 @@ export FACTER_MAIL_USERNAME=""
 export FACTER_MAIL_PASSWORD=""
 
 ## Manifest destiny
-[ "true" = "${DFE_UPDATE}" ] && _info "Updating now.." || _info "Installing now..."
+[ "true" = "${DFE_UPDATE}" ] && _info "Updating now...." || _info "Installing now..."
 
 for manifest in $(ls ${MANIFEST_PATH}/*.pp)
 do
@@ -227,15 +227,20 @@ do
     puppet apply -l "${LOG_FILE}" "${manifest}"
     _applyResult=$?
 
-    ${RUBY_BIN} ./resources/assets/bin/check_puppet.rb -c 10 -w 2 -f >>${LOG_FILE} 2>&1
+    ${RUBY_BIN} ./resources/assets/bin/check_puppet.rb --ignore-enabled --skipped 2 -c 2 -w 2 -f >>${LOG_FILE} 2>&1
     _checkResult=$?
 
     ## Check the number of failed resources and exit code
     if [ ${_checkResult} -ne 0 -o ${_applyResult} -ne 0 ]; then
-        _error "An unexpected error occurred during the processing of ${manifest}. Installation must be halted."
+        _error ""
+        _error "Manifest ${B1}${manifest}${B2} application returned [{$_applyResult}]. Examination of summary result [{$_checkResult}]"
+        _error ""
+        _error "An unexpected error occurred during the processing of ${B1}${manifest}${B2}. Installation must be halted."
         _error "Please see the logged output of this script in file ${B1}/tmp/dfe-installer.log${B2}"
         _error ""
         _error "Additional information about the specific issue may be found in ${B1}/var/lib/puppet/state/last_run_[report|summary].yaml${B2}"
+        _error ""
+
 	    exit 1
     fi
 done

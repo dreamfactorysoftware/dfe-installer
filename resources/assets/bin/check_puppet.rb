@@ -23,14 +23,17 @@ agent_lockfile = statedir + "/agent_catalog_run.lock"
 agent_disabled_lockfile = statedir + "/agent_disabled.lock"
 statefile = statedir + "/state.yaml"
 summaryfile = statedir + "/last_run_summary.yaml"
+ignore_enabled = false
 enabled = true
 running = false
 lastrun_failed = false
 lastrun = 0
 failcount_resources = 0
 failcount_events = 0
+failcount_skipped = 0
 warn = 0
 crit = 0
+skip = 0
 total_failure = false
 enabled_only = false
 failures = false
@@ -43,6 +46,10 @@ opt.on("--critical [CRIT]", "-c", Integer, "Critical threshold, time or failed r
     crit = f.to_i
 end
 
+opt.on("--skipped [SKIP]", Integer, "Skipped threshold, allowed number of skipped resources") do |f|
+    skip = f.to_i
+end
+
 opt.on("--warn [WARN]", "-w", Integer, "Warning threshold, time or failed resources") do |f|
     warn = f.to_i
 end
@@ -53,6 +60,10 @@ end
 
 opt.on("--only-enabled", "-e", "Only alert if Puppet is enabled") do |f|
     enabled_only = true
+end
+
+opt.on("--ignore-enabled", "Completely ignore the enablement/running state of Puppet") do |f|
+    ignore_enabled = true
 end
 
 opt.on("--state-dir [FILE]", "Location of the state directory containing lock and state files, default #{statedir}, will change location of the files") do |f|
@@ -90,19 +101,20 @@ if warn == 0 || crit == 0
     exit 3
 end
 
-if File.exists?(agent_lockfile)
-    if File::Stat.new(agent_lockfile).zero?
-       enabled = false
-    else
-       running = true
+if ignore_enabled == false
+    if File.exists?(agent_lockfile)
+        if File::Stat.new(agent_lockfile).zero?
+           enabled = false
+        else
+           running = true
+        end
+    end
+
+    if File.exists?(agent_disabled_lockfile)
+        enabled = false
+        disabled_message = File.open(agent_disabled_lockfile, 'r').read.gsub(/.*\"(.*)\"\}/, '\1') || "reason not specified"
     end
 end
-
-if File.exists?(agent_disabled_lockfile)
-    enabled = false
-    disabled_message = File.open(agent_disabled_lockfile, 'r').read.gsub(/.*\"(.*)\"\}/, '\1') || "reason not specified"
-end
-
 
 lastrun = File.stat(statefile).mtime.to_i if File.exists?(statefile)
 
@@ -120,15 +132,18 @@ else
         unless summary.include?("events")
             failcount_resources = 99
             failcount_events = 99
+            failcount_skipped = 99
             total_failure = true
         else
             # and unless there are failures, the events hash just wont have the failure count
             failcount_resources = summary["resources"]["failed"] || 0
+            failcount_skipped = summary["resources"]["skipped"] || 0
             failcount_events = summary["events"]["failure"] || 0
         end
     rescue
         failcount_resources = 0
         failcount_events = 0
+        failcount_skipped = 0
         summary = nil
     end
 end
@@ -145,29 +160,29 @@ end
 if disable_perfdata
   perfdata_time = ""
 else
-  perfdata_time = "|time_since_last_run=#{time_since_last_run}s;#{warn};#{crit};0 failed_resources=#{failcount_resources};;;0 failed_events=#{failcount_events};;;0"
+  perfdata_time = "|time_since_last_run=#{time_since_last_run}s;#{warn};#{crit};0 failed_resources=#{failcount_resources};;;0 failed_events=#{failcount_events};;;0 skipped_resources=#{failcount_skipped};;;0"
 end
 
 unless failures
-    if enabled_only && enabled == false
-        puts "OK: Puppet is currently disabled, not alerting. Last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events. Disabled with reason: #{disabled_message}#{perfdata_time}"
+    if ( ignore_enabled == false && enabled_only && enabled == false )
+        puts "OK: Puppet is currently disabled, not alerting. Last run #{time_since_last_run_string} with: #{failcount_resources}/#{failcount_events}/#{failcount_skipped} (resources/events/skipped). Disabled with reason: #{disabled_message}#{perfdata_time}"
         exit 0
     end
 
     if total_failure
         puts "CRITICAL: FAILED - Puppet failed to run. Missing dependencies? Catalog compilation failed? Last run #{time_since_last_run_string}#{perfdata_time}"
         exit 2
-    elsif time_since_last_run >= crit
+    elsif ( time_since_last_run >= crit )
         puts "CRITICAL: last run #{time_since_last_run_string}, expected < #{crit}s#{perfdata_time}"
         exit 2
 
-    elsif time_since_last_run >= warn
+    elsif ( time_since_last_run >= warn || ( skip > 0 && time_since_last_run >= skip ) )
         puts "WARNING: last run #{time_since_last_run_string}, expected < #{warn}s#{perfdata_time}"
         exit 1
 
     else
-        if enabled
-            puts "OK: last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events and currently enabled#{perfdata_time}"
+        if ( ignore_enabled == true || enabled )
+            puts "OK: last run #{time_since_last_run_string} with: #{failcount_resources}/#{failcount_events}/#{failcount_skipped} (resources/events/skipped), enabled? #{enabled}#{perfdata_time}"
         else
             puts "WARNING: last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events and currently disabled with reason: #{disabled_message}#{perfdata_time}"
             exit 1
@@ -176,7 +191,7 @@ unless failures
         exit 0
     end
 else
-    if enabled_only && enabled == false
+    if ignore_enabled == false && enabled_only && enabled == false
         puts "OK: Puppet is currently disabled, not alerting. Last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events. Disabled with reason: #{disabled_message}#{perfdata_time}"
         exit 0
     end
@@ -185,20 +200,20 @@ else
         puts "CRITICAL: FAILED - Puppet failed to run. Missing dependencies? Catalog compilation failed? Last run #{time_since_last_run_string}#{perfdata_time}"
         exit 2
     elsif failcount_resources >= crit
-        puts "CRITICAL: Puppet last ran had #{failcount_resources} failed resources #{failcount_events} failed events, expected < #{crit}#{perfdata_time}"
+        puts "CRITICAL: Puppet last run had: #{failcount_resources}/#{failcount_events}/#{failcount_skipped} (resources/events/skipped), expected < #{crit}#{perfdata_time}"
         exit 2
 
-    elsif failcount_resources >= warn
-        puts "WARNING: Puppet last ran had #{failcount_resources} failed resources #{failcount_events} failed events, expected < #{warn}#{perfdata_time}"
+    elsif ( failcount_resources >= warn || ( skip > 0 && failcount_skipped >= skip ) )
+        puts "WARNING: Puppet last ran had: #{failcount_resources}/#{failcount_events}/#{failcount_skipped} (resources/events/skipped), expected < #{warn}#{perfdata_time}"
         exit 1
 
     else
-#        if enabled
-            puts "OK: last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events #{perfdata_time}"
-#        else
-#            puts "WARNING: last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events and currently disabled with reason: #{disabled_message}#{perfdata_time}"
-#            exit 1
-#        end
+        if ignore_enabled == true || enabled
+            puts "OK: last run #{time_since_last_run_string} with #{failcount_resources}/#{failcount_events}/#{failcount_skipped} (resources/events/skipped), enabled? #{enabled}#{perfdata_time}"
+        else
+            puts "WARNING: last run #{time_since_last_run_string} with #{failcount_resources}/#{failcount_events}/#{failcount_skipped} (resources/events/skipped), enabled? #{enabled}#{perfdata_time}"
+            exit 1
+        end
 
         exit 0
     end
