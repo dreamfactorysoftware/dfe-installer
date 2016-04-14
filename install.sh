@@ -231,7 +231,7 @@ do
     _checkResult=$?
 
     ## Check the number of failed resources and exit code
-    if [ ${_checkResult} -ne 0 -o ${_applyResult} -ne 0 ];
+    if [ ${_checkResult} -ne 0 -o ${_applyResult} -ne 0 ]; then
         _error "An unexpected error occurred during the processing of ${manifest}. Installation must be halted."
         _error "Please see the logged output of this script in file ${B1}/tmp/dfe-installer.log${B2}"
         _error ""
