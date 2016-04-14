@@ -223,15 +223,15 @@ for manifest in $(ls ${MANIFEST_PATH}/*.pp)
 do
 	_info "Applying ${manifest}..."
 	puppet apply -l "${LOG_FILE}" "${manifest}"
-
-	_pex=$?
-    _cp=`ruby resources/assets/bin/check_puppet.rb -c 5 -w 5 -f >/dev/null`
+	_applyResult=$?
+    _checkResult=`ruby resources/assets/bin/check_puppet.rb -c 5 -w 5 -f >/dev/null; echo $?`
 
     ## Check the number of failed resources and exit code
-    [ $? -ne 0 -o ${_cp} -ne 0 ] && _wasError=0
-
-        _error "An unexpected result code of $? was returned. Halting."
-        _error "See logged output in file /tmp/dfe-installer.log"
+    if [ ${_checkResult} -ne 0 -o ${_applyResult} -ne 0 ];
+        _error "An unexpected error occurred during the processing of ${manifest}. Installation must be halted."
+        _error "Please see the logged output of this script in file ${B1}/tmp/dfe-installer.log${B2}"
+        _error ""
+        _error "Additional information about the specific issue may be found in ${B1}/var/lib/puppet/state/last_run_[report|summary].yaml${B2}"
 	    exit 1
     fi
 done
