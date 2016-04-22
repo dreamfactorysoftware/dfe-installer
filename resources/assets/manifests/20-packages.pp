@@ -41,6 +41,15 @@ class updatePackages {
     'apt-file',
     'apt-utils',
     'software-properties-common',
+    'autoconf',
+    'g++',
+    'make',
+    'openssl',
+    'libssl-dev',
+    'libsasl2-dev',
+    'libcurl4-openssl-dev',
+    'libpcre3-dev',
+    'pkg-config',
   ]
 
   $_removePackages = [
