@@ -35,12 +35,20 @@ class updatePackages {
     'memcached',
     'redis-server',
     'git',
-    'openssl',
     'curl',
     'sqlite3',
     'apt-file',
     'apt-utils',
     'software-properties-common',
+    'autoconf',
+    'g++',
+    'make',
+    'openssl',
+    'libssl-dev',
+    'libsasl2-dev',
+    'libcurl4-openssl-dev',
+    'libpcre3-dev',
+    'pkg-config',
   ]
 
   $_removePackages = [
@@ -75,7 +83,28 @@ class updatePackages {
   exec { 'move-installed-composer':
     command => "mv composer.phar $composer_bin; chmod a+x $composer_bin",
     creates => $composer_bin,
+  }->
+
+  ##Install updated MongoDB driver for PHP
+  exec { "pecl install mongodb":
+    command => "pecl install mongodb",
+    unless => 'pecl info mongodb'
+  }->
+
+  # Make sure mongodb ini file is updated / Create symlinks
+  file { "/etc/php5/mods-available/mongodb.ini":
+    content => 'extension=/usr/lib/php5/20121212/mongodb.so',
+    require => Exec["pecl install mongodb"]
+  }->
+  file { "/etc/php5/fpm/conf.d/20-mongodb.ini":
+    ensure => 'link',
+    target => '../../mods-available/mongodb.ini'
+  }->
+  file { "/etc/php5/cli/conf.d/20-mongodb.ini":
+    ensure => 'link',
+    target => '../../mods-available/mongodb.ini'
   }
+
 }
 
 ##------------------------------------------------------------------------------
