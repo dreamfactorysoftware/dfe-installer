@@ -103,6 +103,14 @@ class updatePackages {
   file { "/etc/php5/cli/conf.d/20-mongodb.ini":
     ensure => 'link',
     target => '../../mods-available/mongodb.ini'
+  }->
+  ini_setting { "pm.max_children":
+    ensure  => present,
+    path    => '/etc/php5/fpm/pool.d/www.conf',
+    key_val_separator => '=',
+    section => 'www',
+    setting => 'pm.max_children',
+    value   => '10'
   }
 
 }
