@@ -47,6 +47,9 @@ apt::source { "percona.trusty":
   notify   => Exec['apt-update'],
 }
 
+## Install database on non updates
+if ( false == str2bool($dfe_update)) {
+
   ## Grant access to the DFE app user
   mysql_grant { "${db_user}@${db_host}/*.*":
     ensure     => present,
