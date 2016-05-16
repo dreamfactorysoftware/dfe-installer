@@ -21,6 +21,11 @@
             "email": "davidweiner@dreamfactory.com",
             "role":  "Puppetmaster"
         }
+        {
+            "name":  "Charles Harmon",
+            "email": "charlesharmon@dreamfactory.com",
+            "role":  "PinchHitter"
+        }
     ],
     "support":           {
         "email": "support@dreamfactory.com"
