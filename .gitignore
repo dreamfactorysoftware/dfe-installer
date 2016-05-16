@@ -5,3 +5,5 @@
 /storage/.env-install*
 /vendor/dreamfactory/*.setdev-on
 .idea/
+.DS_Store
+
