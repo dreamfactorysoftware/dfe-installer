@@ -117,9 +117,19 @@ class installElasticsearch( $root ) {
 
 ##  Logstash installer
 class installLogstash( $root ) {
+  exec { "install-logstash-key":
+    unless  => 'service logstash status',
+    command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - ",
+    cwd     => $root,
+  }->
+  exec { "install-logstash-repo":
+    unless  => 'service logstash status',
+    command => "echo 'deb http://packages.elasticsearch.org/logstash/$install_version_logstash/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list",
+    cwd     => $root,
+  }->
   exec { "install-logstash":
     unless  => 'service logstash status',
-    command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elasticsearch.org/logstash/$install_version_logstash/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list && sudo apt-get -qq update && sudo apt-get -y install logstash",
+    command => "sudo apt-get -qq update && sudo apt-get -y install logstash",
     cwd     => $root,
   }->
   file_line { 'logstash-force-ipv4':
