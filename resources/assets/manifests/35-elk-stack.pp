@@ -90,9 +90,21 @@ class installElasticsearch( $root ) {
     }
 
     ##  Elasticsearch
+    exec { "install-elasticsearch-key":
+      unless  => 'service elasticsearch status',
+      command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - ",
+      cwd     => $root,
+      require => Exec['install-java8'],
+    }->
+    exec { "install-elasticsearch-repo":
+      unless  => 'service elasticsearch status',
+      command => "echo 'deb http://packages.elastic.co/elasticsearch/$install_version_elasticsearch/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list",
+      cwd     => $root,
+      require => Exec['install-java8'],
+    }->
     exec { "install-elasticsearch":
       unless  => 'service elasticsearch status',
-      command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo 'deb http://packages.elastic.co/elasticsearch/$install_version_elasticsearch/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list && sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
+      command => "sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
       cwd     => $root,
       require => Exec['install-java8'],
     }->
