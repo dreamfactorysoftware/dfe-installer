@@ -102,9 +102,15 @@ class installElasticsearch( $root ) {
       cwd     => $root,
       require => Exec['install-java8'],
     }->
+    exec { "install-elasticsearch-repo-update":
+      unless  => 'service elasticsearch status',
+      command => "sudo apt-get -qq update",
+      cwd     => $root,
+      require => Exec['install-java8'],
+    }->
     exec { "install-elasticsearch":
       unless  => 'service elasticsearch status',
-      command => "sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
+      command => "sudo apt-get -y install elasticsearch",
       cwd     => $root,
       require => Exec['install-java8'],
     }->
