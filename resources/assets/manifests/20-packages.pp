@@ -42,6 +42,7 @@ class updatePackages {
     "apache2-bin",
     "apache2-data",
     "libapache2-mod-php5",
+    "php-mongo"
   ]
 
   ## If SMTP is local, then install postfix
@@ -80,7 +81,6 @@ class installPHP {
     'php7.0-fpm',
     'php7.0-mysql',
     'php7.0-pgsql',
-    'php7.0-mongo',
     'php7.0-ldap',
     'php7.0-memcached',
     'php7.0-sqlite',
@@ -102,7 +102,7 @@ class installPHP {
 
   # Make sure mongodb ini file is updated / Create symlinks
   file { "/etc/php/7.0/mods-available/mongodb.ini":
-    content => 'extension=/usr/lib/php5/20121212/mongodb.so',
+    content => 'extension=/usr/lib/php/20121212/mongodb.so',
     require => Exec["pecl install mongodb"]
   }->
   file { "/etc/php/7.0/fpm/conf.d/20-mongodb.ini":
@@ -146,10 +146,10 @@ class { postfix:
   service_enable => true,
   service_ensure => running,
 }->
-exec { 'enable-mcrypt-settings':
+/*exec { 'enable-mcrypt-settings':
   command  => "$php_enmod_bin mcrypt",
   provider => posix
-}->
+}->*/
 group { $www_group:
   ensure  => present,
   members => [$user]
