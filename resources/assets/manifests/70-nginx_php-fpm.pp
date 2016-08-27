@@ -158,13 +158,13 @@ service { "nginx":
   enable  => true,
   require => Package["nginx-extras"],
 }->
-package { "php5-fpm":
+package { "php5.6-fpm":
   ensure => latest,
 }->
-service { "php5-fpm":
+service { "php5.6-fpm":
   ensure  => running,
   enable  => true,
-  require => Package["php5-fpm"],
+  require => Package["php5.6-fpm"],
 }
 
 service { "apache2":
@@ -207,9 +207,9 @@ if ( false == str2bool($dfe_update) ) {
     ensure => link,
     target => "$pwd/resources/assets/etc/nginx/nginx.conf",
   }->
-  file { "/etc/php5/mods-available/dreamfactory.ini":
+  file { "/etc/php/5.6/mods-available/dreamfactory.ini":
     ensure  => link,
-    target  => "$server_config_path/php/etc/php5/mods-available/dreamfactory.ini"
+    target  => "$server_config_path/php/etc/php/5.6/mods-available/dreamfactory.ini"
   }->
     # Needs to be based on $app_debug
     #  file_line { "update-dreamfactory-ini":
@@ -248,10 +248,13 @@ if ( false == str2bool($dfe_update) ) {
     ensure   => link,
     target   => "$nginx_path/sites-available/20-dfe-dashboard.conf",
   }->
-  exec { "enable-dreamfactory-module":
+  /*exec { "enable-dreamfactory-module":
     command  => "$php_enmod_bin dreamfactory",
-    provider => posix,
     notify   => Service["php5-fpm", "nginx"],
+  }->*/
+  exec { "restart-nginx":
+    cwd         => $root,
+    command     => "sudo service nginx restart",
   }->
   exec { "start-kibana-if-not-started":
     cwd         => $root,

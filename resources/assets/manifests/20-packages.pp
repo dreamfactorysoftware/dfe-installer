@@ -16,26 +16,29 @@ stage { 'pre': before => Stage['main'], }
 class updatePackages {
   $_basePackages = [
     'nginx-extras',
-    'php5',
-    'php5-common',
-    'php5-fpm',
+    'php5.6',
+    'php5.6-common',
+    'php5.6-fpm',
     'php5-mysqlnd',
     'php5-redis',
-    'php5-pgsql',
-    'php5-mongo',
-    'php5-ldap',
-    'php5-memcached',
-    'php5-sqlite',
-    'php5-dev',
-    'php5-mcrypt',
+    'php5.6-pgsql',
+    'php5.6-ldap',
+    'php5.6-memcache',
+    'php5.6-sqlite',
+    'php5.6-dev',
+    'php5.6-mcrypt',
+    'php5.6-mysql',
     'php5-curl',
-    'php5-mssql',
+    'php5-sybase',
+    'php5.6-xml',
+    'php5.6-mbstring',
     'mongodb',
     'zip',
     'memcached',
     'redis-server',
     'git',
     'curl',
+    'php5.6-curl',
     'sqlite3',
     'apt-file',
     'apt-utils',
@@ -92,21 +95,21 @@ class updatePackages {
   }->
 
   # Make sure mongodb ini file is updated / Create symlinks
-  file { "/etc/php5/mods-available/mongodb.ini":
-    content => 'extension=/usr/lib/php5/20121212/mongodb.so',
+  file { "/etc/php/5.6/mods-available/mongodb.ini":
+    content => 'extension=/usr/lib/php/20131226/mongodb.so',
     require => Exec["pecl install mongodb"]
   }->
-  file { "/etc/php5/fpm/conf.d/20-mongodb.ini":
+  file { "/etc/php/5.6/fpm/conf.d/20-mongodb.ini":
     ensure => 'link',
     target => '../../mods-available/mongodb.ini'
   }->
-  file { "/etc/php5/cli/conf.d/20-mongodb.ini":
+  file { "/etc/php/5.6/cli/conf.d/20-mongodb.ini":
     ensure => 'link',
     target => '../../mods-available/mongodb.ini'
   }->
   ini_setting { "pm.max_children":
     ensure  => present,
-    path    => '/etc/php5/fpm/pool.d/www.conf',
+    path    => '/etc/php/5.6/fpm/pool.d/www.conf',
     key_val_separator => '=',
     section => 'www',
     setting => 'pm.max_children',
@@ -128,8 +131,7 @@ class { postfix:
   service_ensure => running,
 }->
 exec { 'enable-mcrypt-settings':
-  command  => "$php_enmod_bin mcrypt",
-  provider => posix
+  command  => "/usr/sbin/php5enmod mcrypt",
 }->
 group { $www_group:
   ensure  => present,
