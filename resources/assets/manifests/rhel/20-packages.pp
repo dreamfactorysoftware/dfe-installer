@@ -15,40 +15,37 @@ stage { 'pre': before => Stage['main'], }
 
 class updatePackages {
   $_basePackages = [
-    'nginx-extras',
-    'php5',
-    'php5-common',
-    'php5-fpm',
-    'php5-mysqlnd',
-    'php5-redis',
-    'php5-pgsql',
-    'php5-mongo',
-    'php5-ldap',
-    'php5-memcached',
-    'php5-sqlite',
-    'php5-dev',
-    'php5-mcrypt',
-    'php5-curl',
-    'php5-mssql',
+    'epel-release',
+    'nginx',
+    'redis',
+    'php70w',
+    'php70w-common',
+    'php70w-fpm',
+    'php70w-mysqlnd',
+    'php70w-pecl-redis',
+    'php70w-pgsql',
+    'php70w-ldap',
+    'php70w-pecl-memcached',
+    'php70w-pdo',
+    'php70w-devel',
+    'php70w-mcrypt',
+    'php70w-pdo_dblib',
     'mongodb',
     'zip',
     'memcached',
-    'redis-server',
     'git',
     'curl',
-    'sqlite3',
-    'apt-file',
-    'apt-utils',
-    'software-properties-common',
+    'sqlite',
     'autoconf',
-    'g++',
+    'gcc-c++',
     'make',
     'openssl',
-    'libssl-dev',
-    'libsasl2-dev',
-    'libcurl4-openssl-dev',
-    'libpcre3-dev',
-    'pkg-config',
+    'openssl-devel',
+    'libcurl',
+    'libcurl-devel',
+    'pcre',
+    'pcre-devel',
+    'pkgconfig',
   ]
 
   $_removePackages = [
@@ -60,7 +57,7 @@ class updatePackages {
 
   ## If SMTP is local, then install postfix
   if ($smtp_host == "localhost") or ($smtp_host == "127.0.0.1") or ($smtp_host == "127.0.1.1") {
-    $_requiredPackages = union($_basePackages, [$preferred_mail_package])
+    $_requiredPackages = union($_basePackages, ['exim'])
   } else {
     $_requiredPackages = $_basePackages
   }
@@ -91,9 +88,9 @@ class updatePackages {
     unless => 'pecl info mongodb'
   }->
 
-  # Make sure mongodb ini file is updated / Create symlinks
-  file { "/etc/php5/mods-available/mongodb.ini":
-    content => 'extension=/usr/lib/php5/20121212/mongodb.so',
+  # The PECL install above seems to assure this in Centos/RHEL. Leave for now to be sure.
+  /*file { "/etc/php.d/mongodb.ini":
+    content => 'extension=/usr/lib64/php/modules/mongodb.so',
     require => Exec["pecl install mongodb"]
   }->
   file { "/etc/php5/fpm/conf.d/20-mongodb.ini":
@@ -103,10 +100,10 @@ class updatePackages {
   file { "/etc/php5/cli/conf.d/20-mongodb.ini":
     ensure => 'link',
     target => '../../mods-available/mongodb.ini'
-  }->
+  }->*/
   ini_setting { "pm.max_children":
     ensure  => present,
-    path    => '/etc/php5/fpm/pool.d/www.conf',
+    path    => '/etc/php-fpm.d/www.conf',
     key_val_separator => '=',
     section => 'www',
     setting => 'pm.max_children',
@@ -122,7 +119,8 @@ class updatePackages {
 ## Make this go first
 class { updatePackages:
   stage => 'pre',
-}->
+}
+/*
 class { postfix:
   service_enable => true,
   service_ensure => running,
@@ -143,3 +141,4 @@ group { $group:
   ensure  => present,
   members => [$user, $www_user],
 }
+*/
