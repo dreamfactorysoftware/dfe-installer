@@ -114,6 +114,8 @@ CREATE TABLE `environment_t` (
 * Configuration Settings: config_t
 ********************************************************************************/
 
+DROP TABLE IF EXISTS `config_t`;
+
 CREATE TABLE `config_t` (
   `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name_text`   VARCHAR(64)  NOT NULL,
@@ -414,7 +416,7 @@ CREATE TABLE `service_user_t` (
   `last_login_ip_text` VARCHAR(64)           DEFAULT NULL,
   `remember_token`     VARCHAR(128)          DEFAULT NULL,
   `active_ind`         TINYINT(1)   NOT NULL DEFAULT '0',
-  `create_date`        DATETIME     NOT NULL,
+  `create_date`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `lmod_date`          TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ux_service_user_email_addr` (`email_addr_text`),
@@ -925,7 +927,7 @@ DROP TABLE IF EXISTS `cluster_server_asgn_t`;
 CREATE TABLE `cluster_server_asgn_t` (
   `cluster_id`  INT(11)   NOT NULL,
   `server_id`   INT(11)   NOT NULL,
-  `create_date` DATETIME  NOT NULL,
+  `create_date` DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `lmod_date`   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`cluster_id`, `server_id`),
   KEY `ix_csa_server_id` (`server_id`),

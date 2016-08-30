@@ -30,6 +30,7 @@ class updatePackages {
     'php70w-devel',
     'php70w-pear',
     'php70w-mcrypt',
+    'php70w-mbstring',
     'php70w-pdo_dblib',
     'mongodb',
     'zip',
