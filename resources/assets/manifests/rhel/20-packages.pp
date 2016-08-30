@@ -25,9 +25,10 @@ class updatePackages {
     'php70w-pecl-redis',
     'php70w-pgsql',
     'php70w-ldap',
-    'php70w-pecl-memcached',
+    'php70w-opcache',
     'php70w-pdo',
     'php70w-devel',
+    'php70w-pear',
     'php70w-mcrypt',
     'php70w-pdo_dblib',
     'mongodb',
@@ -89,11 +90,11 @@ class updatePackages {
   }->
 
   # The PECL install above seems to assure this in Centos/RHEL. Leave for now to be sure.
-  /*file { "/etc/php.d/mongodb.ini":
+  file { "/etc/php.d/mongodb.ini":
     content => 'extension=/usr/lib64/php/modules/mongodb.so',
     require => Exec["pecl install mongodb"]
   }->
-  file { "/etc/php5/fpm/conf.d/20-mongodb.ini":
+  /*file { "/etc/php5/fpm/conf.d/20-mongodb.ini":
     ensure => 'link',
     target => '../../mods-available/mongodb.ini'
   }->
@@ -128,7 +129,7 @@ class { postfix:
 exec { 'enable-mcrypt-settings':
   command  => "$php_enmod_bin mcrypt",
   provider => posix
-}->
+}-> */
 group { $www_group:
   ensure  => present,
   members => [$user]
@@ -141,4 +142,4 @@ group { $group:
   ensure  => present,
   members => [$user, $www_user],
 }
-*/
+
