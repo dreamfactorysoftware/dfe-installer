@@ -248,7 +248,7 @@ if ( false == str2bool($dfe_update) ) {
     command  => "$php_enmod_bin dreamfactory",
     notify   => Service["php5-fpm", "nginx"],
   }->*/
-  exec { "restart-nginx":
+  exec { "restart-php-fpm":
     cwd         => $root,
     command     => "sudo systemctl restart php-fpm",
   }->
