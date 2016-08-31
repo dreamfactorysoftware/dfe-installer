@@ -157,7 +157,7 @@ service { "nginx":
 package { "php70w-fpm":
   ensure => latest,
 }->
-service { "php70w-fpm":
+service { "php-fpm":
   ensure  => running,
   enable  => true,
   require => Package["php70w-fpm"],
@@ -250,10 +250,14 @@ if ( false == str2bool($dfe_update) ) {
   }->*/
   exec { "restart-nginx":
     cwd         => $root,
-    command     => "sudo service nginx restart",
+    command     => "sudo systemctl restart php-fpm",
+  }->
+  exec { "restart-nginx":
+    cwd         => $root,
+    command     => "sudo systemctl restart nginx",
   }->
   exec { "start-kibana-if-not-started":
     cwd         => $root,
-    command     => "sudo service kibana restart",
+    command     => "sudo systemctl restart kibana",
   }
 }
