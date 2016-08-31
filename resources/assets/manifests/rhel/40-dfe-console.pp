@@ -148,7 +148,7 @@ class createInitialCluster( $root ) {
 ##  Only on new installs
   if ( true == str2bool($dfe_update) ) {
     exec { "composer-update":
-      command     => "$composer_bin update",
+      command     => "composer update",
       user        => $user,
       provider    => shell,
       cwd         => $console_root,
@@ -376,7 +376,7 @@ class { laravelDirectories:
   group   => $group,
 }->
 exec { "composer-console-update":
-  command     => "$composer_bin update",
+  command     => "composer update",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,

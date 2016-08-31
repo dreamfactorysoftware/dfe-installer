@@ -278,7 +278,7 @@ class { laravelDirectories:
   group => $group,
 }->
 exec { "composer-install":
-  command     => "$composer_bin install",
+  command     => "composer install",
   user        => $user,
   provider    => shell,
   cwd         => $dashboard_root,
@@ -292,7 +292,7 @@ class { customizeApp:
   root => $dashboard_root,
 }->
 exec { "composer-dashboard-update":
-  command     => "$composer_bin update",
+  command     => "composer update",
   user        => $user,
   provider    => shell,
   cwd         => $dashboard_root,

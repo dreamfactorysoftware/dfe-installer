@@ -33,6 +33,7 @@ class updatePackages {
     'php70w-mbstring',
     'php70w-pdo_dblib',
     'mongodb',
+    'composer',
     'zip',
     'memcached',
     'git',
@@ -71,7 +72,7 @@ class updatePackages {
     ensure  => absent
   }->
     ## Install/update Composer
-  exec { 'install-composer':
+ /* exec { 'install-composer':
     command     => "/usr/bin/curl -sS https://getcomposer.org/installer | /usr/bin/php",
     creates     => "$pwd/composer.phar",
     provider    => shell,
@@ -82,7 +83,7 @@ class updatePackages {
   exec { 'move-installed-composer':
     command => "mv composer.phar $composer_bin; chmod a+x $composer_bin",
     creates => $composer_bin,
-  }->
+  }->*/
 
   ##Install updated MongoDB driver for PHP
   exec { "pecl install mongodb":
@@ -109,7 +110,7 @@ class updatePackages {
     key_val_separator => '=',
     section => 'www',
     setting => 'pm.max_children',
-    value   => '10'
+    value   => '50'
   }
 
 }
