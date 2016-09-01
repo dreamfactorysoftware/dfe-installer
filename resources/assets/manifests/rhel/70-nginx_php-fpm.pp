@@ -203,6 +203,87 @@ if ( false == str2bool($dfe_update) ) {
     ensure => link,
     target => "$pwd/resources/assets/etc/nginx/nginx.conf",
   }->
+  #Setup Nginx for RHEL/Centos
+  ini_setting { "listen":
+    ensure  => present,
+    path    => "/etc/php-fpm.d/www.conf",
+    key_val_separator => '=',
+    section => 'www',
+    setting => 'listen',
+    value   => '/var/run/php-fpm/php-fpm.sock'
+  }->
+  ini_setting { "listen.mode":
+    ensure  => present,
+    path    => "/etc/php-fpm.d/www.conf",
+    key_val_separator => '=',
+    section => 'www',
+    setting => 'listen.mode',
+    value   => '0660'
+  }->
+  ini_setting { "listen.owner":
+    ensure  => present,
+    path    => "/etc/php-fpm.d/www.conf",
+    key_val_separator => '=',
+    section => 'www',
+    setting => 'listen.owner',
+    value   => 'nginx'
+  }->
+  ini_setting { "listen.group":
+    ensure  => present,
+    path    => "/etc/php-fpm.d/www.conf",
+    key_val_separator => '=',
+    section => 'www',
+    setting => 'listen.group',
+    value   => 'nginx'
+  }->
+  ini_setting { "user.nginx":
+    ensure  => present,
+    path    => "/etc/php-fpm.d/www.conf",
+    key_val_separator => '=',
+    section => 'www',
+    setting => 'user',
+    value   => 'nginx'
+  }->
+  ini_setting { "group.nginx":
+    ensure  => present,
+    path    => "/etc/php-fpm.d/www.conf",
+    key_val_separator => '=',
+    section => 'www',
+    setting => 'group',
+    value   => 'nginx'
+  }->
+  ini_setting { "pm.max_children2":
+    ensure  => present,
+    path    => "/etc/php-fpm.d/www.conf",
+    key_val_separator => '=',
+    section => 'www',
+    setting => 'pm.max_children',
+    value   => '100'
+  }->
+  ini_setting { "pm.start_servers":
+    ensure  => present,
+    path    => "/etc/php-fpm.d/www.conf",
+    key_val_separator => '=',
+    section => 'www',
+    setting => 'pm.start_servers',
+    value   => '20'
+  }->
+  ini_setting { "pm.min_spare_servers":
+    ensure  => present,
+    path    => "/etc/php-fpm.d/www.conf",
+    key_val_separator => '=',
+    section => 'www',
+    setting => 'pm.min_spare_servers',
+    value   => '10'
+  }->
+  ini_setting { "pm.max_spare_servers":
+    ensure  => present,
+    path    => "/etc/php-fpm.d/www.conf",
+    key_val_separator => '=',
+    section => 'www',
+    setting => 'pm.max_spare_servers',
+    value   => '20'
+  }->
   /*file { "/etc/php/5.6/mods-available/dreamfactory.ini":
     ensure  => link,
     target  => "$server_config_path/php/etc/php/5.6/mods-available/dreamfactory.ini"
