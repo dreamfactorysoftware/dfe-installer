@@ -119,6 +119,7 @@ class installElasticsearch( $root ) {
       content => $_esConfig,
     }->
     exec { "install-elasticsearch-plugins":
+      unless  => 'sudo /usr/share/elasticsearch/bin/plugin list | grep hq',
       user    => root,
       command => "sudo /usr/share/elasticsearch/bin/plugin install royrusso/elasticsearch-HQ",
       cwd     => '/usr/share/elasticsearch/bin',

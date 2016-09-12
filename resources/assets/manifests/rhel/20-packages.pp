@@ -32,6 +32,7 @@ class updatePackages {
     'php70w-mcrypt',
     'php70w-mbstring',
     'php70w-pdo_dblib',
+    'php70w-soap',
     'mongodb',
     'composer',
     'zip',
@@ -71,20 +72,6 @@ class updatePackages {
   package { $_removePackages:
     ensure  => absent
   }->
-    ## Install/update Composer
- /* exec { 'install-composer':
-    command     => "/usr/bin/curl -sS https://getcomposer.org/installer | /usr/bin/php",
-    creates     => "$pwd/composer.phar",
-    provider    => shell,
-    cwd         => $root,
-    environment => ["HOME=/home/$user"],
-    require     => Package['curl']
-  }->
-  exec { 'move-installed-composer':
-    command => "mv composer.phar $composer_bin; chmod a+x $composer_bin",
-    creates => $composer_bin,
-  }->*/
-
   ##Install updated MongoDB driver for PHP
   exec { "pecl install mongodb":
     command => "pecl install mongodb",
@@ -96,14 +83,6 @@ class updatePackages {
     content => 'extension=/usr/lib64/php/modules/mongodb.so',
     require => Exec["pecl install mongodb"]
   }->
-  /*file { "/etc/php5/fpm/conf.d/20-mongodb.ini":
-    ensure => 'link',
-    target => '../../mods-available/mongodb.ini'
-  }->
-  file { "/etc/php5/cli/conf.d/20-mongodb.ini":
-    ensure => 'link',
-    target => '../../mods-available/mongodb.ini'
-  }->*/
   ini_setting { "pm.max_children":
     ensure  => present,
     path    => '/etc/php-fpm.d/www.conf',
