@@ -61,10 +61,15 @@ fi
 OS_FAMILY=$(facter osfamily)
 if [[ $OS_FAMILY == "Debian" ]]; then
     MANIFEST_PATH=./resources/assets/manifests/ubuntu
+export FACTER_PERCONA_VERSION=5.7
+export FACTER_COMPOSER_ROOT=/usr/bin
+
     _info "System is Debian / Ubuntu based"
 
 elif [[ $OS_FAMILY == "RedHat" ]]; then
     MANIFEST_PATH=./resources/assets/manifests/rhel
+export FACTER_PERCONA_VERSION=57
+export FACTER_COMPOSER_ROOT=/usr/local/bin
     _info "System is RHEL/Centos based"
 fi
 
@@ -108,18 +113,17 @@ _checkPuppetModules() {
 }
 
 ## Defaults, versions, branches and executable locations
+export FACTER_OS_FAMILY=$OS_FAMILY
 export FACTER_APP_DEBUG=true
 export FACTER_DFE_UPDATE=${DFE_UPDATE}
 export FACTER_PREFERRED_MAIL_PACKAGE=exim4
 export FACTER_PHP_BIN=${PHP_BIN}
 export FACTER_PHP_ENMOD_BIN=${PHP_ENMOD_BIN}
 export FACTER_ARTISAN="${PHP_BIN} artisan"
-export FACTER_COMPOSER_ROOT=/usr/local/bin
 export FACTER_COMPOSER_BIN="${FACTER_COMPOSER_ROOT}/composer"
 export FACTER_DEFAULT_LOCAL_MOUNT_NAME=mount-local-1
 export FACTER_FSTAB=/etc/fstab
 export FACTER_USER_PWD=`openssl rand -base64 32`
-export FACTER_PERCONA_VERSION=57
 export FACTER_NGINX_PATH=/etc/nginx
 export FACTER_RUN_USER=${USER}
 export FACTER_LOG_USER=ubuntu

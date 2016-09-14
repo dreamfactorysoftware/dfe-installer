@@ -102,15 +102,6 @@ class updatePackages {
 class { updatePackages:
   stage => 'pre',
 }
-/*
-class { postfix:
-  service_enable => true,
-  service_ensure => running,
-}->
-exec { 'enable-mcrypt-settings':
-  command  => "$php_enmod_bin mcrypt",
-  provider => posix
-}-> */
 group { $www_group:
   ensure  => present,
   members => [$user]

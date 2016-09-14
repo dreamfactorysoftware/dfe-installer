@@ -52,6 +52,7 @@ class Installer
      * @type array
      */
     protected $defaults = [
+        'install_user'          => null,
         'user'                  => 'dfadmin',
         'group'                 => 'dfadmin',
         'storage_group'         => 'dfadmin',
@@ -115,6 +116,18 @@ class Installer
 
         //  Get any package requirements
         $this->getRequiredPackages();
+
+        try {
+            /* Look for Debian versus RHEL/Centos here, apply overrides, as necessary */
+            $os_family = exec('facter osfamily');
+            if($os_family == 'Debian'){
+                $this->defaults['www_user']  = 'www-data';
+                $this->defaults['www_group'] = 'www-data';
+            }
+        } catch (Exception $e){
+          logger('Problem with puppet command: ' . $e->getMessage());
+        }
+
 
         logger('Base operational values set: ' . print_r($this->defaults, true));
     }
