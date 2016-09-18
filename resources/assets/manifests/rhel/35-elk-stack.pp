@@ -80,22 +80,18 @@ end script
 ## Classes
 ##------------------------------------------------------------------------------
 
+class { 'java': }
+
 class installElasticsearch( $root ) {
   ##  Only install if requested
   if ( false == str2bool($dc_es_exists) ) {
-    ##  Java
-    java::oracle { 'jdk8' :
-      ensure  => 'present',
-      version => '8',
-      java_se => 'jdk',
-    }
 
     ##  Elasticsearch
     exec { "install-elasticsearch-key":
       unless  => 'service elasticsearch status',
       command => "sudo rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch",
       cwd     => $root,
-      require => Java::Oracle['jdk8'],
+      require => Class['java'],
     }->
     exec { "install-elasticsearch-repo":
       unless  => 'sudo service elasticsearch status',
@@ -107,7 +103,7 @@ gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
 enabled=1
 ' | sudo tee /etc/yum.repos.d/elasticsearch.repo",
       cwd     => $root,
-      require => Java::Oracle['jdk8'],
+      require => Class['java'],
     }->
     package { 'elasticsearch':
       ensure  => 'present'
@@ -143,7 +139,7 @@ gpgcheck=1
 gpgkey=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
 enabled=1' | sudo tee /etc/yum.repos.d/logstash.repo",
     cwd     => $root,
-    require => Java::Oracle['jdk8'],
+    require => Class['java'],
   }->
   package { 'logstash':
     ensure  => 'present'
@@ -189,7 +185,7 @@ gpgcheck=1
 gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
 enabled=1' | sudo tee /etc/yum.repos.d/kibana.repo",
     cwd     => $root,
-    require => Java::Oracle['jdk8'],
+    require => Class['java'],
   }->
   package { 'kibana':
     ensure  => 'present'

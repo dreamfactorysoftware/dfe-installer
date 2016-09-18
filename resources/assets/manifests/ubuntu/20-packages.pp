@@ -44,7 +44,6 @@ class updatePackages {
     'apt-utils',
     'software-properties-common',
     'autoconf',
-    'composer',
     'g++',
     'make',
     'openssl',
@@ -74,6 +73,9 @@ class updatePackages {
   package { $_requiredPackages:
     ensure  => latest
   }->
+  exec { 'install-composer':
+    command => 'curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer',
+  }
 
   ini_setting { "pm.max_children":
     ensure  => present,
