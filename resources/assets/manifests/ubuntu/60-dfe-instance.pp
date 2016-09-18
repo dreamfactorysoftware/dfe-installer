@@ -6,7 +6,7 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] Install/update instance software', }
-Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
+Exec { path => ['/usr/bin','/usr/sbin','/usr/local/bin', '/bin','/sbin'], }
 
 ##------------------------------------------------------------------------------
 ## Classes
@@ -206,7 +206,7 @@ class { laravelDirectories:
   group => $group,
 }->
 exec { 'composer-update':
-  command     => "$composer_bin update",
+  command     => "composer update",
   user        => $user,
   provider    => shell,
   cwd         => $instance_root,
