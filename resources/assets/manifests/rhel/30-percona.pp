@@ -89,6 +89,9 @@ exec { "reset_root_pw":
 exec { "create_dfe_database":
   command => "/usr/bin/mysql --defaults-extra-file=/etc/mytemp.cnf --execute=\"CREATE DATABASE IF NOT EXISTS $db_name CHARACTER SET utf8 COLLATE utf8_general_ci;\""
 }->
+exec { "create_df_database":
+  command => "/usr/bin/mysql --defaults-extra-file=/etc/mytemp.cnf --execute=\"CREATE DATABASE IF NOT EXISTS dreamfactory CHARACTER SET utf8 COLLATE utf8_general_ci;\""
+}->
 exec { "create_dfe_user":
   command => "/usr/bin/mysql --defaults-extra-file=/etc/mytemp.cnf --execute=\"CREATE USER IF NOT EXISTS '$db_user'@'$db_host' IDENTIFIED BY '$db_pwd';\""
 }->

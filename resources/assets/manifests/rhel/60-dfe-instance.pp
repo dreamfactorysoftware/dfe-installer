@@ -65,6 +65,8 @@ class iniSettings( $root ) {
     '' => {
       'APP_LOG'                   => 'single',
       'DB_DRIVER'                 => 'mysql',
+      'DB_USERNAME'               => $db_user,
+      'DB_PASSWORD'               => $db_pwd,
       'DF_INSTANCE_NAME'          => "instance-${vendor_id}",
       'DF_MANAGED'                => 'true',
       'DF_MANAGED_LOG_PATH'       => $instance_log_path,

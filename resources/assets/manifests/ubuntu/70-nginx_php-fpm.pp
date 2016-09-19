@@ -238,27 +238,23 @@ if ( false == str2bool($dfe_update) ) {
   file { "$nginx_path/sites-enabled/20-dfe-dashboard.conf":
     ensure   => link,
     target   => "$nginx_path/sites-available/20-dfe-dashboard.conf",
-  }
-
+  }->
   /* If the OS Family is debian/ubuntu, need to change the location of a couple things in the conf file - default is rhel/centos */
-  if($os_family == 'Debian'){
-    file_line { 'server socket':
-      path  => "$nginx_path/conf.d/dfe.conf",
-      line  => 'server unix:/run/php/php7.0-fpm.sock;',
-      match => 'server unix:\/var\/run\/php-fpm\/php-fpm.sock;',
-    }
-    file_line { 'nginx user':
-      path  => "$nginx_path/nginx.conf",
-      line  => 'user www-data;',
-      match => 'user nginx;',
-    }
-    file_line { 'nginx include':
-      path  => "$nginx_path/nginx.conf",
-      line  => 'include /etc/nginx/sites-enabled/*;',
-      match => '#include \/etc\/nginx\/sites-enabled\/\*;',
-    }
-
-  }
+  file_line { 'server socket':
+    path  => "$nginx_path/conf.d/dfe.conf",
+    line  => 'server unix:/run/php/php7.0-fpm.sock;',
+    match => 'server unix:\/var\/run\/php-fpm\/php-fpm.sock;',
+  }->
+  file_line { 'nginx user':
+    path  => "$nginx_path/nginx.conf",
+    line  => 'user www-data;',
+    match => 'user nginx;',
+  }->
+  file_line { 'nginx include':
+    path  => "$nginx_path/nginx.conf",
+    line  => 'include /etc/nginx/sites-enabled/*;',
+    match => '#include \/etc\/nginx\/sites-enabled\/\*;',
+  }->
   exec { "restart-nginx":
     cwd         => $root,
     command     => "sudo service nginx restart",
