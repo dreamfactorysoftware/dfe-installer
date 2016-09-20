@@ -33,6 +33,14 @@ file_line { 'mysql.skip-grant-tables':
   path  => "/etc/my.cnf",
   line => 'skip-grant-tables',
 }->
+ini_setting { 'alter-password-policy-absent':
+  ensure => absent,
+  path   => '/etc/my.cnf',
+  key_val_separator => '=',
+  section => 'mysqld',
+  setting => 'validate_password_policy',
+  value => 'LOW'
+}->
 service { "mysql-ensure-restart":
   name    => 'mysql',
   ensure  => 'running',
@@ -43,8 +51,7 @@ exec { "mysql_root_user":
   command => "/usr/bin/mysql mysql --execute=\"UPDATE user SET authentication_string = PASSWORD('$mysql_root_pwd') WHERE user = 'root';\""
 }->
 file_line { 'mysql_remove_skip':
-  ensure => 'absent',
-  notify  => Exec['mysql-restart'],
+  ensure => absent,
   path  => "/etc/my.cnf",
   line => 'skip-grant-tables',
 }->
@@ -104,6 +111,18 @@ exec {'import mysql':
 #put back the plugin for re-installs
 exec {'reinstall plugin':
   command => "/usr/bin/mysql -u$db_user -p$db_pwd -D $db_name -e\"INSTALL PLUGIN validate_password SONAME 'validate_password.so';\""
+}->
+ini_setting { 'alter-password-policy':
+  ensure => 'present',
+  path   => '/etc/my.cnf',
+  key_val_separator => '=',
+  section => 'mysqld',
+  setting => 'validate_password_policy',
+  value => 'LOW'
+}->
+exec { "mysql-restart-post":
+  command => "sudo service mysql restart",
+  require => Ini_setting['alter-password-policy']
 }
 
 
