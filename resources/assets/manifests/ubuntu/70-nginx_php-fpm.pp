@@ -158,18 +158,20 @@ service { "nginx":
   enable  => true,
   require => Package["nginx-extras"],
 }->
-package { "php5.6-fpm":
+package { "php7.0-fpm":
   ensure => latest,
 }->
-service { "php5.6-fpm":
+service { "php7.0-fpm":
   ensure  => running,
   enable  => true,
-  require => Package["php5.6-fpm"],
-}
-
+  require => Package["php7.0-fpm"],
+}->
 service { "apache2":
   ensure => stopped,
   enable => false
+}->
+package { "apache2":
+  ensure => absent
 }
 
 ##------------------------------------------------------------------------------
@@ -204,21 +206,10 @@ if ( false == str2bool($dfe_update) ) {
     source => "$pwd/resources/assets/etc/nginx/conf.d/ssl/dfe-instance.conf"
   }->
   file { "$nginx_path/nginx.conf":
-    ensure => link,
-    target => "$pwd/resources/assets/etc/nginx/nginx.conf",
+    ensure => present,
+    source => "$pwd/resources/assets/etc/nginx/nginx.conf",
   }->
-  file { "/etc/php/5.6/mods-available/dreamfactory.ini":
-    ensure  => link,
-    target  => "$server_config_path/php/etc/php/5.6/mods-available/dreamfactory.ini"
-  }->
-    # Needs to be based on $app_debug
-    #  file_line { "update-dreamfactory-ini":
-    #    path   => "/etc/php5/mods-available/dreamfactory.ini",
-    #    line   => "display_errors = 0",
-    #    match  => ".*display_errors.*",
-    #  }->
-    ## Enable our tweaks
-    ## Instance
+  ## Instance
   file { "$nginx_path/sites-available/00-dfe-instance.conf":
     ensure  => present,
     content => $instance_content,
@@ -248,13 +239,29 @@ if ( false == str2bool($dfe_update) ) {
     ensure   => link,
     target   => "$nginx_path/sites-available/20-dfe-dashboard.conf",
   }->
-  /*exec { "enable-dreamfactory-module":
-    command  => "$php_enmod_bin dreamfactory",
-    notify   => Service["php5-fpm", "nginx"],
-  }->*/
+  /* If the OS Family is debian/ubuntu, need to change the location of a couple things in the conf file - default is rhel/centos */
+  file_line { 'server socket':
+    path  => "$nginx_path/conf.d/dfe.conf",
+    line  => 'server unix:/run/php/php7.0-fpm.sock;',
+    match => 'server unix:\/var\/run\/php-fpm\/php-fpm.sock;',
+  }->
+  file_line { 'nginx user':
+    path  => "$nginx_path/nginx.conf",
+    line  => 'user www-data;',
+    match => 'user nginx;',
+  }->
+  file_line { 'nginx include':
+    path  => "$nginx_path/nginx.conf",
+    line  => 'include /etc/nginx/sites-enabled/*;',
+    match => '#include \/etc\/nginx\/sites-enabled\/\*;',
+  }->
   exec { "restart-nginx":
     cwd         => $root,
     command     => "sudo service nginx restart",
+  }->
+  exec { "restart-php-fpm":
+    cwd         => $root,
+    command     => "sudo service php7.0-fpm restart"
   }->
   exec { "start-kibana-if-not-started":
     cwd         => $root,

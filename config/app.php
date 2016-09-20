@@ -41,7 +41,7 @@ return [
         DreamFactory\Enterprise\Installer\Providers\RouteServiceProvider::class,
         DreamFactory\Library\Utility\Providers\InspectionServiceProvider::class,
         /** Third-party Providers */
-        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+        /**Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,**/
     ],
     'aliases'         => [
         'App'       => Illuminate\Support\Facades\App::class,

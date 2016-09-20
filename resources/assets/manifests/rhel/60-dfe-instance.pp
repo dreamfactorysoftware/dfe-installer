@@ -65,6 +65,8 @@ class iniSettings( $root ) {
     '' => {
       'APP_LOG'                   => 'single',
       'DB_DRIVER'                 => 'mysql',
+      'DB_USERNAME'               => $db_user,
+      'DB_PASSWORD'               => $db_pwd,
       'DF_INSTANCE_NAME'          => "instance-${vendor_id}",
       'DF_MANAGED'                => 'true',
       'DF_MANAGED_LOG_PATH'       => $instance_log_path,
@@ -81,11 +83,10 @@ class iniSettings( $root ) {
 class setupApp( $root ) {
   if ( false == str2bool($dfe_update) ) {
     exec { 'generate-app-key':
-      command     => "$artisan key:generate",
+      command     => "sudo /usr/bin/php artisan key:generate",
       user        => $user,
       provider    => shell,
       cwd         => $root,
-      environment => ["HOME=/home/$user"]
     }
   }
 }
@@ -206,7 +207,7 @@ class { laravelDirectories:
   group => $group,
 }->
 exec { 'composer-update':
-  command     => "$composer_bin update",
+  command     => "composer update",
   user        => $user,
   provider    => shell,
   cwd         => $instance_root,
