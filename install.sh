@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.1.58
+VERSION=1.2.0
 SYSTEM_TYPE=`uname -s`
 ENV_FILE=./storage/.env-install
 PHP_BIN=`which php`
@@ -193,7 +193,7 @@ export FACTER_CONSOLE_BRANCH FACTER_DASHBOARD_BRANCH FACTER_INSTANCE_BRANCH
 #[ -f "${LOG_FILE}" ] && mv "${LOG_FILE}" "${LOG_FILE}.1"
 
 ## Header
-sectionHeader " ${B1}DreamFactory Enterprise(tm)${B2} ${SYSTEM_TYPE} Installer v${VERSION}"
+sectionHeader " ${B1}DreamFactory Gold ${B2} ${SYSTEM_TYPE} Installer v${VERSION}"
 
 ## Find settings file...
 if [ -f "${ENV_FILE}" ]; then
