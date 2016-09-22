@@ -53,7 +53,7 @@ output {
 }
 "
 
-$_kibanaConfig = "# kibana.conf - log viewer
+/*$_kibanaConfig = "# kibana.conf - log viewer
 description \"Kibana logstash viewer\"
 
 start on virtual-filesystems
@@ -74,39 +74,39 @@ console log
 script
     bin/kibana
 end script
-"
+"*/
 
 ##------------------------------------------------------------------------------
 ## Classes
 ##------------------------------------------------------------------------------
 
+class { 'java': }
+
 class installElasticsearch( $root ) {
   ##  Only install if requested
   if ( false == str2bool($dc_es_exists) ) {
-    ##  Java
-    exec { "install-java8":
-      command => "add-apt-repository -y ppa:webupd8team/java && echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections && sudo apt-get -qq update && sudo apt-get -y install oracle-java8-installer",
-      cwd     => $root,
-    }
 
     ##  Elasticsearch
     exec { "install-elasticsearch-key":
       unless  => 'service elasticsearch status',
-      command => "wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - ",
+      command => "sudo rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch",
       cwd     => $root,
-      require => Exec['install-java8'],
+      require => Class['java'],
     }->
     exec { "install-elasticsearch-repo":
-      unless  => 'service elasticsearch status',
-      command => "echo 'deb http://packages.elastic.co/elasticsearch/$install_version_elasticsearch/debian stable main' | sudo tee -a /etc/apt/sources.list.d/elasticsearch.list",
+      unless  => 'sudo service elasticsearch status',
+      command => "echo '[elasticsearch-2.x]
+name=Elasticsearch repository for 2.x packages
+baseurl=http://packages.elastic.co/elasticsearch/2.x/centos
+gpgcheck=1
+gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+' | sudo tee /etc/yum.repos.d/elasticsearch.repo",
       cwd     => $root,
-      require => Exec['install-java8'],
+      require => Class['java'],
     }->
-    exec { "install-elasticsearch":
-      unless  => 'service elasticsearch status',
-      command => "sudo apt-get -qq update && sudo apt-get -y install elasticsearch",
-      cwd     => $root,
-      require => Exec['install-java8'],
+    package { 'elasticsearch':
+      ensure  => 'present'
     }->
     file { '/etc/default/elasticsearch':
       ensure  => file,
@@ -114,6 +114,7 @@ class installElasticsearch( $root ) {
     }->
     exec { "install-elasticsearch-plugins":
       user    => root,
+      unless => 'sudo /usr/share/elasticsearch/bin/plugin list | grep hq',
       command => "sudo /usr/share/elasticsearch/bin/plugin install royrusso/elasticsearch-HQ",
       cwd     => '/usr/share/elasticsearch/bin',
     }
@@ -122,27 +123,30 @@ class installElasticsearch( $root ) {
     service { "elasticsearch":
       ensure  => running,
       enable  => true,
-      require => Exec['install-elasticsearch'],
+      require => Exec['install-elasticsearch-plugins'],
     }
   }
 }
 
 ##  Logstash installer
 class installLogstash( $root ) {
-  exec { "install-logstash-key":
-    unless  => 'service logstash status',
-    command => "wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add - ",
-    cwd     => $root,
-  }->
   exec { "install-logstash-repo":
-    unless  => 'service logstash status',
-    command => "echo 'deb http://packages.elasticsearch.org/logstash/$install_version_logstash/debian stable main' | sudo tee -a /etc/apt/sources.list.d/logstash.list",
+    unless  => 'sudo service logstash status',
+    command => "echo '[logstash-2.2]
+name=logstash repository for 2.2 packages
+baseurl=http://packages.elasticsearch.org/logstash/2.2/centos
+gpgcheck=1
+gpgkey=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
+enabled=1' | sudo tee /etc/yum.repos.d/logstash.repo",
     cwd     => $root,
+    require => Class['java'],
   }->
-  exec { "install-logstash":
-    unless  => 'service logstash status',
-    command => "sudo apt-get -qq update && sudo apt-get -y install logstash",
-    cwd     => $root,
+  package { 'logstash':
+    ensure  => 'present'
+  }->
+  file { '/etc/default/logstash':
+    ensure  => file,
+    require => Package['logstash'],
   }->
   file_line { 'logstash-force-ipv4':
     path   => '/etc/default/logstash',
@@ -154,7 +158,7 @@ class installLogstash( $root ) {
   service { "logstash":
     ensure  => running,
     enable  => true,
-    require => Exec['install-logstash'],
+    require => Package['logstash'],
   }
 
   ##  Cluster configuration
@@ -162,7 +166,7 @@ class installLogstash( $root ) {
     ensure  => file,
     content => $_logstashConfig,
     notify  => Service['logstash'],
-    require => Exec['install-logstash'],
+    require => Package['logstash'],
   }
 }
 
@@ -172,36 +176,28 @@ class installKibana( $root ) {
   ##
   ##  Kibana (v4.3.x not available on PPA as of 2015-11-30 hence the tarball)
   ##
-  exec { "download-kibana":
-    cwd     => "$root/_releases/kibana",
-    command => "wget https://download.elastic.co/kibana/kibana/kibana-${install_version_kibana}-linux-x64.tar.gz",
-    creates => "$root/_releases/kibana/kibana-${install_version_kibana}-linux-x64.tar.gz",
+  exec { "install-kibana-repo":
+    unless  => 'sudo service logstash status',
+    command => "echo '[kibana-4.4]
+name=Kibana repository for 4.4.x packages
+baseurl=http://packages.elastic.co/kibana/4.4/centos
+gpgcheck=1
+gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
+enabled=1' | sudo tee /etc/yum.repos.d/kibana.repo",
+    cwd     => $root,
+    require => Class['java'],
+  }->
+  package { 'kibana':
+    ensure  => 'present'
+  }->
+
+  # Kibana service
+  service { "kibana":
+    ensure  => running,
+    enable  => true,
+    require => Package['kibana'],
   }
 
-  exec { "install-kibana":
-    user        => $www_user,
-    group       => $group,
-    cwd         => "$root/_releases/kibana",
-    command     => "tar xzf kibana-${install_version_kibana}-linux-x64.tar.gz",
-    environment => ["HOME=/home/${user}"],
-    require     => Exec["download-kibana"],
-  }->
-  file { "$root/kibana":
-    ensure => link,
-    target => "$root/_releases/kibana/kibana-${install_version_kibana}-linux-x64",
-  }
-
-  ##  Create a service definition
-  file { '/etc/init/kibana.conf':
-    ensure  => file,
-    content => $_kibanaConfig,
-    require => Exec['install-kibana'],
-  }->
-    ##  Kibana service
-  exec { 'start-kibana':
-    command     => "sudo service kibana start",
-    cwd         => $root,
-  }
 }
 
 ##  ELK stack installer
@@ -221,7 +217,7 @@ class elk( $root ) {
   }->
   class { installLogstash:
     root => $root,
-  }->
+  }
   class { installKibana:
     root => $root,
   }

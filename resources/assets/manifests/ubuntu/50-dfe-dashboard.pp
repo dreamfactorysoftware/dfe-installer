@@ -6,7 +6,7 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] Install/update dashboard software', }
-Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
+Exec { path => ['/usr/bin','/usr/sbin','/usr/local/bin', '/bin','/sbin'], }
 
 ############
 ## Classes
@@ -278,7 +278,7 @@ class { laravelDirectories:
   group => $group,
 }->
 exec { "composer-install":
-  command     => "$composer_bin install",
+  command     => "composer update",
   user        => $user,
   provider    => shell,
   cwd         => $dashboard_root,
@@ -292,7 +292,7 @@ class { customizeApp:
   root => $dashboard_root,
 }->
 exec { "composer-update":
-  command     => "$composer_bin update",
+  command     => "composer update",
   user        => $user,
   provider    => shell,
   cwd         => $dashboard_root,

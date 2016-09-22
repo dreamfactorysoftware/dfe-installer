@@ -18,14 +18,18 @@
                         <p class="text-muted">This user/group is created (if it does not exist) and will own the DFE
                             directories and services. This user is given <strong>sudo</strong> rights as well. The
                             defaults are recommended.</p>
-
                         <div class="form-group">
                             <label for="user">Install User</label>
+                            <input required type="text" class="form-control" id="log_user" name="log_user" value="{{ $install_user }}"
+                                   placeholder="The user executing the install.sh script, ie, ubuntu, ec2-user, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label for="user">DreamFactory Gold User</label>
                             <input required type="text" class="form-control" id="user" name="user" value="{{ $user }}"
                                    placeholder="dfadmin">
                         </div>
                         <div class="form-group">
-                            <label for="group">Install Group</label>
+                            <label for="group">DreamFactory Gold Group</label>
                             <input required type="text" class="form-control" id="group" name="group"
                                    value="{{ $group }}" placeholder="dfadmin">
                         </div>

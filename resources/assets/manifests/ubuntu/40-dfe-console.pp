@@ -6,7 +6,7 @@
 ################################################################################
 
 notify { 'announce-thyself': message => '[DFE] Install/update console software', }
-Exec { path => ['/usr/bin','/usr/sbin','/bin','/sbin'], }
+Exec { path => ['/usr/bin','/usr/sbin', '/usr/local/bin', '/bin','/sbin'], }
 
 $db_server_config = "'{\"port\": 3306,\"username\": \"${db_user}\",\"password\": \"${db_pwd}\",\"database\": \"${db_name}\",\"driver\": \"${db_driver}\",\"default-database-name\": \"\",\"charset\": \"utf8\",\"collation\": \"utf8_unicode_ci\",\"prefix\": \"\",\"multi-assign\": \"on\"}'"
 
@@ -148,7 +148,7 @@ class createInitialCluster( $root ) {
 ##  Only on new installs
   if ( true == str2bool($dfe_update) ) {
     exec { "composer-update":
-      command     => "$composer_bin update",
+      command     => "composer update",
       user        => $user,
       provider    => shell,
       cwd         => $console_root,
@@ -205,7 +205,7 @@ class createInitialCluster( $root ) {
       environment => ["HOME=/home/$user"]
     }->
     exec { "composer-update":
-      command     => "$composer_bin update",
+      command     => "composer update",
       user        => $user,
       provider    => shell,
       cwd         => $console_root,
@@ -376,7 +376,7 @@ class { laravelDirectories:
   group   => $group,
 }->
 exec { "composer-install":
-  command     => "$composer_bin install",
+  command     => "composer update",
   user        => $user,
   provider    => shell,
   cwd         => $console_root,
