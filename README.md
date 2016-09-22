@@ -1,6 +1,6 @@
 ## DreamFactory Gold(tm) Installer v1.2.0
 
-DreamFactory Gold may now be installed on both Debian (Ubuntu 14.04/16.04) and RHEL/Centos (7.x). The installer will automatically select the appropriate packages based on your distribution.
+DreamFactory Gold may now be installed on both Debian (Ubuntu 14.04/16.04) and RHEL/Centos (7.x). This installer has also been tested on Oracle Linux 7.2. The installer will automatically select the appropriate packages based on your distribution.
 
 ###Minimum Requirements
 The installer utility installs DreamFactory Gold as an **all-in-one** package. A 64 bit Ubuntu or RHEL/Centos machine is required with a minimum of 8GB of RAM. For production environments, we recommend at least 16GB of RAM and at least 4 cores.
@@ -104,7 +104,7 @@ From the dfe-installer directory, launch the install.sh script.
 $ sudo ./install.sh
 ```
 
-### During Installation
+### Errors Encountered During Installation
 During installation, if any errors are encountered, the installer will halt with an error message. Further detail can be found in the installation log file found in:
 ```
 /tmp/dfe-installer.log
@@ -113,41 +113,3 @@ During installation, if any errors are encountered, the installer will halt with
 > Be patient. Certain sections of the installer may take up to 10 minutes to complete and the entire installation process may take up to 
 > 30 minutes.
 
-### Suggested Performance Tweaks
-
-#### Percona/MySQL
-
-    [isamchk]
-    key_buffer_size = 128M
-    
-    [mysqld]
-    key_buffer_size = 128M
-    
-    max_allowed_packet = 128M
-    max_binlog_size = 200M
-    max_connections = 600
-    
-    query_cache_limit = 4M
-    query_cache_size = 128M
-    
-    thread_cache_size = 8
-    thread_stack = 512K
-    
-    # Restart mysql server
-    sudo systemctl restart mysql
-    
-#### PHP-FPM
-
-    # For 8 core 32 GB Ram
-    
-    pm.max_children = 2000
-    pm.start_servers = 1000
-    pm.min_spare_servers = 500
-    pm.max_spare_servers = 1000
-    
-    # For 4 core 16 GB Ram
-    
-    pm.max_children = 1000
-    pm.start_servers = 500
-    pm.min_spare_servers = 250
-    pm.max_spare_servers = 500
