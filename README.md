@@ -1,4 +1,4 @@
-## DreamFactory Gold(tm) Installer v1.2.0
+## DreamFactory Gold(tm) Installer v1.2.1
 
 DreamFactory Gold may now be installed on both Debian (Ubuntu 14.04/16.04) and RHEL/Centos (7.x). This installer has also been tested on Oracle Linux 7.2. The installer will automatically select the appropriate packages based on your distribution.
 
@@ -60,8 +60,6 @@ Disabled
 ```bash
 $ git clone https://github.com/dreamfactorysoftware/dfe-installer.git
 $ cd dfe-installer
-$ git checkout feature/rhel
-$ composer install --no-dev
     
 $ php -S 0.0.0.0:8000 -t public/
 ```
@@ -90,9 +88,7 @@ $ sudo apt-get install php7.0 puppet git -y
 ```bash
 $ git clone https://github.com/dreamfactorysoftware/dfe-installer.git
 $ cd dfe-installer
-$ git checkout feature/rhel
-$ composer install --no-dev
-    
+
 $ php -S 0.0.0.0:8000 -t public/
 ```
 Open a browser and point to http://127.0.0.1:8000 and fill out the config form. You may need to open port 8000 for your server as well or choose a different port.
