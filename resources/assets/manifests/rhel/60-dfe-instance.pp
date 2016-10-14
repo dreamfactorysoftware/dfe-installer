@@ -58,6 +58,20 @@ class laravelDirectories( $root, $owner, $group, $mode = '2775') {
   }
 }
 
+##  Create an environment file
+class createEnvFile( $root, $source = ".env-dist" ) {
+  ##  On new installs only
+  if ( false == str2bool($dfe_update) ) {
+    file { "${root}/.env":
+      ensure => present,
+      owner  => $user,
+      group  => $www_group,
+      mode   => 0640,
+      source => "${root}/${source}",
+    }
+  }
+}
+
 ## set the .env vars
 class iniSettings( $root ) {
   $_env = { 'path' => "$root/.env", }
@@ -67,6 +81,7 @@ class iniSettings( $root ) {
       'DB_DRIVER'                 => 'mysql',
       'DB_USERNAME'               => $db_user,
       'DB_PASSWORD'               => $db_pwd,
+      'DB_DATABASE'               => 'dreamfactory',
       'DF_INSTANCE_NAME'          => "instance-${vendor_id}",
       'DF_MANAGED'                => 'true',
       'DF_MANAGED_LOG_PATH'       => $instance_log_path,
@@ -159,20 +174,6 @@ class checkPermissions( $root, $dir_mode = '2775', $file_mode = '0664' ) {
     command         => "find ${instance_cache_path} -type f -exec chmod ${file_mode} {} \\;",
     cwd             => $root,
     onlyif          => "test -d ${instance_cache_path}",
-  }
-}
-
-##  Create an environment file
-class createEnvFile( $root, $source = ".env-dist" ) {
-  ##  On new installs only
-  if ( false == str2bool($dfe_update) ) {
-    file { "${root}/.env":
-      ensure => present,
-      owner  => $user,
-      group  => $www_group,
-      mode   => 0640,
-      source => "${root}/${source}",
-    }
   }
 }
 
