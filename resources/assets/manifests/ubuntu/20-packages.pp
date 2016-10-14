@@ -32,6 +32,7 @@ class updatePackages {
     'php7.0-sybase',
     'php7.0-xml',
     'php7.0-mbstring',
+    'php7.0-soap',
     'php7.0-zip',
     'mongodb',
     'zip',
