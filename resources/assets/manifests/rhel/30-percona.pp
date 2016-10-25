@@ -42,9 +42,7 @@ ini_setting { 'alter-password-policy-absent':
   value => 'LOW'
 }->
 service { "mysql-ensure-restart":
-  name    => 'mysql',
-  ensure  => 'running',
-  enable  => true,
+  command => "sudo service mysql restart",
   require => File_line['mysql.skip-grant-tables']
 }->
 exec { "mysql_root_user":
