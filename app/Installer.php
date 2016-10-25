@@ -60,6 +60,8 @@ class Installer
         'www_group'             => 'nginx',
         'admin_email'           => null,
         'admin_pwd'             => null,
+        'db_user'               => null,
+        'db_pwd'                => null,
         'mysql_root_pwd'        => null,
         'vendor_id'             => 'dfe',
         'domain'                => null,

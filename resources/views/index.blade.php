@@ -59,15 +59,27 @@
                                    value="{{ $www_group }}" placeholder="www-data">
                         </div>
                     </fieldset>
+                    <fieldset>
+                        <legend>MySQL <strong>Root</strong> Password</legend>
+                        <p class="text-muted">This installer creates a local MySQL database. This password will be the
+                            <strong>root</strong> password for that database.</p>
+
+                        <div class="form-group">
+                            <label for="mysql-root-pwd">MySQL Root Password</label>
+                            <input required type="password" class="form-control" id="mysql-root-pwd"
+                                   name="mysql-root-pwd"
+                                   placeholder="secret" value="{{ $mysql_root_pwd }}">
+                        </div>
+                    </fieldset>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6">
                     <fieldset>
-                        <legend>DFE <strong>Administrator</strong> Credentials</legend>
+                        <legend><strong>Administrator</strong> Credentials</legend>
                         <p class="text-muted">These credentials are used to create the initial administrator account on
-                            the DreamFactory Enterprise&trade; Console</p>
+                            the DreamFactory Gold Console</p>
 
                         <div class="form-group">
                             <label for="admin-email">Email Address</label>
@@ -83,15 +95,18 @@
                 </div>
                 <div class="col-md-6">
                     <fieldset>
-                        <legend>MySQL <strong>Root</strong> Password</legend>
-                        <p class="text-muted">This installer creates a local MySQL database. This password will be the
-                            <strong>root</strong> password for that database.</p>
+                        <legend><strong>Administrator</strong> Database Credentials</legend>
+                        <p class="text-muted">These credentials create an Administrator user for the serivce database.</p>
 
                         <div class="form-group">
-                            <label for="mysql-root-pwd">MySQL Root Password</label>
-                            <input required type="password" class="form-control" id="mysql-root-pwd"
-                                   name="mysql-root-pwd"
-                                   placeholder="secret" value="{{ $mysql_root_pwd }}">
+                            <label for="admin-email">Admin DB User Name</label>
+                            <input required type="db-user" class="form-control" id="db-user" name="db-user"
+                                   value="{{ $db_user }}" placeholder="dfg_admin" >
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-pwd">Admin DB Password</label>
+                            <input required type="password" class="form-control" id="db-pwd" name="db-pwd"
+                                   placeholder="secret" value="{{ $db_pwd }}">
                         </div>
                     </fieldset>
                 </div>

@@ -32,15 +32,13 @@ exec { "apt-update":
 }
 
 apt::source { "percona.trusty":
-  comment  => "Repo for percona db server",
-  location => "http://repo.percona.com/apt",
-  release  => "trusty",
-  repos    => "main",
-  key      => {
-    "id"     => "430BDF5C56E7C94E848EE60C1C4CBDCDCD2EFD2A",
-    "server" => "keys.gnupg.net",
-  },
-  include  => {
+  comment    => "Repo for percona db server",
+  location   => "http://repo.percona.com/apt",
+  release    => "trusty",
+  repos      => "main",
+  key        => '8507EFA5',
+  key_server => 'keyserver.ubuntu.com',
+  include    => {
     "src" => false,
     "deb" => true,
   },
