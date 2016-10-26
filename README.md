@@ -1,4 +1,4 @@
-## DreamFactory Gold(tm) Installer v1.2.1
+## DreamFactory Gold(tm) Installer v1.2.2
 
 DreamFactory Gold may now be installed on both Debian (Ubuntu 14.04/16.04) and RHEL/Centos (7.x). This installer has also been tested on Oracle Linux 7.2. The installer will automatically select the appropriate packages based on your distribution.
 
