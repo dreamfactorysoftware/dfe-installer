@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.2][v1.2.2]
+### Updated
+- Fixed Percona issues with Percona Server 5.7
+- Added php-zip module package
+- Added php-pgsql module package
+
 ## [1.2.1][v1.2.1]
 ### Updated
 - Updated PHP Version to 7.0 with serious performance improvements.
@@ -20,4 +26,5 @@ All notable changes to this project will be documented in this file. This projec
 
 [v1.1.59]: https://github.com/dreamfactorysoftware/dfe-installer/compare/1.1.58...1.1.59
 [v1.2.1]: https://github.com/dreamfactorysoftware/dfe-installer/compare/1.1.59...1.2.1
+[v1.2.2]: https://github.com/dreamfactorysoftware/dfe-installer/compare/1.2.1...1.2.2
 
