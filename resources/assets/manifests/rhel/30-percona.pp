@@ -22,10 +22,14 @@ group { 'mysql':
   members   => [$user],
   require   => Yumrepo['percona'],
 }
-
-
 package { "Percona-Server-server-${percona_version}":
   ensure  => present
+}->
+file_line { 'mysql.add-mysqld-block':
+  ensure  => present,
+  notify  => Service['mysql'],
+  path  => "/etc/my.cnf",
+  line => '[mysqld]',
 }->
 file_line { 'mysql.skip-grant-tables':
   ensure  => present,

@@ -11,7 +11,7 @@
 ##	Initial settings
 . ./ansi.sh
 
-VERSION=1.2.1
+VERSION=1.2.2
 SYSTEM_TYPE=`uname -s`
 ENV_FILE=./storage/.env-install
 PHP_BIN=`which php`
