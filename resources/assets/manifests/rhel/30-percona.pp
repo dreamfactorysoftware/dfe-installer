@@ -95,19 +95,19 @@ file { 'add_tmp_sql':
 }->
   #This is due to the restart we have to reset this pw before executing any other statements
 exec { "reset_root_pw":
-  command => "/usr/bin/mysql --defaults-extra-file=/etc/mytemp.cnf --connect-expired-password < tmp.sql"
+  command => "/usr/bin/mysql -u root --password=$mysql_root_pwd --connect-expired-password < tmp.sql"
 }->
 exec { "create_dfe_database":
-  command => "/usr/bin/mysql --defaults-extra-file=/etc/mytemp.cnf --execute=\"CREATE DATABASE IF NOT EXISTS $db_name CHARACTER SET utf8 COLLATE utf8_general_ci;\""
+  command => "/usr/bin/mysql -u root --password=$mysql_root_pwd --execute=\"CREATE DATABASE IF NOT EXISTS $db_name CHARACTER SET utf8 COLLATE utf8_general_ci;\""
 }->
 exec { "create_df_database":
-  command => "/usr/bin/mysql --defaults-extra-file=/etc/mytemp.cnf --execute=\"CREATE DATABASE IF NOT EXISTS dreamfactory CHARACTER SET utf8 COLLATE utf8_general_ci;\""
+  command => "/usr/bin/mysql -u root --password=$mysql_root_pwd --execute=\"CREATE DATABASE IF NOT EXISTS dreamfactory CHARACTER SET utf8 COLLATE utf8_general_ci;\""
 }->
 exec { "create_dfe_user":
-  command => "/usr/bin/mysql --defaults-extra-file=/etc/mytemp.cnf --execute=\"CREATE USER IF NOT EXISTS '$db_user'@'$db_host' IDENTIFIED BY '$db_pwd';\""
+  command => "/usr/bin/mysql -u root --password=$mysql_root_pwd --execute=\"CREATE USER IF NOT EXISTS '$db_user'@'$db_host' IDENTIFIED BY '$db_pwd';\""
 }->
 exec { "grant_dfe_user":
-  command => "/usr/bin/mysql --defaults-extra-file=/etc/mytemp.cnf --execute=\"GRANT ALL PRIVILEGES ON *.* TO '$db_user'@'$db_host' WITH GRANT OPTION;\""
+  command => "/usr/bin/mysql -u root --password=$mysql_root_pwd --execute=\"GRANT ALL PRIVILEGES ON *.* TO '$db_user'@'$db_host' WITH GRANT OPTION;\""
 }->
 exec {'import mysql':
   command => "/usr/bin/mysql -u$db_user -p$db_pwd -D $db_name < $pwd/resources/assets/sql/dfe_local.schema.sql",
