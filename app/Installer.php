@@ -60,9 +60,12 @@ class Installer
         'www_group'             => 'nginx',
         'admin_email'           => null,
         'admin_pwd'             => null,
-        'db_user'               => null,
+        'db_host'               => 'localhost',
+        'db_name'               => 'dfe_local',
+        'db_user'               => 'dfg_admin',
         'db_pwd'                => null,
         'mysql_root_pwd'        => null,
+        'exists_service_db'     => false,
         'vendor_id'             => 'dfe',
         'domain'                => null,
         'gh_user'               => null,
@@ -223,6 +226,7 @@ class Installer
         $formData = array_merge($formData, $_customisations);
 
         //  Add in things that don't exist in form...
+        $formData['exists_service_db'] = array_key_exists('exists_service_db', $formData) ? 'true' : 'false';
         $formData['dc-es-exists'] = array_key_exists('dc-es-exists', $formData) ? 'true' : 'false';
         $formData['dc-es-cluster'] = array_get($formData, 'dc-es-cluster', $this->defaults['dc_es_cluster']);
         $formData['dc-es-port'] = array_get($formData, 'dc-es-port', $this->defaults['dc_es_port']);

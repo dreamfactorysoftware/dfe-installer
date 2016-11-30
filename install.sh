@@ -146,7 +146,6 @@ export FACTER_ENABLE_SSL=false
 export FACTER_DEFAULT_PROTOCOL=http
 
 ## Needs to match DB name in dfe_local.schema.sql
-export FACTER_DB_NAME=dfe_local
 export FACTER_DB_DRIVER=mysql
 
 ## Paths
@@ -171,10 +170,13 @@ export FACTER_MYSQL_USER=mysql
 export FACTER_MYSQL_GROUP=mysql
 export FACTER_HOME=$HOME
 export FACTER_PWD=${PWD}
-export FACTER_DB_USER=dfe_user
-export FACTER_DB_PWD=dfe_user
-export FACTER_DB_HOST=localhost
-export FACTER_DB_NAME=dfe_local
+
+#Database overrides
+export FACTER_DB_HOST=${FACTER_DB_HOST}
+export FACTER_DB_NAME=${FACTER_DB_NAME}
+export FACTER_DB_USER=${FACTER_DB_USER}
+export FACTER_DB_PWD=${FACTER_DB_PWD}
+
 export FACTER_INSTANCE_CACHE_PATH=/tmp/.df-cache
 
 ## General information that is sourced

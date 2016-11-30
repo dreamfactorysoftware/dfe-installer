@@ -58,25 +58,6 @@
                             <input required type="text" class="form-control" id="www-group" name="www-group"
                                    value="{{ $www_group }}" placeholder="www-data">
                         </div>
-                    </fieldset>
-                    <fieldset>
-                        <legend>MySQL <strong>Root</strong> Password</legend>
-                        <p class="text-muted">This installer creates a local MySQL database. This password will be the
-                            <strong>root</strong> password for that database.</p>
-
-                        <div class="form-group">
-                            <label for="mysql-root-pwd">MySQL Root Password</label>
-                            <input required type="password" class="form-control" id="mysql-root-pwd"
-                                   name="mysql-root-pwd"
-                                   placeholder="secret" value="{{ $mysql_root_pwd }}">
-                        </div>
-                    </fieldset>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <fieldset>
                         <legend><strong>Administrator</strong> Credentials</legend>
                         <p class="text-muted">These credentials are used to create the initial administrator account on
                             the DreamFactory Gold Console</p>
@@ -86,34 +67,21 @@
                             <input required type="email" class="form-control" id="admin-email" name="admin-email"
                                    value="{{ $admin_email }}" placeholder="you@yourdomain.com">
                         </div>
+                    </fieldset>
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <fieldset>
+
                         <div class="form-group">
                             <label for="admin-pwd">Password</label>
                             <input required type="password" class="form-control" id="admin-pwd" name="admin-pwd"
                                    placeholder="secret" value="{{ $admin_pwd }}">
                         </div>
                     </fieldset>
-                </div>
-                <div class="col-md-6">
-                    <fieldset>
-                        <legend><strong>Administrator</strong> Database Credentials</legend>
-                        <p class="text-muted">These credentials create an Administrator user for the serivce database.</p>
-
-                        <div class="form-group">
-                            <label for="admin-email">Admin DB User Name</label>
-                            <input required type="db-user" class="form-control" id="db-user" name="db-user"
-                                   value="{{ $db_user }}" placeholder="dfg_admin" >
-                        </div>
-                        <div class="form-group">
-                            <label for="admin-pwd">Admin DB Password</label>
-                            <input required type="password" class="form-control" id="db-pwd" name="db-pwd"
-                                   placeholder="secret" value="{{ $db_pwd }}">
-                        </div>
-                    </fieldset>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
                     <fieldset>
                         <legend>GitHub Token</legend>
                         <p class="text-muted">To avoid GitHub API Rating Limit issues during installation, please create
@@ -131,9 +99,6 @@
                                    placeholder="token" value="{{ $gh_token }}">
                         </div>
                     </fieldset>
-                </div>
-
-                <div class="col-md-6">
                     <fieldset>
                         <legend>DNS</legend>
                         <p class="text-muted">This is the zone and domain of this cluster. This will be the subdomain of
@@ -153,7 +118,52 @@
                         </div>
                     </fieldset>
                 </div>
+                <div class="col-md-6">
+
+                    <fieldset>
+                        <legend>Service Database Settings</legend>
+                        <p class="text-muted">By default, DreamFactory Gold will install a Percona MySQL database. Optionally, you can use an existing installation on another host.</p>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input id="exists_service_db" name="exists_service_db" type="checkbox"
+                                           value="" {{ true === $exists_service_db ? 'checked="checked"' : null }}>Use an
+                                    existing Service Database?
+                                    <span class="help-block">If left unchecked, Percona will be installed on this system and used locally.</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="db-host">MySQL Host</label>
+                            <input required type="db-host" class="form-control" id="db-host"
+                                   name="db-host"
+                                   placeholder="DB Host" value="{{ $db_host }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="mysql-root-pwd">MySQL Root Password</label>
+                            <input required type="password" class="form-control" id="mysql-root-pwd"
+                                   name="mysql-root-pwd"
+                                   placeholder="secret" value="{{ $mysql_root_pwd }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="db-user">DB User Name</label>
+                            <input required type="db-user" class="form-control" id="db-user" name="db-user"
+                                   value="{{ $db_user }}" placeholder="dfg_admin" >
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-pwd">DB Password</label>
+                            <input required type="password" class="form-control" id="db-pwd" name="db-pwd"
+                                   placeholder="secret" value="{{ $db_pwd }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-email">DB Name</label>
+                            <input required type="db-name" class="form-control" id="db-name" name="db-name"
+                                   value="{{ $db_name }}" placeholder="dfe_local" >
+                        </div>
+                    </fieldset>
+                </div>
             </div>
+
 
             <div class="row">
                 <div class="col-md-6 col-sm-8 col-xs-12">
@@ -326,13 +336,13 @@
     </section>
 
     <script>
-        jQuery(function ($) {
+        $(function() {
             var $_checkbox = $('#dc-es-exists'), $_dcHost = $('#dc-host'), $_domain = $('#domain'), $_zone = $('#vendor-id');
             var _lastHost = $_dcHost.val();
 
             //  Set the reporting host name the same as the console if we are installing ELK
             $('#vendor-id, #domain').on('change', function () {
-                if (!$_checkbox.prop('checked')) {
+                if (!$_checkbox.is(':checked')) {
                     if (_lastHost == $_dcHost.val()) {
                         $_dcHost.val(_lastHost = '{{ $console_host_name }}.' + $_zone.val() + '.' + $_domain.val());
                     }
@@ -341,11 +351,22 @@
 
             //  Enable/disable ES entries if we are not installing ELK
             $_checkbox.on('change', function () {
-                if (this.prop('checked')) {
+                if ($(this).is(':checked')) {
                     $('#dc-es-cluster, #dc-host, #dc-port').removeAttr('disabled').removeClass('disabled').removeAttr('required');
                     $_dcHost.val('');
                 } else {
                     $('#dc-es-cluster, #dc-host, #dc-port').attr('disabled', 'disabled').prop('required', true);
+                }
+            });
+
+            $('input#exists_service_db').on('change', function(){
+                $('input#mysql-root-pwd').val('');
+                if($(this).is(':checked')){
+                    $('input#mysql-root-pwd').prop('disabled', true);
+                    $('input#db-host').val('').focus();
+                } else {
+                    $('input#mysql-root-pwd').prop('disabled', false);
+                    $('input#db-host').val('localhost');
                 }
             });
         });

@@ -61,6 +61,9 @@ class updatePackages {
     "apache2-bin",
     "apache2-data",
     "libapache2-mod-php5",
+    "mysql-server",
+    "mysql-client",
+    "mysql-common"
   ]
 
   ## If SMTP is local, then install postfix

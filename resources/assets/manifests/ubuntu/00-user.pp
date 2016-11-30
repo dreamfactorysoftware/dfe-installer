@@ -76,13 +76,6 @@ alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service 
       group   => $group,
       mode    => '700',
     }->
-    file { "$root/.ssh/authorized_keys":
-      ensure => file,
-      owner  => $user,
-      group  => $group,
-      mode   => '400',
-      source => "/home/${log_user}/.ssh/authorized_keys",
-    }->
     file_line { 'add-user-to-sudoers':
       path    => '/etc/sudoers',
       line    => "$user  ALL=(ALL) NOPASSWD:ALL",
