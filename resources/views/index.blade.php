@@ -67,21 +67,20 @@
                             <input required type="email" class="form-control" id="admin-email" name="admin-email"
                                    value="{{ $admin_email }}" placeholder="you@yourdomain.com">
                         </div>
-                    </fieldset>
-
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <fieldset>
-
                         <div class="form-group">
                             <label for="admin-pwd">Password</label>
                             <input required type="password" class="form-control" id="admin-pwd" name="admin-pwd"
                                    placeholder="secret" value="{{ $admin_pwd }}">
                         </div>
                     </fieldset>
+
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+
                     <fieldset>
                         <legend>GitHub Token</legend>
                         <p class="text-muted">To avoid GitHub API Rating Limit issues during installation, please create
