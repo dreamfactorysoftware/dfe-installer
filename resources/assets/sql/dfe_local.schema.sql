@@ -1,13 +1,13 @@
 /********************************************************************************
 * DreamFactory Enterprise(tm) Console/Dashboard Schema
 * Copyright (c) 2012-infinity DreamFactory Software, Inc. All Rights Reserved
-********************************************************************************/
+******************************************************************************* 
 
 /********************************************************************************
 *
 * Grab current variable settings and turn off index checks for reload
 *
-********************************************************************************/
+******************************************************************************* 
 
 SET NAMES utf8;
 SET SQL_MODE = '';
@@ -16,7 +16,7 @@ SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
 SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';
 SET @OLD_SQL_NOTES = @@SQL_NOTES, SQL_NOTES = 0;
 
-/** Create the database and use it **/
+/** Create the database and use it * 
 CREATE DATABASE IF NOT EXISTS `dfe_local`
   DEFAULT CHARACTER SET utf8;
 
@@ -26,11 +26,11 @@ USE `dfe_local`;
 *
 * Create the core entity and their associated archive tables
 *
-********************************************************************************/
+******************************************************************************* 
 
 /********************************************************************************
 * Entity keys: app_key_t and app_key_arch_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `app_key_t`;
 
@@ -74,7 +74,7 @@ CREATE TABLE `app_key_arch_t` (
 
 /********************************************************************************
 * Password reset: auth_reset_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `auth_reset_t`;
 
@@ -93,7 +93,7 @@ CREATE TABLE `auth_reset_t` (
 
 /********************************************************************************
 * Deployment Environments: environment_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `environment_t`;
 
@@ -112,7 +112,7 @@ CREATE TABLE `environment_t` (
 
 /********************************************************************************
 * Configuration Settings: config_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `config_t`;
 
@@ -131,7 +131,7 @@ CREATE TABLE `config_t` (
 
 /********************************************************************************
 * Metrics & Telemetry: metrics_t / telemetry_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `metrics_t`;
 
@@ -192,7 +192,7 @@ CREATE TABLE `telemetry_t` (
 
 /********************************************************************************
 * Server Mounts: mount_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `mount_t`;
 
@@ -219,7 +219,7 @@ CREATE TABLE `mount_t` (
 
 /********************************************************************************
 * Artisan Migrations: migration_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `migration_t`;
 
@@ -234,7 +234,7 @@ CREATE TABLE `migration_t` (
 
 /********************************************************************************
 * Console User Roles: role_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `role_t`;
 
@@ -257,9 +257,9 @@ CREATE TABLE `role_t` (
 
 /********************************************************************************
 * Export Download Hashing: owner_hash_t and route_hash_t
-********************************************************************************/
+******************************************************************************* 
 
-/** @todo I believe this table is no longer used. Will verify and remove if so. **/
+/** @todo I believe this table is no longer used. Will verify and remove if so. * 
 DROP TABLE IF EXISTS `owner_hash_t`;
 
 CREATE TABLE `owner_hash_t` (
@@ -295,7 +295,7 @@ CREATE TABLE `route_hash_t` (
 
 /********************************************************************************
 * Dashboard Users: user_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `user_t`;
 
@@ -337,7 +337,7 @@ CREATE TABLE `user_t` (
 
 /********************************************************************************
 * Provisioners: vendor_t, vendor_image_t, and vendor_credentials_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `vendor_t`;
 
@@ -399,7 +399,7 @@ CREATE TABLE `vendor_credentials_t` (
 
 /********************************************************************************
 * Console Users: service_user_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `service_user_t`;
 
@@ -429,7 +429,7 @@ CREATE TABLE `service_user_t` (
 
 /********************************************************************************
 * Clusters: cluster_t and cluster_arch_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `cluster_t`;
 
@@ -465,7 +465,7 @@ CREATE TABLE `cluster_arch_t` (
 
 /********************************************************************************
 * Servers: server_t, server_arch_t, and server_type_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `server_type_t`;
 
@@ -522,7 +522,7 @@ CREATE TABLE `server_arch_t` (
 
 /********************************************************************************
 * Instances: instance_t, instance_arch_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `instance_t`;
 
@@ -640,7 +640,7 @@ CREATE TABLE `instance_arch_t` (
 
 /********************************************************************************
 * instance_guest_t and instance_guest_arch_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `instance_guest_t`;
 
@@ -727,7 +727,7 @@ CREATE TABLE `instance_guest_arch_t` (
 *
 * These tables are used to automatically deprovision instances that are
 * never activated after a set period of time.
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `deactivation_t`;
 
@@ -770,7 +770,7 @@ CREATE TABLE `deactivation_arch_t` (
 
 /********************************************************************************
 * Job Queue: job_t, job_result_t, and job_fail_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `job_t`;
 
@@ -826,7 +826,7 @@ CREATE TABLE `job_result_t` (
 
 /********************************************************************************
 * Limits: limit_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `limit_t`;
 
@@ -861,7 +861,7 @@ CREATE TABLE `limit_t` (
 
 /********************************************************************************
 * Instance Exports: snapshot_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `snapshot_t`;
 
@@ -893,11 +893,11 @@ CREATE TABLE `snapshot_t` (
 *
 * Associative Entity Assignment Tables
 *
-********************************************************************************/
+******************************************************************************* 
 
 /********************************************************************************
 * Roles -> Users: user_role_asgn_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `user_role_asgn_t`;
 
@@ -920,7 +920,7 @@ CREATE TABLE `user_role_asgn_t` (
 
 /********************************************************************************
 * Servers -> Clusters: cluster_server_asgn_t and cluster_server_asgn_arch_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `cluster_server_asgn_t`;
 
@@ -953,7 +953,7 @@ CREATE TABLE `cluster_server_asgn_arch_t` (
 
 /********************************************************************************
 * Instances -> Servers: instance_server_asgn_t and instance_server_asgn_arch_t
-********************************************************************************/
+******************************************************************************* 
 
 DROP TABLE IF EXISTS `instance_server_asgn_t`;
 
@@ -990,118 +990,118 @@ CREATE TABLE `instance_server_asgn_arch_t` (
 *
 * Triggers!
 *
-********************************************************************************/
+******************************************************************************* 
 
 DELIMITER $$
 
-/*!50003 DROP TRIGGER *//*!50032 IF EXISTS */ /*!50003 `appKey_beforeDelete` */$$
-  /*!50003 CREATE */ /*!50003 TRIGGER `appKey_beforeDelete` BEFORE DELETE ON `app_key_t`
+ DROP TRIGGER   IF EXISTS     `appKey_beforeDelete` 
+    CREATE     TRIGGER `appKey_beforeDelete` BEFORE DELETE ON `app_key_t`
 FOR EACH ROW BEGIN
   INSERT INTO `app_key_arch_t` SELECT *
                                FROM `app_key_t`
                                WHERE `app_key_t`.`id` = old.id;
-END */$$
+END 
 
-/*!50003 DROP TRIGGER *//*!50032 IF EXISTS */ /*!50003 `csa_beforeDelete` */$$
-  /*!50003 CREATE */ /*!50003 TRIGGER `csa_beforeDelete` BEFORE DELETE ON `cluster_server_asgn_t`
+  DROP TRIGGER   IF EXISTS     `csa_beforeDelete` 
+    CREATE     TRIGGER `csa_beforeDelete` BEFORE DELETE ON `cluster_server_asgn_t`
 FOR EACH ROW BEGIN
   INSERT INTO `cluster_server_asgn_arch_t` (cluster_id, server_id, create_date, lmod_date)
   VALUES (old.cluster_id, old.server_id, old.create_date, old.lmod_date);
-END */$$
+END 
 
-/*!50003 DROP TRIGGER *//*!50032 IF EXISTS */ /*!50003 `cluster_beforeDelete` */$$
-  /*!50003 CREATE */ /*!50003 TRIGGER `cluster_beforeDelete` BEFORE DELETE ON `cluster_t`
+  DROP TRIGGER   IF EXISTS     `cluster_beforeDelete` 
+    CREATE     TRIGGER `cluster_beforeDelete` BEFORE DELETE ON `cluster_t`
 FOR EACH ROW BEGIN
   INSERT INTO `cluster_arch_t` SELECT *
                                FROM `cluster_t`
                                WHERE `cluster_t`.`id` = old.id;
-END */$$
+END 
 
-/*!50003 DROP TRIGGER *//*!50032 IF EXISTS */ /*!50003 `deactivation_beforeDelete` */$$
-  /*!50003 CREATE */ /*!50003 TRIGGER `deactivation_beforeDelete` BEFORE DELETE ON `deactivation_t`
+  DROP TRIGGER   IF EXISTS     `deactivation_beforeDelete` 
+    CREATE     TRIGGER `deactivation_beforeDelete` BEFORE DELETE ON `deactivation_t`
 FOR EACH ROW BEGIN
   INSERT INTO `deactivation_arch_t` SELECT *
                                     FROM `deactivation_t`
                                     WHERE `deactivation_t`.`id` = old.id;
-END */$$
+END 
 
-/*!50003 DROP TRIGGER *//*!50032 IF EXISTS */ /*!50003 `isa_beforeDelete` */$$
-  /*!50003 CREATE */ /*!50003 TRIGGER `isa_beforeDelete` BEFORE DELETE ON `instance_server_asgn_t`
+  DROP TRIGGER   IF EXISTS     `isa_beforeDelete` 
+    CREATE     TRIGGER `isa_beforeDelete` BEFORE DELETE ON `instance_server_asgn_t`
 FOR EACH ROW BEGIN
   INSERT INTO `instance_server_asgn_arch_t` SELECT *
                                             FROM `instance_server_asgn_t`
                                             WHERE
                                               `instance_server_asgn_t`.`server_id` = old.server_id AND
                                               `instance_server_asgn_t`.`instance_id` = old.instance_id;
-END */$$
+END 
 
-/*!50003 DROP TRIGGER *//*!50032 IF EXISTS */ /*!50003 `instance_afterInsert` */$$
-  /*!50003 CREATE */ /*!50003 TRIGGER `instance_afterInsert` AFTER INSERT ON `instance_t`
+  DROP TRIGGER   IF EXISTS     `instance_afterInsert` 
+    CREATE     TRIGGER `instance_afterInsert` AFTER INSERT ON `instance_t`
 FOR EACH ROW BEGIN
   DELETE FROM `deactivation_t`
   WHERE user_id = new.user_id AND instance_id = new.id;
 
   INSERT INTO `deactivation_t` (user_id, instance_id, activate_by_date, create_date)
   VALUES (new.user_id, new.id, CURRENT_TIMESTAMP + INTERVAL 7 DAY, current_timestamp);
-END */$$
+END 
 
-/*!50003 DROP TRIGGER *//*!50032 IF EXISTS */ /*!50003 `instance_beforeDelete` */$$
-  /*!50003 CREATE */ /*!50003 TRIGGER `instance_beforeDelete` BEFORE DELETE ON `instance_t`
+  DROP TRIGGER   IF EXISTS     `instance_beforeDelete` 
+    CREATE     TRIGGER `instance_beforeDelete` BEFORE DELETE ON `instance_t`
 FOR EACH ROW BEGIN
   INSERT INTO `instance_arch_t` SELECT *
                                 FROM `instance_t`
                                 WHERE `instance_t`.`id` = old.id;
-END */$$
+END 
 
-/*!50003 DROP TRIGGER *//*!50032 IF EXISTS */ /*!50003 `instance_afterDelete` */$$
-  /*!50003 CREATE */ /*!50003 TRIGGER `instance_afterDelete` AFTER DELETE ON `instance_t`
+  DROP TRIGGER   IF EXISTS     `instance_afterDelete` 
+    CREATE     TRIGGER `instance_afterDelete` AFTER DELETE ON `instance_t`
 FOR EACH ROW BEGIN
   DELETE FROM `app_key_t`
   WHERE owner_id = old.id AND owner_type_nbr = 1;
 
   DELETE FROM `deactivation_t`
   WHERE instance_id = old.id;
-END */$$
+END 
 
-/*!50003 DROP TRIGGER *//*!50032 IF EXISTS */ /*!50003 `server_beforeDelete` */$$
-  /*!50003 CREATE */ /*!50003 TRIGGER `server_beforeDelete` BEFORE DELETE ON `server_t`
+  DROP TRIGGER   IF EXISTS     `server_beforeDelete` 
+    CREATE     TRIGGER `server_beforeDelete` BEFORE DELETE ON `server_t`
 FOR EACH ROW BEGIN
   INSERT INTO `server_arch_t` SELECT *
                               FROM `server_t`
                               WHERE `server_t`.`id` = old.id;
-END */$$
+END 
 
 DELIMITER ;
 
 /********************************************************************************
 * DreamFactory Enterprise(tm) Console/Dashboard Install/Setup Data
 * Copyright (c) 2012-infinity DreamFactory Software, Inc. All Rights Reserved
-********************************************************************************/
+******************************************************************************* 
 
 /********************************************************************************
 * The supported environments
-********************************************************************************/
+******************************************************************************* 
 
 INSERT INTO `environment_t` (`user_id`, `environment_id_text`, `create_date`, `lmod_date`)
 VALUES (NULL, 'Development', NOW(), NOW()), (NULL, 'Production', NOW(), NOW());
 
 /********************************************************************************
 * The default local mount
-********************************************************************************/
+******************************************************************************* 
 
 INSERT INTO `mount_t` (`mount_type_nbr`, `mount_id_text`, `root_path_text`, `owner_id`, `owner_type_nbr`, `config_text`, `create_date`)
 VALUES (0, 'mount-local-1', '/data/storage/', NULL, NULL, '{"disk":"local"}', NOW());
 
 /********************************************************************************
 * The types of servers allowed in clusters
-********************************************************************************/
+******************************************************************************* 
 
 INSERT INTO `server_type_t` (`id`, `type_name_text`, `schema_text`, `create_date`, `lmod_date`)
 VALUES (1, 'db', '', NOW(), NOW()), (2, 'web', '', NOW(), NOW()), (3, 'app', '', NOW(), NOW());
 
 /********************************************************************************
 * Vendors supported with this version
-********************************************************************************/
+******************************************************************************* 
 
 INSERT INTO `vendor_t` (`id`, `vendor_name_text`, `create_date`, `lmod_date`)
 VALUES (1, 'Amazon EC2', NOW(), NOW()), (2, 'DreamFactory', NOW(), NOW()), (3, 'Windows Azure', NOW(), NOW()), (4, 'Rackspace', NOW(), NOW()),
@@ -1109,7 +1109,7 @@ VALUES (1, 'Amazon EC2', NOW(), NOW()), (2, 'DreamFactory', NOW(), NOW()), (3, '
 
 /********************************************************************************
 * Pre-loaded vendor images for instances (this is way old)
-********************************************************************************/
+******************************************************************************* 
 
 INSERT INTO `vendor_image_t` (`id`, `vendor_id`, `os_text`, `license_text`, `image_id_text`, `image_name_text`, `image_description_text`, `architecture_nbr`, `region_text`, `availability_zone_text`, `root_storage_text`, `create_date`, `lmod_date`)
 VALUES (34, 1, 'Linux', 'Public', 'ami-013f9768', 'ubuntu/images/ebs/ubuntu-precise-12.04-amd64-server-20120728', NULL, 1, NULL, NULL, 'ebs', NOW(), NOW()),
