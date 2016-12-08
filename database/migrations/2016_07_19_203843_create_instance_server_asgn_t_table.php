@@ -17,7 +17,7 @@ class CreateInstanceServerAsgnTTable extends Migration {
             Schema::create('instance_server_asgn_t', function (Blueprint $table){
                 $table->integer('instance_id')->index('ix_isa_instance_id');
                 $table->integer('server_id')->index('ix_isa_server_id');
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->primary(['instance_id', 'server_id']);
             });

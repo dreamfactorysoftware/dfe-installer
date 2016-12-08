@@ -17,7 +17,7 @@ class CreateVendorTTable extends Migration {
             Schema::create('vendor_t', function (Blueprint $table){
                 $table->integer('id', true);
                 $table->string('vendor_name_text', 64)->unique('ux_vendor_vendor_name');
-                $table->dateTime('create_date');
+                $table->timestamp('create_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

@@ -22,8 +22,8 @@ class CreateSnapshotTTable extends Migration {
                 $table->string('snapshot_id_text', 128)->nullable();
                 $table->boolean('public_ind')->default(1);
                 $table->string('public_url_text', 1024);
-                $table->dateTime('expire_date');
-                $table->dateTime('create_date');
+                $table->dateTime('expire_date')->nullable();
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->unique(['user_id', 'snapshot_id_text'], 'ux_snapshot_user_id_snapshot_id');
             });

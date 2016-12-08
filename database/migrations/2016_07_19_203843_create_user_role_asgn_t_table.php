@@ -17,7 +17,7 @@ class CreateUserRoleAsgnTTable extends Migration {
             Schema::create('user_role_asgn_t', function (Blueprint $table){
                 $table->integer('user_id');
                 $table->integer('role_id')->index('fk_role_role_id');
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->primary(['user_id', 'role_id']);
             });

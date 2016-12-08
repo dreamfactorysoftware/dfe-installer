@@ -20,7 +20,7 @@ class CreateRoleTTable extends Migration {
                 $table->string('description_text', 1024)->nullable();
                 $table->boolean('active_ind');
                 $table->string('home_view_text', 256);
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

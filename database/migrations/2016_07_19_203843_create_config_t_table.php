@@ -18,7 +18,7 @@ class CreateConfigTTable extends Migration {
                 $table->increments('id');
                 $table->string('name_text', 64)->unique('ux_config_name_text');
                 $table->text('value_text', 65535)->nullable();
-                $table->dateTime('create_date');
+                $table->timestamp('create_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

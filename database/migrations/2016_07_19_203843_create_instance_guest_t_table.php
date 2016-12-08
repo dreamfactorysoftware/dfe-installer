@@ -33,7 +33,7 @@ class CreateInstanceGuestTTable extends Migration {
                 $table->string('private_ip_text', 20)->nullable();
                 $table->integer('state_nbr')->default(0);
                 $table->string('state_text', 64)->nullable();
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

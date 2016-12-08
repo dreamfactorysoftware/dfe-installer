@@ -18,7 +18,7 @@ class CreateMetricsTTable extends Migration {
                 $table->bigInteger('id', true)->unsigned();
                 $table->text('metrics_data_text', 16777215);
                 $table->boolean('sent_ind')->default(0);
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

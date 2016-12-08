@@ -26,7 +26,7 @@ class CreateVendorImageTTable extends Migration {
                 $table->string('region_text', 64)->nullable();
                 $table->string('availability_zone_text', 64)->nullable();
                 $table->string('root_storage_text', 32)->nullable();
-                $table->dateTime('create_date');
+                $table->timestamp('create_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->unique(['vendor_id', 'image_id_text'], 'ux_vendor_image_vendor_image');
             });

@@ -20,7 +20,7 @@ class CreateRouteHashTTable extends Migration {
                 $table->string('hash_text', 128)->unique('ix_route_hash_hash');
                 $table->string('actual_path_text', 1024);
                 $table->dateTime('expire_date')->nullable();
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

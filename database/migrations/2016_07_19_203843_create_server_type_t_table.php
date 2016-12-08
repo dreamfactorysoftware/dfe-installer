@@ -18,7 +18,7 @@ class CreateServerTypeTTable extends Migration {
                 $table->integer('id', true);
                 $table->string('type_name_text', 64)->unique('ux_server_type_type_name');
                 $table->binary('schema_text', 16777215);
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

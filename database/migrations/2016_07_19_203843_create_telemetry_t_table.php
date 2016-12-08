@@ -19,7 +19,7 @@ class CreateTelemetryTTable extends Migration {
                 $table->string('provider_id_text')->index('ix_telemetry_provider_id');
                 $table->dateTime('gather_date')->index('ix_telemetry_gather_date');
                 $table->text('data_text', 16777215);
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

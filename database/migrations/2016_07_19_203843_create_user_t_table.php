@@ -42,7 +42,7 @@ class CreateUserTTable extends Migration {
                 $table->boolean('admin_ind')->default(0);
                 $table->boolean('activate_ind')->default(0);
                 $table->boolean('active_ind')->default(1);
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

@@ -18,7 +18,7 @@ class CreateJobResultTTable extends Migration {
                 $table->bigInteger('id', true)->unsigned();
                 $table->string('result_id_text')->index('ix_job_result_result_id');
                 $table->text('result_text', 16777215);
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

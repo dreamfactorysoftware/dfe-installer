@@ -21,7 +21,7 @@ class CreateClusterTTable extends Migration {
                 $table->string('cluster_id_text', 128)->unique('ux_cluster_cluster_id_text');
                 $table->string('subdomain_text', 128);
                 $table->integer('max_instances_nbr')->nullable();
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

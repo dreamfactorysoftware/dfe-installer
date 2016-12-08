@@ -23,7 +23,7 @@ class CreateMountTTable extends Migration {
                 $table->string('root_path_text', 128)->nullable();
                 $table->text('config_text', 16777215)->nullable();
                 $table->dateTime('last_mount_date')->nullable();
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

@@ -21,7 +21,7 @@ class CreateServerTTable extends Migration {
                 $table->string('host_text', 1024);
                 $table->integer('mount_id')->nullable()->index('ix_server_mount_id');
                 $table->text('config_text', 16777215)->nullable();
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

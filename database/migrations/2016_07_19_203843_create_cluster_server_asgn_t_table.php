@@ -17,7 +17,7 @@ class CreateClusterServerAsgnTTable extends Migration {
             Schema::create('cluster_server_asgn_t', function (Blueprint $table){
                 $table->integer('cluster_id')->index('ix_csa_cluster_id');
                 $table->integer('server_id')->index('ix_csa_server_id');
-                $table->dateTime('create_date');
+                $table->timestamp('create_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->primary(['cluster_id', 'server_id']);
             });

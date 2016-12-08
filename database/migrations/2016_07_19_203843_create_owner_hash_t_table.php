@@ -19,7 +19,7 @@ class CreateOwnerHashTTable extends Migration {
                 $table->integer('owner_id');
                 $table->integer('owner_type_nbr');
                 $table->string('hash_text', 128);
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

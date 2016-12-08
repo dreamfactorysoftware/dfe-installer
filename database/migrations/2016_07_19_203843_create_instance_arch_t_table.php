@@ -33,7 +33,7 @@ class CreateInstanceArchTTable extends Migration {
                 $table->string('db_user_text', 64)->nullable();
                 $table->string('db_password_text', 64)->nullable();
                 $table->string('request_id_text', 128)->nullable();
-                $table->dateTime('request_date')->nullable();
+                $table->timestamp('request_date')->nullable();
                 $table->boolean('activate_ind')->nullable()->default(0);
                 $table->boolean('trial_instance_ind')->nullable()->default(1);
                 $table->boolean('provision_ind')->nullable()->default(0);
@@ -42,11 +42,11 @@ class CreateInstanceArchTTable extends Migration {
                 $table->integer('ready_state_nbr')->nullable()->default(0);
                 $table->integer('platform_state_nbr')->nullable()->default(0);
                 $table->integer('storage_version_nbr')->nullable()->default(0);
-                $table->dateTime('last_state_date')->nullable();
-                $table->dateTime('start_date')->nullable();
-                $table->dateTime('end_date')->nullable();
-                $table->dateTime('terminate_date')->nullable();
-                $table->dateTime('create_date')->nullable();
+                $table->timestamp('last_state_date')->nullable();
+                $table->timestamp('start_date')->nullable();
+                $table->timestamp('end_date')->nullable();
+                $table->timestamp('terminate_date')->nullable();
+                $table->timestamp('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

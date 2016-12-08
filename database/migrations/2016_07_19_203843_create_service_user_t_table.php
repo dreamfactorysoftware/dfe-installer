@@ -23,11 +23,11 @@ class CreateServiceUserTTable extends Migration {
                 $table->string('password_text', 192);
                 $table->integer('owner_id')->nullable()->index('ix_service_user_owner_id');
                 $table->integer('owner_type_nbr')->nullable();
-                $table->dateTime('last_login_date')->nullable();
+                $table->timestamp('last_login_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->string('last_login_ip_text', 64)->nullable();
                 $table->string('remember_token', 128)->nullable();
                 $table->boolean('active_ind')->default(0);
-                $table->dateTime('create_date');
+                $table->timestamp('create_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

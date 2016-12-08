@@ -18,7 +18,7 @@ class CreateEnvironmentTTable extends Migration {
                 $table->integer('id', true);
                 $table->integer('user_id')->nullable();
                 $table->string('environment_id_text', 64)->unique('ux_environment_environment_id');
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }

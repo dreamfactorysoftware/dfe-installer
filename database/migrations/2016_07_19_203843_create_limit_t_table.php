@@ -24,7 +24,7 @@ class CreateLimitTTable extends Migration {
                 $table->integer('period_nbr')->nullable();
                 $table->string('label_text', 64)->unique('ix_limit_label');
                 $table->boolean('active_ind')->default(1);
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->unique(['cluster_id', 'instance_id', 'limit_key_text'], 'ux_limit_cluster_instance_key');
             });

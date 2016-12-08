@@ -20,7 +20,7 @@ class CreateVendorCredentialsTTable extends Migration {
                 $table->integer('environment_id')->default(0);
                 $table->text('keys_text', 16777215)->nullable();
                 $table->string('label_text', 64)->nullable();
-                $table->dateTime('create_date');
+                $table->dateTime('create_date')->nullable();
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->unique(['user_id', 'vendor_id', 'label_text'], 'ux_vendor_creds_user_vendor_label');
             });

@@ -21,7 +21,7 @@ class CreateClusterArchTTable extends Migration {
                 $table->string('cluster_id_text', 128)->nullable();
                 $table->string('subdomain_text', 128)->nullable();
                 $table->integer('max_instances_nbr')->nullable();
-                $table->dateTime('create_date')->nullable();
+                $table->timestamp('create_date')->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->timestamp('lmod_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             });
         }
