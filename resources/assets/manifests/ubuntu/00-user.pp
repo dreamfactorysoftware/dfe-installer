@@ -94,12 +94,13 @@ alias ngtr='sudo service php5-fpm stop ; sudo service nginx stop ; sudo service 
 ##------------------------------------------------------------------------------
 
 ##  Keep up-to-date
-class { 'apt':
-  stage  => 'pre',
-  update => {
-    frequency => 'daily',
-  },
-}
+## This wasn't working with the latest version of the apt module in puppet
+#class { 'apt':
+#  stage  => 'pre',
+#  update => {
+#    frequency => 'daily',
+#  },
+#}
 
 ##  Update the hosts file
 class { "updateHostsFile":
